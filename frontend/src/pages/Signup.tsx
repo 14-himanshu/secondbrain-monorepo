@@ -3,7 +3,7 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 export function Signup() {
@@ -31,6 +31,7 @@ const navigate = useNavigate()
         <div className="flex justify-center pt-4">
           <Button onClick={signup} loading ={false}  text="Signup" variant="primary" fullwidth= {true} />
         </div>
+        <h1>Go to <Link to="/signin">Signin</Link></h1>
       </div>
     </div>
   );

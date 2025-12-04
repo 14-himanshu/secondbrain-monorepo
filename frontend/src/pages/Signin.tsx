@@ -3,7 +3,7 @@ import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { BACKEND_URL } from "../config";
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Signin() {
     const usernameRef = useRef<HTMLInputElement | null>(null);
@@ -30,6 +30,7 @@ export function Signin() {
         <div className="flex justify-center pt-4">
           <Button onClick={signin} loading ={false}  text="Signin" variant="primary" fullwidth= {true} />
         </div>
+        <h1>Go to <Link to="/signup">Signup</Link></h1>
       </div>
     </div>
   );

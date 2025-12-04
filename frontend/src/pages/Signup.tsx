@@ -13,6 +13,7 @@ const navigate = useNavigate()
 
 
     async function signup(){
+      console.log("signing up...")
         const username = usernameRef.current?.value ?? "";
         const password = passwordRef.current?.value ?? "";
         await axios.post(BACKEND_URL + "/api/v1/signup", {

@@ -8,13 +8,21 @@ import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const {contents,refresh} = useContent();
+  const navigate = useNavigate()
   useEffect(()=>{
     refresh()
   },[modalOpen, refresh])
+
+  useEffect(()=>{
+    if (!localStorage.getItem("token")){
+      navigate("/signup")
+    }
+  })
   return (
     <div>
       <Sidebar />

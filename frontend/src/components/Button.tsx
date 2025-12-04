@@ -1,12 +1,12 @@
 import type { ReactElement } from "react";
 
 interface ButtonProps{
-    variant : "primary" | "secondary",
-    text : String,
-    startIcon : ReactElement,
-    onClick? : () => void,
-    fullwidth? : boolean,
-    loading? : boolean
+  variant : "primary" | "secondary",
+  text : string,
+  startIcon?: ReactElement,
+  onClick? : () => void,
+  fullwidth? : boolean,
+  loading? : boolean
 }
 const variantClasses = {
     primary : "bg-purple-600 text-white",
@@ -20,9 +20,11 @@ export function Button({variant,text,startIcon,onClick,fullwidth,loading}: Butto
     return (
       <button onClick = {onClick} className={variantClasses[variant] + " " + defaultStyles + `${fullwidth ? " w-full flex justify-center items-center" : ""}
         ${loading?"opacity-45":""}`} disabled = {loading}>
-        <div className="pr-2">
-            {startIcon}
-        </div>
+        {startIcon && (
+          <div className="pr-2">
+              {startIcon}
+          </div>
+        )}
 
         {text}
       </button>

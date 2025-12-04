@@ -17,5 +17,10 @@ export function Sidebar(){
             <SidebarItem text ="Youtube" icon = {<YoutubeIcon />} />
 
         </div>
+        <button className="text-red-500 px-4 py-2 rounded-md font-light flex justify-center items-center w-full mt-4" onClick={()=>{
+            localStorage.removeItem("token")
+        }}>
+            Logout
+        </button>
     </div>
 }

@@ -1,6 +1,6 @@
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { Shareicon } from "../icons/ShareIcon";
-import { YouTubeIcon } from "../icons/YouTubeIcon";
+import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { EditIcon } from "../icons/EditIcon";

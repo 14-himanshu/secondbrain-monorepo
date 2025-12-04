@@ -1,20 +1,26 @@
-import type { ReactElement } from "react"
+import type { ReactElement } from "react";
 
-export function SidebarItem({text,icon}: {
-    text : String,
-    icon : ReactElement
-}){
-    return <div className="flex text-gray-700 py-2 cursor-pointer
-    hover:bg-gray-200 rounded max-w-48 pl-4 transition-all  duration-250">
-        <div className="pr-2">
-
-        {icon} 
+export function SidebarItem({
+    text,
+    icon,
+    onClick,
+    active = false,
+}: {
+    text: string;
+    icon: ReactElement;
+    onClick?: () => void;
+    active?: boolean;
+}) {
+    return (
+        <div
+            className={`flex items-center text-md py-3 px-4 cursor-pointer rounded-lg transition-all duration-200 ${active
+                ? "bg-purple-200 text-purple-600 font-medium"
+                : "text-gray-700 hover:bg-gray-100"
+                }`}
+            onClick={onClick}
+        >
+            <div className="pr-3">{icon}</div>
+            <div>{text}</div>
         </div>
-        <div >
-
-        {text}
-        </div>
-        
-
-    </div>
+    );
 }

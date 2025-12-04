@@ -52,7 +52,7 @@ const signinSchema = z.object({
 const contentSchema = z.object({
   title: z.string().min(1, "Title is required"),
   link: z.string().url("Invalid URL"),
-  type: z.enum(["Youtube", "Twitter"]),
+  type: z.enum(["Youtube", "Twitter", "Document"]),
   tags: z.array(z.string()).optional(),
 });
 
@@ -108,11 +108,11 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
-  
+
   const { title, link, type, tags } = parsed.data;
 
   await ContentModel.create({
-    title, 
+    title,
     link,
     type,
     tags: tags || [],
@@ -135,74 +135,119 @@ app.get("/api/v1/content", userMiddleware, async (req, res) => {
   res.json({ content });
 });
 
+app.put("/api/v1/content", userMiddleware, async (req, res) => {
+  const { contentId, title } = req.body;
+
+  if (!contentId || !title) {
+    return res.status(400).json({ message: "Content ID and title are required" });
+  }
+
+  try {
+    const result = await ContentModel.updateOne(
+      { _id: contentId, userId: req.userId },
+      { title }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Content not found or unauthorized" });
+    }
+
+    res.json({ message: "Content updated" });
+  } catch (e) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.delete("/api/v1/content", userMiddleware, async (req, res) => {
   const contentId = req.body.contentId;
+  console.log("Delete request received");
+  console.log("contentId:", contentId);
+  console.log("userId:", req.userId);
 
-  await ContentModel.deleteMany({
-    contentId,
-    userId: req.userId,
-  });
+  if (!contentId) {
+    return res.status(400).json({ message: "Content ID is required" });
+  }
 
-  res.json({
-    message: "Deleted",
-  });
+  try {
+    const result = await ContentModel.deleteOne({
+      _id: contentId,
+      userId: req.userId,
+    });
+
+    console.log("Delete result:", result);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        message: "Content not found or you don't have permission to delete it",
+        debug: { contentId, userId: req.userId }
+      });
+    }
+
+    res.json({
+      message: "Deleted",
+      deletedCount: result.deletedCount,
+    });
+  } catch (e) {
+    console.error("Delete error:", e);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
-app.post("/api/v1/brain/share", userMiddleware,async (req, res) => {
+app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
   const share = req.body.share
 
-  if (share){
+  if (share) {
     const existingLink = await LinkModel.findOne({
-      userId : req.userId
+      userId: req.userId
     })
 
-    if (existingLink){
+    if (existingLink) {
       res.json({
-        hash : existingLink.hash
+        hash: existingLink.hash
       })
-      return 
+      return
     }
 
     const hash = random(10)
     await LinkModel.create({
-      userId : req.userId,
-      hash : hash
+      userId: req.userId,
+      hash: hash
     })
-    res.json({message : "/share/" + hash})
+    res.json({ message: "/share/" + hash })
 
 
-  }else{
+  } else {
     await LinkModel.deleteOne({
-      userId : req.userId
+      userId: req.userId
     })
   }
   res.json({
-    "message" : "Removed sharable link"
+    "message": "Removed sharable link"
   })
 });
 
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  const hash  = req.params.shareLink
+  const hash = req.params.shareLink
   const link = await LinkModel.findOne({
-    hash 
+    hash
   })
-  if (!link){
+  if (!link) {
     res.status(411).json({
-      message : "Sorry incorrect input"
+      message: "Sorry incorrect input"
     })
-    return 
+    return
   }
   const content = await ContentModel.find({
-    userId : link.userId
+    userId: link.userId
   })
   const user = await UserModel.findOne({
-    _id : link.userId
+    _id: link.userId
   })
 
-  if (!user){
+  if (!user) {
     res.status(411).json({
-      "message" : "user not found"
+      "message": "user not found"
     })
-    return 
+    return
   }
   res.json({
     username: user.username,
@@ -211,6 +256,7 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
 
 });
 
-app.listen(3000,()=>{
-  console.log("running the server")
+app.listen(3000, () => {
+  console.log("running the server");
 });
+// Force restart for PUT endpoint

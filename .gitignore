@@ -4,3 +4,4 @@ backend/node_modules/
 .env
 backend/.env
 frontend/.env
+frontend/vercel.json

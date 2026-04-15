@@ -5,7 +5,7 @@ import { PlusIcon } from "../icons/PlusIcon";
 import { Shareicon } from "../icons/ShareIcon";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
@@ -16,9 +16,14 @@ export function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const { contents, refresh, setContents } = useContent();
   const navigate = useNavigate();
+  const prevModalOpen = useRef(false);
 
+  // Refresh only when modal transitions from open → closed (i.e. content was just added)
   useEffect(() => {
-    refresh();
+    if (prevModalOpen.current === true && modalOpen === false) {
+      refresh();
+    }
+    prevModalOpen.current = modalOpen;
   }, [modalOpen, refresh]);
 
   useEffect(() => {
@@ -63,12 +68,10 @@ export function Dashboard() {
             {/* Left: Title & Count */}
             <div className="shrink-0 min-w-[200px]">
               <h1 className="text-3xl font-bold text-black tracking-tight">
-                {selectedFilter === "all" && "All Notes"}
-                {selectedFilter === "twitter" && "Tweets"}
-                {selectedFilter === "youtube" && "Videos"}
+              {selectedFilter === "all"      && "All Notes"}
+                {selectedFilter === "post"     && "Posts"}
+                {selectedFilter === "video"    && "Videos"}
                 {selectedFilter === "document" && "Documents"}
-                {selectedFilter === "link" && "Links"}
-                {selectedFilter === "tag" && "Tags"}
               </h1>
               <p className="text-gray-600 text-sm font-medium mt-1">
                 {filteredContents.length}{" "}
@@ -172,61 +175,43 @@ export function Dashboard() {
               link={link}
               type={type}
               onEdit={async (newTitle) => {
-                console.log("Edit clicked for:", title, "ID:", _id, "New Title:", newTitle);
-
-                // Optimistic UI update
+                // Optimistic update — no refresh needed on success
                 setContents(contents.map(c => c._id === _id ? { ...c, title: newTitle } : c));
 
                 try {
                   await axios.put(
                     `${BACKEND_URL}/api/v1/content`,
-                    {
-                      contentId: _id,
-                      title: newTitle
-                    },
+                    { contentId: _id, title: newTitle },
                     {
                       headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                       },
                     }
                   );
-                  await refresh();
                 } catch (error: any) {
-                  console.error("Edit error:", error);
                   const errorMessage = error.response?.data?.message || error.message || "Unknown error";
                   alert(`Failed to update content: ${errorMessage}`);
                   await refresh();
                 }
               }}
               onDelete={async () => {
-                console.log("Delete clicked for:", title, "ID:", _id);
-
-                // Optimistic UI update - remove immediately
+                // Optimistic update — remove immediately, no refresh needed on success
                 setContents(contents.filter((item) => item._id !== _id));
 
                 try {
-                  const response = await axios.delete(
+                  await axios.delete(
                     `${BACKEND_URL}/api/v1/content`,
                     {
-                      data: {
-                        contentId: _id,
-                      },
+                      data: { contentId: _id },
                       headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                          "token"
-                        )}`,
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
                       },
                     }
                   );
-                  console.log("Delete response:", response.data);
-
-                  // Refresh in background to stay in sync with server
-                  await refresh();
                 } catch (error: any) {
-                  console.error("Delete error:", error);
                   const errorMessage = error.response?.data?.message || error.message || "Unknown error";
                   alert(`Failed to delete content: ${errorMessage}`);
-                  // Revert the optimistic update on error
+                  // Revert on error
                   await refresh();
                 }
               }}

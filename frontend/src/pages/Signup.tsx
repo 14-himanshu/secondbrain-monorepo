@@ -1,79 +1,255 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
+interface ValidationError {
+  path: (string | number)[];
+  message: string;
+}
+
+const PASSWORD_REQUIREMENTS = [
+  { label: "8+ characters", test: (v: string) => v.length >= 8 },
+  { label: "Max 30 characters", test: (v: string) => v.length <= 30 },
+  { label: "One uppercase", test: (v: string) => /[A-Z]/.test(v) },
+  { label: "One lowercase", test: (v: string) => /[a-z]/.test(v) },
+  { label: "One number", test: (v: string) => /[0-9]/.test(v) },
+  { label: "One special char", test: (v: string) => /[^A-Za-z0-9]/.test(v) },
+];
 
 export function Signup() {
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
+  const [errors, setErrors] = useState<ValidationError[]>([]);
+  const [passwordValue, setPasswordValue] = useState("");
+  const [showRequirements, setShowRequirements] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
 
   async function signup() {
+    setErrors([]);
+    setSuccessMsg("");
+    setLoading(true);
     const username = usernameRef.current?.value ?? "";
     const password = passwordRef.current?.value ?? "";
     try {
-      await axios.post(BACKEND_URL + "/api/v1/signup", {
-        username,
-        password,
-      });
-      alert("Signup successful");
-      navigate("/signin");
-    } catch (e) {
-      alert("Error while signing up");
+      await axios.post(BACKEND_URL + "/api/v1/signup", { username, password });
+      setSuccessMsg("Account created! Redirecting you to sign in…");
+      setTimeout(() => navigate("/signin"), 1500);
+    } catch (e: any) {
+      if (e.response?.data?.errors) {
+        setErrors(e.response.data.errors);
+      } else if (e.response?.data?.message) {
+        setErrors([{ path: ["general"], message: e.response.data.message }]);
+      } else {
+        setErrors([{ path: ["general"], message: "Something went wrong. Please try again." }]);
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
+  const usernameErrors = errors.filter((e) => e.path?.includes("username"));
+  const passwordErrors = errors.filter((e) => e.path?.includes("password"));
+  const generalErrors = errors.filter((e) => e.path?.includes("general"));
+
+  const allRequirementsMet = PASSWORD_REQUIREMENTS.every((r) => r.test(passwordValue));
+  const strengthCount = PASSWORD_REQUIREMENTS.filter((r) => r.test(passwordValue)).length;
+  const strengthPct = Math.round((strengthCount / PASSWORD_REQUIREMENTS.length) * 100);
+  const strengthColor =
+    strengthCount <= 2 ? "bg-red-400" :
+      strengthCount <= 4 ? "bg-yellow-400" :
+        "bg-green-500";
+
   return (
-    <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-      <div className="bg-white rounded-xl border min-w-80 p-8 shadow-lg">
-        <div className="flex flex-col justify-center items-center mb-6">
-          <div className="text-purple-600 mb-2">
-            {/* Assuming Logo component is available or we can use a placeholder/icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="size-10"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
-              />
+    <div className="min-h-screen w-screen bg-gray-100 flex">
+      {/* ── Left decorative panel ── */}
+      <div className="hidden lg:flex lg:w-1/2 bg-purple-600 flex-col justify-between p-12 relative overflow-hidden">
+        {/* Background orbs */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-purple-500 rounded-full opacity-40 blur-3xl" />
+        <div className="absolute -bottom-24 -right-16 w-80 h-80 bg-purple-200 rounded-full opacity-20 blur-3xl" />
+
+        {/* Logo / brand */}
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
-          <p className="text-gray-500 text-sm mt-1">Join Second Brain today</p>
+          <span className="text-white font-semibold text-lg tracking-tight">Second Brain</span>
         </div>
 
-        <div>
-          <div className="mb-4">
-            <Input ref={usernameRef} placeholder="Username" />
+        {/* Central copy */}
+        <div className="relative z-10">
+          <h2 className="text-white text-4xl font-bold leading-tight mb-4">
+            Start building<br />
+            <span className="text-purple-200">your second brain.</span>
+          </h2>
+          <p className="text-purple-200/80 text-base leading-relaxed max-w-sm">
+            Join thousands who capture what matters, stay organised, and never lose an idea again.
+          </p>
+        </div>
+
+        {/* Testimonial / social proof */}
+        <div className="relative z-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5">
+          <p className="text-white/90 text-sm leading-relaxed mb-3">
+            "Second Brain changed how I work. Everything I need is organised and instantly searchable."
+          </p>
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-purple-600 font-bold text-xs">
+              AK
+            </div>
+            <div>
+              <p className="text-white text-xs font-semibold">Aryan K.</p>
+              <p className="text-purple-200/70 text-xs">Product Designer</p>
+            </div>
           </div>
-          <div className="mb-4">
-            <Input ref={passwordRef} placeholder="Password" />
+        </div>
+      </div>
+
+      {/* ── Right form panel ── */}
+      <div className="flex-1 flex flex-col justify-center items-center px-6 py-12">
+        {/* Mobile brand */}
+        <div className="lg:hidden flex items-center gap-2 mb-10">
+          <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-4.5 h-4.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+            </svg>
           </div>
-          <div className="pt-2">
-            <Button
-              onClick={signup}
-              loading={false}
-              text="Sign Up"
-              variant="primary"
-              fullwidth={true}
+          <span className="text-gray-800 font-semibold text-base">Second Brain</span>
+        </div>
+
+        <div className="w-full max-w-sm">
+          {/* Heading */}
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-800 mb-1">Create your account</h1>
+            <p className="text-gray-600 text-sm">It's free and takes less than a minute.</p>
+          </div>
+
+          {/* General error banner */}
+          {generalErrors.length > 0 && (
+            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
+                <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+              </svg>
+              <p className="text-red-600 text-sm">{generalErrors[0].message}</p>
+            </div>
+          )}
+
+          {/* Success banner */}
+          {successMsg && (
+            <div className="mb-5 px-4 py-3 rounded-xl bg-green-50 border border-green-100 flex items-start gap-2.5">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-green-500 mt-0.5">
+                <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
+              </svg>
+              <p className="text-green-700 text-sm">{successMsg}</p>
+            </div>
+          )}
+
+          {/* Username field */}
+          <div className="mb-4">
+            <Input ref={usernameRef} placeholder="Choose a username" label="Username" />
+            {usernameErrors.length > 0 && (
+              <div className="mt-1.5 flex flex-col gap-0.5">
+                {usernameErrors.map((err, i) => (
+                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
+                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                    </svg>
+                    {err.message}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Password field */}
+          <div className="mb-2">
+            <Input
+              ref={passwordRef}
+              placeholder="Create a strong password"
+              label="Password"
+              type="password"
+              onFocus={() => setShowRequirements(true)}
+              onBlur={() => { if (passwordValue.length === 0) setShowRequirements(false); }}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordValue(e.target.value)}
             />
+            {passwordErrors.length > 0 && (
+              <div className="mt-1.5 flex flex-col gap-0.5">
+                {passwordErrors.map((err, i) => (
+                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
+                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                    </svg>
+                    {err.message}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link to="/signin" className="text-purple-600 hover:underline">
-            Sign in
-          </Link>
+          {/* Strength bar */}
+          {passwordValue.length > 0 && (
+            <div className="mb-4">
+              <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${strengthColor}`}
+                  style={{ width: `${strengthPct}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Requirement checklist */}
+          {showRequirements && (
+            <div className="mb-5 p-3 rounded-xl bg-gray-50 border border-gray-200">
+              <div className="flex flex-wrap gap-2">
+                {PASSWORD_REQUIREMENTS.map((req, i) => {
+                  const met = req.test(passwordValue);
+                  return (
+                    <span
+                      key={i}
+                      className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full transition-colors duration-200 ${met
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-500"
+                        }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${met ? "bg-green-500" : "bg-gray-400"
+                        }`} />
+                      {req.label}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* CTA */}
+          <Button
+            onClick={signup}
+            loading={loading}
+            text={allRequirementsMet || passwordValue.length === 0 ? "Create Account" : "Create Account"}
+            variant="primary"
+            fullwidth={true}
+          />
+
+          {/* Divider */}
+          <div className="mt-6 mb-5 flex items-center gap-3">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-xs text-gray-600">or</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Sign-in link */}
+          <p className="text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link to="/signin" className="text-purple-600 font-medium hover:text-purple-500 transition-colors">
+              Sign in
+            </Link>
+          </p>
         </div>
       </div>
     </div>

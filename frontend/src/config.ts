@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://secondbrain-monorepo.onrender.com";
+export const BACKEND_URL = "http://localhost:3000";

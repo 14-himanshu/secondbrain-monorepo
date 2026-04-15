@@ -6,7 +6,7 @@ import { DocumentIcon } from "../icons/DocumentIcon";
 import { EditIcon } from "../icons/EditIcon";
 import { CheckIcon } from "../icons/CheckIcon";
 import { CrossIcon } from "../icons/CrossIcon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface CardProps {
   title: string;
@@ -17,15 +17,13 @@ interface CardProps {
 }
 
 export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
-  const normalizedType = type.toLowerCase();
+  const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
 
-  useEffect(() => {
-    if (normalizedType === "twitter" && (window as any).twttr) {
-      (window as any).twttr.widgets.load();
-    }
-  }, [normalizedType, link]);
+  const isVideo    = normalizedType === "video"    || normalizedType === "youtube";
+  const isPost     = normalizedType === "post"     || normalizedType === "twitter";
+  const isDocument = normalizedType === "document";
 
   const handleSave = () => {
     if (editedTitle.trim() !== "") {
@@ -40,9 +38,9 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
   };
 
   const getIcon = () => {
-    if (normalizedType === "youtube") return <YouTubeIcon />;
-    if (normalizedType === "twitter") return <TwitterIcon />;
-    if (normalizedType === "document") return <DocumentIcon />;
+    if (isVideo)    return <YouTubeIcon />;
+    if (isPost)     return <TwitterIcon />;
+    if (isDocument) return <DocumentIcon />;
     return <Shareicon />;
   };
 
@@ -132,8 +130,8 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
 
       {/* Content Body */}
       <div className="w-full">
-        {/* YOUTUBE */}
-        {normalizedType === "youtube" && (
+        {/* VIDEO (youtube / video type) */}
+        {isVideo && (
           <div className="rounded-lg overflow-hidden border border-gray-100 bg-gray-100">
             <iframe
               className="w-full aspect-video"
@@ -141,7 +139,7 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
                 .split("/")
                 .pop()
                 ?.replace("watch?v=", "")}`}
-              title="YouTube video player"
+              title="Video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
@@ -150,17 +148,27 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
           </div>
         )}
 
-        {/* TWITTER */}
-        {normalizedType === "twitter" && (
-          <div className="rounded-lg overflow-hidden border border-gray-100">
-            <blockquote className="twitter-tweet" data-dnt="true" data-theme="light">
-              <a href={link.replace("x.com", "twitter.com")}></a>
-            </blockquote>
-          </div>
+        {/* POST (twitter / post type) */}
+        {isPost && (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block group"
+          >
+            <div className="flex flex-col items-center justify-center p-6 bg-gray-100 rounded-lg border border-gray-200 group-hover:border-purple-200 group-hover:bg-white transition-all">
+              <div className="text-gray-400 group-hover:text-purple-600 transition-colors mb-3">
+                <TwitterIcon />
+              </div>
+              <span className="text-sm font-medium text-gray-600 group-hover:text-purple-700 transition-colors underline decoration-transparent group-hover:decoration-purple-700 underline-offset-2">
+                Open Post
+              </span>
+            </div>
+          </a>
         )}
 
         {/* DOCUMENT */}
-        {normalizedType === "document" && (
+        {isDocument && (
           <a
             href={link}
             target="_blank"

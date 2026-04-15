@@ -52,7 +52,7 @@ const signinSchema = z.object({
 const contentSchema = z.object({
   title: z.string().min(1, "Title is required"),
   link: z.string().url("Invalid URL"),
-  type: z.enum(["Youtube", "Twitter", "Document"]),
+  type: z.enum(["video", "post", "document"]),
   tags: z.array(z.string()).optional(),
 });
 
@@ -213,6 +213,7 @@ app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
       hash: hash
     })
     res.json({ message: "/share/" + hash })
+    return;
 
 
   } else {

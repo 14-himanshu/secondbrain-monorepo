@@ -6,17 +6,17 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 
 const ContentType = {
-  Youtube: "Youtube",
-  Twitter: "Twitter",
-  Document: "Document",
+  Video: "video",
+  Post: "post",
+  Document: "document",
 } as const;
 
-export function CreateContentModal({ open, onClose }) {
+type ContentTypeValue = (typeof ContentType)[keyof typeof ContentType];
+
+export function CreateContentModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const titleRef = useRef<HTMLInputElement | null>(null);
   const linkRef = useRef<HTMLInputElement | null>(null);
-  const [type, setType] = useState<
-    (typeof ContentType)[keyof typeof ContentType]
-  >(ContentType.Youtube);
+  const [type, setType] = useState<ContentTypeValue>(ContentType.Video);
 
   async function addContent() {
     const title = titleRef.current?.value;
@@ -30,11 +30,7 @@ export function CreateContentModal({ open, onClose }) {
     try {
       await axios.post(
         BACKEND_URL + "/api/v1/content",
-        {
-          link,
-          title,
-          type,
-        },
+        { link, title, type },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -44,7 +40,6 @@ export function CreateContentModal({ open, onClose }) {
       onClose();
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || error.message || "Unknown error";
-      // Check for validation errors
       if (error.response?.data?.errors) {
         const validationErrors = error.response.data.errors.map((e: any) => e.message).join(", ");
         alert(`Failed to add content: ${validationErrors}`);
@@ -86,11 +81,7 @@ export function CreateContentModal({ open, onClose }) {
                       stroke="currentColor"
                       className="size-8"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                   </div>
                   <h2 className="text-2xl font-bold text-gray-800">Add Content</h2>
@@ -101,64 +92,41 @@ export function CreateContentModal({ open, onClose }) {
               {/* Form */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Title
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
                   <Input ref={titleRef} placeholder="Enter title..." />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Link
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Link</label>
                   <Input ref={linkRef} placeholder="https://..." />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Content Type
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Content Type</label>
                   <div className="grid grid-cols-3 gap-2">
                     <Button
-                      text="YouTube"
-                      variant={
-                        type === ContentType.Youtube ? "primary" : "secondary"
-                      }
-                      onClick={() => {
-                        setType(ContentType.Youtube);
-                      }}
+                      text="Video"
+                      variant={type === ContentType.Video ? "primary" : "secondary"}
+                      onClick={() => setType(ContentType.Video)}
                       fullwidth={true}
                     />
                     <Button
-                      text="Twitter"
-                      variant={
-                        type === ContentType.Twitter ? "primary" : "secondary"
-                      }
-                      onClick={() => {
-                        setType(ContentType.Twitter);
-                      }}
+                      text="Post"
+                      variant={type === ContentType.Post ? "primary" : "secondary"}
+                      onClick={() => setType(ContentType.Post)}
                       fullwidth={true}
                     />
                     <Button
                       text="Document"
-                      variant={
-                        type === ContentType.Document ? "primary" : "secondary"
-                      }
-                      onClick={() => {
-                        setType(ContentType.Document);
-                      }}
+                      variant={type === ContentType.Document ? "primary" : "secondary"}
+                      onClick={() => setType(ContentType.Document)}
                       fullwidth={true}
                     />
                   </div>
                 </div>
 
                 <div className="pt-4">
-                  <Button
-                    onClick={addContent}
-                    variant="primary"
-                    text="Add to Brain"
-                    fullwidth={true}
-                  />
+                  <Button onClick={addContent} variant="primary" text="Add to Brain" fullwidth={true} />
                 </div>
               </div>
             </div>

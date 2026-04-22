@@ -1,108 +1,174 @@
-1. Project Title
+# Second Brain
 
-SecondBrain – A Collaborative Q&A Learning Platform
+Second Brain is a full-stack content-saving app for collecting useful links in one place. Users can sign up, save posts, videos, and documents, organize them in a clean dashboard, edit or delete entries, and share their public brain with a generated link.
 
-2. Problem Statement
+## Live Links
 
-Learners frequently struggle to organize educational resources, save important information, and share knowledge efficiently.
-SecondBrain provides a structured platform that allows users to create, store, manage, and share learning content using secure shareable links.
-The system encourages personal knowledge organization while enabling collaborative learning through a simple and intuitive interface.
+- Frontend: [https://secondbrain-chi.vercel.app](https://secondbrain-chi.vercel.app)
+- Backend: [https://secondbrain-monorepo.onrender.com](https://secondbrain-monorepo.onrender.com)
+- GitHub: [https://github.com/14-himanshu/secondbrain-monorepo](https://github.com/14-himanshu/secondbrain-monorepo)
 
-3. System Architecture
-Architecture:
+## What The Project Does
 
-Frontend → Backend (API) → Database
+The app helps users build a personal knowledge hub by saving important internet content in one dashboard.
 
-Components Used
+Users can:
 
-Frontend: React.js, HTML, TailwindCSS, Axios
+- create an account and sign in securely
+- save links as `post`, `video`, or `document`
+- search and filter saved content
+- edit titles and delete saved items
+- view styled content preview cards
+- generate a shareable public brain link
 
-Backend: Node.js, Express.js
+## Features
 
-Database: MongoDB Atlas
+- JWT-based authentication
+- password validation with Zod
+- bcrypt password hashing
+- create, read, update, and delete content
+- share-brain link generation
+- search and type-based filtering
+- responsive React dashboard UI
+- deployed frontend and backend
 
-Authentication: JWT-based login with user/admin roles
+## Tech Stack
 
-Hosting:
+### Frontend
 
-Frontend → Vercel
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Axios
+- React Router
 
-Backend → Render
+### Backend
 
-Database → MongoDB Atlas
+- Node.js
+- Express
+- TypeScript
+- Zod
+- JWT
+- bcrypt
+- Mongoose
 
-Additional Functional Modules
+### Database and Hosting
 
-Searching, sorting, filtering, and pagination integrated across content endpoints
+- MongoDB Atlas
+- Vercel for frontend deployment
+- Render for backend deployment
 
-Dynamic data fetching using Axios for real-time updates
+## Architecture
 
-Public sharing system for content accessibility
+```text
+Frontend (React/Vite)
+        |
+        v
+Backend API (Express/Node.js)
+        |
+        v
+MongoDB Atlas
+```
 
-Modular code separation for controllers, routes, and middleware
+## Main Pages
 
-4. Key Features
-Category	Features
-Authentication & Roles	Secure login/signup using JWT, role-based access (user/admin)
-CRUD Operations	Create, view, edit, and delete content items (notes/questions/entries)
-Search, Sort & Filter	Search by keywords, sort by date or popularity, filter by tags
-Pagination	Improves page performance by loading data in chunks
-Dynamic Data Fetching	Real-time content updates using API calls from React
-Routing	Organized pages for Home, Login, Dashboard, Create Content, View Content
-Sharing System	Generate shareable public links for selected content
-Hosting	Fully deployed using Vercel (FE) and Render (BE)
-5. Tech Stack
-Layer	Technologies Used
-Frontend	React.js, HTML, TailwindCSS, Axios
-Backend	Node.js, Express.js
-Database	MongoDB Atlas
-Authentication	JWT, bcrypt.js
-Hosting	Vercel (Frontend), Render (Backend)
-Programming Language	JavaScript (ES6+)
-6. API Overview
+- Signup page
+- Signin page
+- Dashboard
+- Public shared brain view
 
-POST /api/v1/signup — Register a new user
+## API Overview
 
-POST /api/v1/login — User login
+### Auth
 
-POST /api/v1/content — Add new content
+- `POST /api/v1/signup` - create a user account
+- `POST /api/v1/signin` - sign in and receive a token
 
-GET /api/v1/content — Fetch user’s content
+### Content
 
-DELETE /api/v1/content/:id — Delete a specific content item
+- `POST /api/v1/content` - add content
+- `GET /api/v1/content` - fetch user content
+- `PUT /api/v1/content` - update content title
+- `DELETE /api/v1/content` - delete content
 
-POST /api/v1/brain/share — Enable or disable sharing for content
+### Share Brain
 
-GET /api/v1/brain/:shareLink — Access publicly shared content
+- `POST /api/v1/brain/share` - create or remove a shareable brain link
+- `GET /api/v1/brain/:shareLink` - fetch public shared brain content
 
-(Exact endpoints sourced from the repo’s backend folder & README.)
+## Local Development
 
-7. Additional Notes
+### 1. Clone the repository
 
-React Hooks + Axios enable real-time data fetch and page updates.
+```bash
+git clone https://github.com/14-himanshu/secondbrain-monorepo.git
+cd secondbrain-monorepo
+```
 
-Pagination and query-based filtering improve performance at scale.
+### 2. Install dependencies
 
-The monorepo architecture keeps frontend & backend aligned for faster development.
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
 
-Modular Express structure ensures maintainable routes, controllers, and middleware.
+### 3. Configure environment variables
 
-Public sharing via unique links enhances collaboration and usability.
+Backend example: [backend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/.env.example:1)
 
-8. Local Setup & Deploy Config
+Frontend example: [frontend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/frontend/.env.example:1)
 
-Backend environment variables:
+Backend env vars:
 
-`MONGODB_URI` - your MongoDB Atlas connection string
+- `MONGODB_URI` - MongoDB Atlas connection string
+- `JWT_PASSWORD` - secret used to sign auth tokens
+- `PORT` - optional, defaults to `3000`
+- `FRONTEND_URL` - allowed frontend origin for CORS
 
-`JWT_PASSWORD` - a long random secret used for signing auth tokens
+Frontend env vars:
 
-`PORT` - optional, defaults to `3000`
+- `VITE_BACKEND_URL` - backend base URL
 
-`FRONTEND_URL` - optional, used for CORS. Set it to your frontend origin, for example `http://localhost:5173` or your Vercel URL
+### 4. Run the apps
 
-Frontend environment variables:
+Backend:
 
-`VITE_BACKEND_URL` - your deployed backend base URL
+```bash
+cd backend
+npm run dev
+```
 
-Example files are included at [backend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/.env.example) and [frontend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/frontend/.env.example).
+Frontend:
+
+```bash
+cd frontend
+npm run dev
+```
+
+## Deployment Notes
+
+### Render
+
+- root directory: `backend`
+- build command: `npm install`
+- start command: `npm start`
+
+Required backend env vars:
+
+- `MONGODB_URI`
+- `JWT_PASSWORD`
+- `FRONTEND_URL`
+
+### Vercel
+
+- root directory: `frontend`
+- framework preset: `Vite`
+
+Required frontend env vars:
+
+- `VITE_BACKEND_URL`
+
+## Project Summary
+
+Second Brain is a practical full-stack MERN-style project focused on authentication, content management, search, sharing, and deployment. It demonstrates how to build and ship a clean production-style app using React, Express, MongoDB Atlas, Render, and Vercel.

@@ -1,8 +1,9 @@
 import mongoose, { model, Schema } from "mongoose";
+import { getMongoDbUri } from "./config.js";
 
-mongoose.connect(
-  "mongodb+srv://klawchop1_db_user:9wYz7V9u2elw4w0d@cluster0.hejysje.mongodb.net/brainly"
-);
+export const connectToDatabase = async () => {
+  await mongoose.connect(getMongoDbUri());
+};
 const UserSchema = new Schema({
   username: { type: String, unique: true },
   password: String,

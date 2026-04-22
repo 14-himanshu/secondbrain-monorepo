@@ -88,3 +88,21 @@ The monorepo architecture keeps frontend & backend aligned for faster developmen
 Modular Express structure ensures maintainable routes, controllers, and middleware.
 
 Public sharing via unique links enhances collaboration and usability.
+
+8. Local Setup & Deploy Config
+
+Backend environment variables:
+
+`MONGODB_URI` - your MongoDB Atlas connection string
+
+`JWT_PASSWORD` - a long random secret used for signing auth tokens
+
+`PORT` - optional, defaults to `3000`
+
+`FRONTEND_URL` - optional, used for CORS. Set it to your frontend origin, for example `http://localhost:5173` or your Vercel URL
+
+Frontend environment variables:
+
+`VITE_BACKEND_URL` - your deployed backend base URL
+
+Example files are included at [backend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/.env.example) and [frontend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/frontend/.env.example).

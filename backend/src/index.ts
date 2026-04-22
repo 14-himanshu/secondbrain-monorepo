@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
-import { ContentModel, LinkModel, UserModel } from "./db.js";
-import { JWT_PASSWORD } from "./config.js";
+import { connectToDatabase, ContentModel, LinkModel, UserModel } from "./db.js";
+import { getFrontendUrls, getJwtPassword, getPort } from "./config.js";
 import { userMiddleware } from "./middleware.js";
 import { random } from "./utils.js";
-import cors from "cors"
+import cors from "cors";
 
 declare global {
   namespace Express {
@@ -19,7 +19,11 @@ declare global {
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: getFrontendUrls() ?? true,
+  })
+);
 
 const signupSchema = z.object({
   username: z
@@ -96,7 +100,7 @@ app.post("/api/v1/signin", async (req, res) => {
     return res.status(403).json({ message: "Invalid credentials" });
   }
 
-  const token = jwt.sign({ id: existingUser._id }, JWT_PASSWORD);
+  const token = jwt.sign({ id: existingUser._id }, getJwtPassword());
 
   res.json({ token });
 });
@@ -257,7 +261,19 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
 
 });
 
-app.listen(3000, () => {
-  console.log("running the server");
+const startServer = async () => {
+  await connectToDatabase();
+
+  const port = getPort();
+
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+};
+
+startServer().catch((error) => {
+  console.error("Failed to start backend");
+  console.error(error instanceof Error ? error.message : error);
+  process.exit(1);
 });
 // Force restart for PUT endpoint

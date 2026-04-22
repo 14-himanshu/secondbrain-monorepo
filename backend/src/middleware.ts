@@ -1,10 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { JWT_PASSWORD } from "./config.js";
-
-if (!JWT_PASSWORD) {
-  throw new Error("JWT_PASSWORD is not configured");
-}
+import { getJwtPassword } from "./config.js";
 
 export const userMiddleware = (
   req: Request,
@@ -31,7 +27,7 @@ export const userMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_PASSWORD) as jwt.JwtPayload;
+    const decoded = jwt.verify(token, getJwtPassword()) as jwt.JwtPayload;
 
     if (!decoded || !decoded.id) {
       return res.status(403).json({ message: "Invalid token" });

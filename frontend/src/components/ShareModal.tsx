@@ -11,11 +11,11 @@ interface ShareModalProps {
   onStatusChange: () => void;
 }
 
-type AccessType = "private" | "link" | "public";
+type ShareType = "private" | "link" | "public";
 
 export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
-  const [accessType, setAccessType] = useState<AccessType>("private");
-  const [hash, setHash] = useState<string | null>(null);
+  const [shareType, setShareType] = useState<ShareType>("private");
+  const [shareId, setShareId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -27,26 +27,26 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
 
   async function fetchShareStatus() {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/v1/brain/share-status`, {
+      const response = await axios.get(`${BACKEND_URL}/api/brain/share-status`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      setAccessType(response.data.accessType);
-      setHash(response.data.hash);
+      setShareType(response.data.shareType);
+      setShareId(response.data.shareId);
     } catch (e) {
       console.error("Failed to fetch share status", e);
     }
   }
 
-  async function updateShareSettings(type: AccessType, regenerate = false) {
+  async function updateShareSettings(type: ShareType, regenerate = false) {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/api/v1/brain/share`,
-        { accessType: type, regenerate },
+        `${BACKEND_URL}/api/brain/share`,
+        { shareType: type, regenerate },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      setAccessType(response.data.accessType);
-      setHash(response.data.hash);
+      setShareType(response.data.shareType);
+      setShareId(response.data.shareId);
       onStatusChange();
     } catch (e) {
       alert("Failed to update sharing settings");
@@ -55,7 +55,7 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
     }
   }
 
-  const shareUrl = hash ? `${window.location.origin}/share/${hash}` : "";
+  const shareUrl = shareId ? `${window.location.origin}/share/${shareId}` : "";
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareUrl);
@@ -104,22 +104,22 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
             ].map((mode) => (
               <button
                 key={mode.id}
-                onClick={() => updateShareSettings(mode.id as AccessType)}
+                onClick={() => updateShareSettings(mode.id as ShareType)}
                 disabled={loading}
                 className={`flex items-start gap-3 rounded-xl border p-3 text-left transition-all ${
-                  accessType === mode.id 
+                  shareType === mode.id 
                     ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' 
                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                <div className={`mt-0.5 ${accessType === mode.id ? 'text-purple-600' : 'text-gray-400'}`}>
+                <div className={`mt-0.5 ${shareType === mode.id ? 'text-purple-600' : 'text-gray-400'}`}>
                   {mode.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-sm font-bold ${accessType === mode.id ? 'text-purple-900' : 'text-gray-900'}`}>{mode.label}</div>
+                  <div className={`text-sm font-bold ${shareType === mode.id ? 'text-purple-900' : 'text-gray-900'}`}>{mode.label}</div>
                   <div className="text-xs text-gray-500">{mode.desc}</div>
                 </div>
-                {accessType === mode.id && (
+                {shareType === mode.id && (
                   <div className="text-purple-600">
                     <CheckIcon />
                   </div>
@@ -130,12 +130,12 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
         </div>
 
         {/* Link Management (Visible if not Private) */}
-        {accessType !== 'private' && hash && (
+        {shareType !== 'private' && shareId && (
           <div className="space-y-3 rounded-xl bg-gray-50 p-4 border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Shareable Link</label>
               <button 
-                onClick={() => updateShareSettings(accessType, true)}
+                onClick={() => updateShareSettings(shareType, true)}
                 className="text-[10px] font-bold text-purple-600 hover:text-purple-700 uppercase tracking-tight flex items-center gap-1"
                 disabled={loading}
               >
@@ -178,7 +178,7 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
         </div>
 
         {/* Footer Actions */}
-        {accessType !== 'private' && (
+        {shareType !== 'private' && (
           <div className="pt-2">
             <button
               onClick={() => updateShareSettings('private')}

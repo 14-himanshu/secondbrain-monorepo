@@ -6,7 +6,7 @@ import { Card } from "../components/Card";
 import { Logo } from "../icons/Logo";
 
 export function PublicView() {
-  const { hash } = useParams();
+  const { shareId } = useParams();
   const [content, setContent] = useState<any[]>([]);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
@@ -15,7 +15,7 @@ export function PublicView() {
   useEffect(() => {
     async function fetchSharedBrain() {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/brain/${hash}`);
+        const response = await axios.get(`${BACKEND_URL}/api/brain/share/${shareId}`);
         setContent(response.data.content);
         setUsername(response.data.username);
       } catch (e: any) {
@@ -25,7 +25,7 @@ export function PublicView() {
       }
     }
     fetchSharedBrain();
-  }, [hash]);
+  }, [shareId]);
 
   if (loading) {
     return (

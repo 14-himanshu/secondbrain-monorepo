@@ -196,61 +196,61 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-app.get("/api/v1/brain/share-status", userMiddleware, async (req, res) => {
+app.get("/api/brain/share-status", userMiddleware, async (req, res) => {
   const link = await LinkModel.findOne({ userId: req.userId });
   if (!link) {
-    return res.json({ accessType: 'private', hash: null });
+    return res.json({ shareType: 'private', shareId: null });
   }
   res.json({
-    accessType: link.accessType,
-    hash: link.hash,
+    shareType: link.shareType,
+    shareId: link.shareId,
     isPublic: link.isPublic
   });
 });
 
-app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
-  const { accessType, regenerate } = req.body;
+app.post("/api/brain/share", userMiddleware, async (req, res) => {
+  const { shareType, regenerate } = req.body;
 
-  if (accessType === 'private') {
+  if (shareType === 'private') {
     await LinkModel.deleteOne({ userId: req.userId });
-    return res.json({ message: "Sharing disabled", accessType: 'private' });
+    return res.json({ message: "Sharing disabled", shareType: 'private' });
   }
 
   let link = await LinkModel.findOne({ userId: req.userId });
 
   if (regenerate || !link) {
-    const hash = random(10);
+    const shareId = random(10);
     if (link) {
-      link.hash = hash;
-      link.accessType = accessType || link.accessType;
-      link.isPublic = accessType === 'public';
+      link.shareId = shareId;
+      link.shareType = shareType || link.shareType;
+      link.isPublic = (shareType || link.shareType) === 'public';
       await link.save();
     } else {
       link = await LinkModel.create({
         userId: req.userId,
-        hash,
-        accessType: accessType || 'link',
-        isPublic: accessType === 'public'
+        shareId,
+        shareType: shareType || 'link',
+        isPublic: shareType === 'public'
       });
     }
-  } else if (accessType) {
-    link.accessType = accessType;
-    link.isPublic = accessType === 'public';
+  } else if (shareType) {
+    link.shareType = shareType;
+    link.isPublic = shareType === 'public';
     await link.save();
   }
 
   res.json({
     message: "Sharing updated",
-    hash: link.hash,
-    accessType: link.accessType
+    shareId: link.shareId,
+    shareType: link.shareType
   });
 });
 
-app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  const hash = req.params.shareLink;
-  const link = await LinkModel.findOne({ hash });
+app.get("/api/brain/share/:shareId", async (req, res) => {
+  const shareId = req.params.shareId;
+  const link = await LinkModel.findOne({ shareId });
 
-  if (!link || link.accessType === 'private') {
+  if (!link || link.shareType === 'private') {
     return res.status(404).json({ message: "Shared brain not found or private" });
   }
 
@@ -264,7 +264,7 @@ app.get("/api/v1/brain/:shareLink", async (req, res) => {
   res.json({
     username: user.username,
     content,
-    accessType: link.accessType
+    shareType: link.shareType
   });
 });
 

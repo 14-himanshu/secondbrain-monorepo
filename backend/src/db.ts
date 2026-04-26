@@ -19,9 +19,9 @@ const ContentSchema = new Schema({
     userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true },
 })
 const LinkSchema = new Schema({
-    hash: { type: String, unique: true },
+    shareId: { type: String, unique: true, sparse: true },
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true, unique: true },
-    accessType: { type: String, enum: ['private', 'link', 'public'], default: 'private' },
+    shareType: { type: String, enum: ['private', 'link', 'public'], default: 'private' },
     isPublic: { type: Boolean, default: false },
 });
 export const LinkModel = model("Link", LinkSchema);

@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
-        <Route path="/share/:hash" element={<PublicView />} />
+        <Route path="/share/:shareId" element={<PublicView />} />
         <Route path="/" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>

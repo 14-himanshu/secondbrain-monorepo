@@ -13,9 +13,9 @@ import { useNavigate } from "react-router-dom";
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [shareStatus, setShareStatus] = useState<{ accessType: string; hash: string | null }>({
-    accessType: "private",
-    hash: null,
+  const [shareStatus, setShareStatus] = useState<{ shareType: string; shareId: string | null }>({
+    shareType: "private",
+    shareId: null,
   });
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,7 +40,7 @@ export function Dashboard() {
 
   async function fetchShareStatus() {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/v1/brain/share-status`, {
+      const response = await axios.get(`${BACKEND_URL}/api/brain/share-status`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setShareStatus(response.data);
@@ -66,7 +66,7 @@ export function Dashboard() {
   );
 
   const getShareButtonConfig = () => {
-    switch (shareStatus.accessType) {
+    switch (shareStatus.shareType) {
       case "link":
         return {
           text: "Link Shared",

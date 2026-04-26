@@ -196,69 +196,76 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
-  const share = req.body.share
-
-  if (share) {
-    const existingLink = await LinkModel.findOne({
-      userId: req.userId
-    })
-
-    if (existingLink) {
-      res.json({
-        hash: existingLink.hash
-      })
-      return
-    }
-
-    const hash = random(10)
-    await LinkModel.create({
-      userId: req.userId,
-      hash: hash
-    })
-    res.json({ message: "/share/" + hash })
-    return;
-
-
-  } else {
-    await LinkModel.deleteOne({
-      userId: req.userId
-    })
+app.get("/api/v1/brain/share-status", userMiddleware, async (req, res) => {
+  const link = await LinkModel.findOne({ userId: req.userId });
+  if (!link) {
+    return res.json({ accessType: 'private', hash: null });
   }
   res.json({
-    "message": "Removed sharable link"
-  })
+    accessType: link.accessType,
+    hash: link.hash,
+    isPublic: link.isPublic
+  });
+});
+
+app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
+  const { accessType, regenerate } = req.body;
+
+  if (accessType === 'private') {
+    await LinkModel.deleteOne({ userId: req.userId });
+    return res.json({ message: "Sharing disabled", accessType: 'private' });
+  }
+
+  let link = await LinkModel.findOne({ userId: req.userId });
+
+  if (regenerate || !link) {
+    const hash = random(10);
+    if (link) {
+      link.hash = hash;
+      link.accessType = accessType || link.accessType;
+      link.isPublic = accessType === 'public';
+      await link.save();
+    } else {
+      link = await LinkModel.create({
+        userId: req.userId,
+        hash,
+        accessType: accessType || 'link',
+        isPublic: accessType === 'public'
+      });
+    }
+  } else if (accessType) {
+    link.accessType = accessType;
+    link.isPublic = accessType === 'public';
+    await link.save();
+  }
+
+  res.json({
+    message: "Sharing updated",
+    hash: link.hash,
+    accessType: link.accessType
+  });
 });
 
 app.get("/api/v1/brain/:shareLink", async (req, res) => {
-  const hash = req.params.shareLink
-  const link = await LinkModel.findOne({
-    hash
-  })
-  if (!link) {
-    res.status(411).json({
-      message: "Sorry incorrect input"
-    })
-    return
+  const hash = req.params.shareLink;
+  const link = await LinkModel.findOne({ hash });
+
+  if (!link || link.accessType === 'private') {
+    return res.status(404).json({ message: "Shared brain not found or private" });
   }
-  const content = await ContentModel.find({
-    userId: link.userId
-  })
-  const user = await UserModel.findOne({
-    _id: link.userId
-  })
+
+  const content = await ContentModel.find({ userId: link.userId });
+  const user = await UserModel.findOne({ _id: link.userId });
 
   if (!user) {
-    res.status(411).json({
-      "message": "user not found"
-    })
-    return
+    return res.status(404).json({ message: "User not found" });
   }
+
   res.json({
     username: user.username,
-    content
-  })
-
+    content,
+    accessType: link.accessType
+  });
 });
 
 const startServer = async () => {

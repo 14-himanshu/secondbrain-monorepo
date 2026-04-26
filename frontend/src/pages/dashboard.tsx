@@ -1,8 +1,8 @@
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
+import { ShareModal } from "../components/ShareModal";
 import { PlusIcon } from "../icons/PlusIcon";
-import { Shareicon } from "../icons/ShareIcon";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +12,11 @@ import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareStatus, setShareStatus] = useState<{ accessType: string; hash: string | null }>({
+    accessType: "private",
+    hash: null,
+  });
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const { contents, refresh, setContents } = useContent();
@@ -30,7 +35,19 @@ export function Dashboard() {
     if (!localStorage.getItem("token")) {
       navigate("/signup");
     }
-  });
+    fetchShareStatus();
+  }, []);
+
+  async function fetchShareStatus() {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/v1/brain/share-status`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setShareStatus(response.data);
+    } catch (e) {
+      console.error("Failed to fetch share status", e);
+    }
+  }
 
   // Filter contents based on selected filter
   const typeFilteredContents =
@@ -48,6 +65,40 @@ export function Dashboard() {
       : true
   );
 
+  const getShareButtonConfig = () => {
+    switch (shareStatus.accessType) {
+      case "link":
+        return {
+          text: "Link Shared",
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+            </svg>
+          )
+        };
+      case "public":
+        return {
+          text: "Public",
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 4.5-9m0 0a9.004 9.004 0 0 1 8.716 6.747M12 3a9.004 9.004 0 0 0-8.716 6.747" />
+            </svg>
+          )
+        };
+      default:
+        return {
+          text: "Private",
+          icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>
+          )
+        };
+    }
+  };
+
+  const shareConfig = getShareButtonConfig();
+
   return (
     <div>
       <Sidebar
@@ -60,6 +111,11 @@ export function Dashboard() {
           onClose={() => {
             setModalOpen(false);
           }}
+        />
+        <ShareModal 
+          open={shareModalOpen} 
+          onClose={() => setShareModalOpen(false)} 
+          onStatusChange={fetchShareStatus}
         />
 
         {/* Header Section */}
@@ -132,27 +188,10 @@ export function Dashboard() {
             {/* Right: Actions */}
             <div className="flex gap-3 shrink-0">
               <Button
-                onClick={async () => {
-                  const response = await axios.post(
-                    `${BACKEND_URL}/api/v1/brain/share`,
-                    {
-                      share: true,
-                    },
-                    {
-                      headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                          "token"
-                        )}`,
-                      },
-                    }
-                  );
-                  const shareURL = `${BACKEND_URL}/share/${response.data.hash}`;
-                  navigator.clipboard.writeText(shareURL);
-                  alert("Link copied to clipboard!");
-                }}
+                onClick={() => setShareModalOpen(true)}
                 variant="secondary"
-                text="Share Brain"
-                startIcon={<Shareicon />}
+                text={shareConfig.text}
+                startIcon={shareConfig.icon}
               />
               <Button
                 onClick={() => {

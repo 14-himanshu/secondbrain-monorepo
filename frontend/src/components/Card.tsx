@@ -11,12 +11,13 @@ import { useMemo, useState } from "react";
 interface CardProps {
   title: string;
   link: string;
-  type: any;
-  onDelete: () => void;
-  onEdit: (newTitle: string) => void;
+  type: "video" | "post" | "document" | string;
+  onDelete?: () => void;
+  onEdit?: (newTitle: string) => void;
+  description?: string; // Support optional description
 }
 
-export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
+export function Card({ title, link, type, onDelete, onEdit, description }: CardProps) {
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -33,48 +34,21 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
     }
   }, [link]);
 
-  const hostname = parsedUrl?.hostname.replace(/^www\./, "") ?? "";
-  const pathname = parsedUrl?.pathname ?? "";
-  const platformLabel = hostname || "saved link";
-  const accentClasses = isVideo
-    ? "from-rose-500 via-orange-400 to-amber-300"
-    : isPost
-      ? "from-sky-600 via-cyan-500 to-emerald-300"
-      : "from-violet-600 via-indigo-500 to-blue-300";
+  const source = parsedUrl?.hostname.replace(/^www\./, "") ?? "link";
   const badgeLabel = isVideo ? "VIDEO" : isPost ? "POST" : "DOC";
-  const domainInitial = platformLabel.charAt(0).toUpperCase() || "L";
+  
+  // Dynamic styling based on type
+  const typeStyles = useMemo(() => {
+    if (isVideo) return "bg-amber-100 text-amber-700";
+    if (isPost) return "bg-blue-100 text-blue-600";
+    return "bg-slate-100 text-slate-600";
+  }, [isVideo, isPost]);
 
-  const youtubeVideoId = useMemo(() => {
-    if (!parsedUrl) {
-      return null;
-    }
-
-    const host = parsedUrl.hostname.replace(/^www\./, "");
-
-    if (host === "youtu.be") {
-      return parsedUrl.pathname.split("/").filter(Boolean)[0] ?? null;
-    }
-
-    if (host === "youtube.com" || host === "m.youtube.com") {
-      return parsedUrl.searchParams.get("v");
-    }
-
-    return null;
-  }, [parsedUrl]);
-
-  const previewImageUrl = youtubeVideoId
-    ? `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg`
-    : null;
-
-  const previewCtaLabel = isVideo
-    ? "Open Video"
-    : isPost
-      ? "Open Post"
-      : "Open Document";
+  const ctaLabel = isVideo ? "Open Video" : isPost ? "Open Post" : "Open Document";
 
   const handleSave = () => {
     if (editedTitle.trim() !== "") {
-      onEdit(editedTitle);
+      onEdit?.(editedTitle);
       setIsEditing(false);
     }
   };
@@ -91,175 +65,94 @@ export function Card({ title, link, type, onDelete, onEdit }: CardProps) {
     return <Shareicon />;
   };
 
-  const renderLinkPreview = () => (
-    <a
-      href={link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block group"
-    >
-      <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-100 transition-all group-hover:border-purple-200 group-hover:shadow-sm">
-        <div className={`relative aspect-video overflow-hidden ${previewImageUrl ? "bg-slate-900" : `bg-gradient-to-br ${accentClasses}`} p-4`}>
-          {previewImageUrl ? (
-            <>
-              <img
-                src={previewImageUrl}
-                alt={`${title} thumbnail`}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/20" />
-            </>
-          ) : (
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.35),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(15,23,42,0.28),transparent_42%)]" />
-          )}
-
-          <div className="relative flex h-full flex-col justify-between">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/18 text-lg font-semibold text-white backdrop-blur-sm">
-                {domainInitial}
-              </div>
-              <span className="rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[11px] font-semibold tracking-[0.22em] text-white/90 backdrop-blur-sm">
-                {badgeLabel}
-              </span>
-            </div>
-
-            {isVideo && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/18 text-white backdrop-blur-md transition-transform duration-300 group-hover:scale-105">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="ml-1 h-8 w-8"
-                  >
-                    <path d="M8 5.14v13.72a1 1 0 0 0 1.52.85l10.86-6.86a1 1 0 0 0 0-1.7L9.52 4.29A1 1 0 0 0 8 5.14Z" />
-                  </svg>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-white/75">
-                {platformLabel}
-              </p>
-              <p className="mt-2 line-clamp-3 text-base font-semibold leading-tight text-white">
-                {title}
-              </p>
-              {pathname && pathname !== "/" && (
-                <p className="mt-2 line-clamp-1 text-xs text-white/70">
-                  {pathname}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between px-4 py-3">
-          <span className="text-sm font-medium text-gray-700 transition-colors group-hover:text-purple-700">
-            {previewCtaLabel}
-          </span>
-          <span className="text-xs text-gray-400 transition-colors group-hover:text-purple-500">
-            {platformLabel}
-          </span>
-        </div>
-      </div>
-    </a>
-  );
-
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-4 hover:shadow-md transition-all duration-200 h-full group/card">
-      {/* Header */}
-      <div className="flex justify-between items-start gap-4">
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          {/* Icon Badge */}
-          <div className="bg-purple-200 text-purple-600 p-2 rounded-full shrink-0">
-            {getIcon()}
-          </div>
-
-          {/* Title / Edit Input */}
-          <div className="flex-1 min-w-0 pt-1">
-            {isEditing ? (
-              <div className="flex flex-col gap-2">
-                <input
-                  type="text"
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                  className="w-full rounded-2xl border border-violet-200 bg-violet-50/60 px-4 py-3 text-base font-medium text-slate-800 shadow-inner outline-none transition focus:border-violet-400 focus:bg-white focus:ring-4 focus:ring-violet-100"
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSave();
-                    if (e.key === 'Escape') handleCancel();
-                  }}
-                />
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={handleSave}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-violet-700"
-                  >
-                    <CheckIcon /> <span>Save</span>
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:bg-slate-50"
-                  >
-                    <CrossIcon /> <span>Cancel</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <h3
-                className="font-semibold text-gray-800 leading-tight line-clamp-2 break-words"
-                title={title}
-              >
-                {title}
-              </h3>
-            )}
-          </div>
+    <div className="group cursor-pointer bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-in-out flex flex-col h-full">
+      {/* Header: Icon and Badge */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 transition-colors group-hover:bg-gray-200">
+          {getIcon()}
         </div>
+        <span className={`text-xs px-2 py-0.5 rounded-md font-semibold tracking-tight ${typeStyles}`}>
+          {badgeLabel}
+        </span>
+      </div>
 
-        {/* Action Buttons */}
-        {!isEditing && (
-          <div className="flex items-center gap-1 text-gray-400 shrink-0 opacity-0 group-hover/card:opacity-100 transition-opacity">
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-purple-600 transition-colors p-1.5 hover:bg-purple-50 rounded-md"
-              title="Open Link"
-            >
-              <Shareicon />
-            </a>
+      {/* Content Section */}
+      <div className="flex-1 space-y-1.5 min-w-0">
+        {isEditing ? (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              className="w-full rounded-md border border-purple-200 bg-purple-50/30 px-3 py-1.5 text-sm font-medium text-gray-900 outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSave();
+                if (e.key === 'Escape') handleCancel();
+              }}
+            />
+            <div className="flex gap-2">
+              <button onClick={handleSave} className="text-xs font-semibold text-purple-600 hover:text-purple-700 flex items-center gap-1"><CheckIcon /> Save</button>
+              <button onClick={handleCancel} className="text-xs font-semibold text-gray-500 hover:text-gray-700 flex items-center gap-1"><CrossIcon /> Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-base font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-purple-700 transition-colors" title={title}>
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500 truncate">
+              {source}
+            </p>
+            {description && (
+              <p className="text-sm text-gray-400 line-clamp-1 mt-1">
+                {description}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Action Section Area */}
+      <div className="border-t border-gray-100 pt-3 mt-5 flex items-center justify-between">
+        <a
+          href={link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-1.5 rounded-md bg-gray-50 hover:bg-gray-100 text-sm font-medium text-gray-700 transition-colors flex items-center gap-2 group/cta"
+        >
+          {ctaLabel}
+          <svg className="w-3.5 h-3.5 text-gray-400 group-hover/cta:text-purple-600 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7 17l9.2-9.2M17 17V7H7" />
+          </svg>
+        </a>
+
+        {!isEditing && (onDelete || onEdit) && (
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 setEditedTitle(title);
                 setIsEditing(true);
               }}
-              className="hover:text-purple-600 transition-colors p-1.5 hover:bg-purple-50 rounded-md"
-              title="Edit Title"
+              className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+              title="Edit"
             >
               <EditIcon />
             </button>
             <button
-              onClick={onDelete}
-              className="hover:text-red-500 transition-colors p-1.5 hover:bg-red-50 rounded-md"
-              title="Delete Content"
+              onClick={(e) => {
+                e.preventDefault();
+                onDelete?.();
+              }}
+              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+              title="Delete"
             >
               <DeleteIcon />
             </button>
           </div>
         )}
-      </div>
-
-      {/* Content Body */}
-      <div className="w-full">
-        {/* VIDEO (youtube / video type) */}
-        {isVideo && renderLinkPreview()}
-
-        {/* POST (twitter / post type) */}
-        {isPost && renderLinkPreview()}
-
-        {/* DOCUMENT */}
-        {isDocument && renderLinkPreview()}
       </div>
     </div>
   );

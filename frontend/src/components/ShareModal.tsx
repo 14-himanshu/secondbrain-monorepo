@@ -49,8 +49,7 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
       setShareId(response.data.shareId);
       onStatusChange();
     } catch (e: any) {
-      const errorMsg = e.response?.data?.error || e.response?.data?.message || "Failed to update sharing settings";
-      alert(`Error: ${errorMsg}`);
+      alert("Failed to update sharing settings");
     } finally {
       setLoading(false);
     }

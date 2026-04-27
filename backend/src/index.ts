@@ -197,27 +197,34 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
   }
 });
 app.get("/api/brain/share-status", userMiddleware, async (req, res) => {
-  const link = await LinkModel.findOne({ userId: req.userId });
-  if (!link) {
-    return res.json({ shareType: 'private', shareId: null });
+  try {
+    const link = await LinkModel.findOne({ 
+      userId: new mongoose.Types.ObjectId(req.userId) 
+    });
+    if (!link) {
+      return res.json({ shareType: 'private', shareId: null });
+    }
+    res.json({
+      shareType: link.shareType,
+      shareId: link.shareId,
+      isPublic: link.isPublic
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
   }
-  res.json({
-    shareType: link.shareType,
-    shareId: link.shareId,
-    isPublic: link.isPublic
-  });
 });
 
 app.post("/api/brain/share", userMiddleware, async (req, res) => {
   try {
     const { shareType, regenerate } = req.body;
+    const userObjectId = new mongoose.Types.ObjectId(req.userId);
 
     if (shareType === 'private') {
-      await LinkModel.deleteOne({ userId: req.userId });
+      await LinkModel.deleteOne({ userId: userObjectId });
       return res.json({ message: "Sharing disabled", shareType: 'private' });
     }
 
-    const existingLink = await LinkModel.findOne({ userId: req.userId });
+    const existingLink = await LinkModel.findOne({ userId: userObjectId });
     
     const update: any = {
       shareType: shareType || (existingLink ? existingLink.shareType : 'link'),
@@ -229,7 +236,7 @@ app.post("/api/brain/share", userMiddleware, async (req, res) => {
     }
 
     const link = await LinkModel.findOneAndUpdate(
-      { userId: req.userId },
+      { userId: userObjectId },
       { $set: update },
       { 
         new: true, 
@@ -246,10 +253,7 @@ app.post("/api/brain/share", userMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error("Critical error in /api/brain/share:", error);
-    res.status(500).json({ 
-      message: "Internal server error", 
-      error: error instanceof Error ? error.message : "Database operation failed" 
-    });
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

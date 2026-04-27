@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
-import { Button } from "./Button";
+
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { CheckIcon } from "../icons/CheckIcon";

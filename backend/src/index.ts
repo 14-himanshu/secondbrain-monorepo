@@ -209,41 +209,53 @@ app.get("/api/brain/share-status", userMiddleware, async (req, res) => {
 });
 
 app.post("/api/brain/share", userMiddleware, async (req, res) => {
-  const { shareType, regenerate } = req.body;
+  try {
+    const { shareType, regenerate } = req.body;
 
-  if (shareType === 'private') {
-    await LinkModel.deleteOne({ userId: req.userId });
-    return res.json({ message: "Sharing disabled", shareType: 'private' });
-  }
-
-  let link = await LinkModel.findOne({ userId: req.userId });
-
-  if (regenerate || !link) {
-    const shareId = random(10);
-    if (link) {
-      link.shareId = shareId;
-      link.shareType = shareType || link.shareType;
-      link.isPublic = (shareType || link.shareType) === 'public';
-      await link.save();
-    } else {
-      link = await LinkModel.create({
-        userId: req.userId,
-        shareId,
-        shareType: shareType || 'link',
-        isPublic: shareType === 'public'
-      });
+    if (shareType === 'private') {
+      await LinkModel.deleteOne({ userId: req.userId });
+      return res.json({ message: "Sharing disabled", shareType: 'private' });
     }
-  } else if (shareType) {
-    link.shareType = shareType;
-    link.isPublic = shareType === 'public';
-    await link.save();
-  }
 
-  res.json({
-    message: "Sharing updated",
-    shareId: link.shareId,
-    shareType: link.shareType
-  });
+    let link = await LinkModel.findOne({ userId: req.userId });
+
+    if (regenerate || !link) {
+      const shareId = random(10);
+      if (link) {
+        link.shareId = shareId;
+        link.shareType = shareType || link.shareType;
+        link.isPublic = (shareType || link.shareType) === 'public';
+        await link.save();
+      } else {
+        link = await LinkModel.create({
+          userId: req.userId,
+          shareId,
+          shareType: shareType || 'link',
+          isPublic: shareType === 'public'
+        });
+      }
+    } else if (shareType) {
+      link.shareType = shareType;
+      link.isPublic = shareType === 'public';
+      await link.save();
+    }
+
+    if (!link) {
+      return res.status(500).json({ message: "Failed to create or update share link" });
+    }
+
+    res.json({
+      message: "Sharing updated",
+      shareId: link.shareId,
+      shareType: link.shareType
+    });
+  } catch (error) {
+    console.error("Error in /api/brain/share:", error);
+    res.status(500).json({ 
+      message: "Internal server error", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    });
+  }
 });
 
 app.get("/api/brain/share/:shareId", async (req, res) => {

@@ -216,44 +216,14 @@ app.get("/api/brain/share-status", userMiddleware, async (req, res) => {
 
 app.post("/api/brain/share", userMiddleware, async (req, res) => {
   try {
-    const { shareType, regenerate } = req.body;
-    const userObjectId = new mongoose.Types.ObjectId(req.userId);
-
-    if (shareType === 'private') {
-      await LinkModel.deleteOne({ userId: userObjectId });
-      return res.json({ message: "Sharing disabled", shareType: 'private' });
-    }
-
-    const existingLink = await LinkModel.findOne({ userId: userObjectId });
-    
-    const update: any = {
-      shareType: shareType || (existingLink ? existingLink.shareType : 'link'),
-      isPublic: (shareType || (existingLink ? existingLink.shareType : 'link')) === 'public'
-    };
-
-    if (regenerate || !existingLink) {
-      update.shareId = random(10);
-    }
-
-    const link = await LinkModel.findOneAndUpdate(
-      { userId: userObjectId },
-      { $set: update },
-      { 
-        new: true, 
-        upsert: true, 
-        setDefaultsOnInsert: true,
-        runValidators: true 
-      }
-    );
-
-    res.json({
-      message: "Sharing updated",
-      shareId: link.shareId,
-      shareType: link.shareType
+    // Diagnostic test: return success without DB operation
+    res.json({ 
+      message: "DIAGNOSTIC_SUCCESS", 
+      userId: req.userId,
+      receivedType: req.body.shareType 
     });
-  } catch (error) {
-    console.error("Critical error in /api/brain/share:", error);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error: any) {
+    res.status(500).json({ message: "DIAGNOSTIC_FAILED", error: error.message });
   }
 });
 

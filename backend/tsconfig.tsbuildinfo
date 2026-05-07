@@ -1,1 +1,1 @@
-{"root":["./src/config.ts","./src/db.ts","./src/index.ts","./src/middleware.ts","./src/utils.ts"],"version":"5.9.3"}
+{"root":["./src/config.ts","./src/cron.ts","./src/db.ts","./src/index.ts","./src/middleware.ts","./src/utils.ts","./src/controllers/ai.controller.ts","./src/controllers/search.controller.ts","./src/routes/ai.ts","./src/scripts/migrate-embeddings.ts","./src/services/ai.service.ts"],"version":"5.9.3"}

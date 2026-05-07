@@ -9,6 +9,12 @@ import { userMiddleware } from "./middleware.js";
 import { random } from "./utils.js";
 import cors from "cors";
 
+import { getAiClassification, processContentEmbedding } from "./services/ai.service.js";
+import { semanticSearchController } from "./controllers/search.controller.js";
+import { initCronJobs } from "./cron.js";
+import aiRouter from "./routes/ai.js";
+
+
 declare global {
   namespace Express {
     interface Request {
@@ -112,19 +118,50 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
+  let { title, link, type, tags } = parsed.data;
+  let description = "";
+  let topics: string[] = [];
 
-  const { title, link, type, tags } = parsed.data;
+  // Auto-generate tags and type if not provided
+  if (!tags || tags.length === 0) {
+    const classification = await getAiClassification(link);
+    tags = classification.tags;
+    topics = classification.topics;
+    if (!title) title = classification.title;
+    description = classification.description;
+    // @ts-ignore
+    if (!type) type = classification.type;
+  }
 
-  await ContentModel.create({
+  const content = await ContentModel.create({
     title,
+    description,
     link,
     type,
     tags: tags || [],
+    topics: topics || [],
     userId: req.userId,
+    embeddingStatus: "pending"
   });
 
-  res.json({ message: "Content added" });
+
+  // FIRE AND FORGET: Trigger background processing
+  processContentEmbedding((content._id as any).toString());
+
+  res.json({ message: "Content added", tags });
 });
+
+
+// AI Route Grouping & Debugging
+app.use("/api/v1/ai", (req, res, next) => {
+  console.log(`[AI_ROUTE_HIT]: ${req.method} ${req.path}`, { body: req.body });
+  next();
+}, aiRouter);
+
+app.get("/api/v1/search", userMiddleware, semanticSearchController);
+
+
+
 
 app.get("/api/v1/content", userMiddleware, async (req, res) => {
   // @ts-ignore
@@ -285,10 +322,23 @@ app.get("/api/brain/share/:shareId", async (req, res) => {
   });
 });
 
+// API v1 Catch-all for 404 debugging (MUST BE LAST)
+app.use(/^\/api\/v1\/.*/, (req, res) => {
+  console.warn(`[API_404_DETECTION]: ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ 
+    success: false, 
+    message: `Endpoint ${req.originalUrl} not found on this server.`,
+    availableRoutes: ["/signup", "/signin", "/content", "/ai/tag", "/ai/reprocess", "/search", "/brain/share-status"]
+  });
+});
+
 const startServer = async () => {
   await connectToDatabase();
 
   const port = getPort();
+  
+  // Initialize background tasks
+  initCronJobs();
 
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);

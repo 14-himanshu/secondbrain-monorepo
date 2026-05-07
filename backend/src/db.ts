@@ -13,11 +13,21 @@ export const UserModel = model("User",UserSchema);
 
 const ContentSchema = new Schema({
     title: String,
+    description: String, // Added for semantic search context
     link: String,
-    tags: [{type: mongoose.Types.ObjectId, ref: 'Tag'}],
+    tags: [String],
+    topics: [String], // AI-extracted themes
     type: String,
-    userId: {type: mongoose.Types.ObjectId, ref: 'User', required: true },
-})
+    userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+    embedding: { type: [Number], select: false }, // Don't return embeddings in normal queries
+    embeddingStatus: { 
+        type: String, 
+        enum: ['pending', 'completed', 'failed'], 
+        default: 'pending' 
+    }
+}, { timestamps: true });
+
+
 const LinkSchema = new Schema({
     shareId: { type: String, unique: true, sparse: true },
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true, unique: true },

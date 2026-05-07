@@ -9,7 +9,11 @@ interface Content {
   type: string;
   tags?: string[];
   userId: string;
+  embeddingStatus?: "pending" | "completed" | "failed";
+  description?: string;
+  topics?: string[];
 }
+
 
 export function useContent() {
   const [contents, setContents] = useState<Content[]>([]);

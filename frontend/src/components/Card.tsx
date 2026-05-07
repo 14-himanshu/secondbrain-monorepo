@@ -78,8 +78,8 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
       onClick={onSelect}
       className={`group bg-white border rounded-xl px-4 py-4 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] flex flex-col h-full relative overflow-hidden cursor-pointer ${
         isSelected 
-          ? 'border-purple-100 ring-[3px] ring-purple-50/40 bg-purple-50/10' 
-          : 'border-gray-100 hover:border-gray-200 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5'
+          ? 'border-purple-200 ring-[4px] ring-purple-100/30 bg-purple-50/20 shadow-[0_0_25px_-5px_rgba(147,51,234,0.1)]' 
+          : 'border-gray-100 hover:border-purple-200/50 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.06),0_0_20px_-5px_rgba(147,51,234,0.05)] hover:-translate-y-1'
       }`}
     >
       
@@ -182,7 +182,7 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
 
         {!isEditing && (onDelete || onEdit) && (
           /* ACTION CLUSTER: Redesigned for Premium Interaction */
-          <div className="flex items-center gap-1 p-1 bg-gray-50/40 backdrop-blur-[2px] rounded-xl border border-gray-100/50 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+          <div className="flex items-center gap-1 p-1 bg-white/40 backdrop-blur-md rounded-xl border border-gray-100 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
             {onEdit && (
               <button
                 onClick={(e) => {

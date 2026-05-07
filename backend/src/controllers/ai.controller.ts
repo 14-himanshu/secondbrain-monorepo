@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding } from "../services/ai.service.js";
 import { cosineSimilarity } from "../utils.js";
 import { ContentModel } from "../db.js";
 import { z } from "zod";
@@ -7,12 +7,12 @@ import { z } from "zod";
 // ... existing code ...
 
 /**
- * AI Chat Controller (RAG)
- * Handles conversational queries over the user's Second Brain.
+ * AI Chat Controller (RAG + SSE Streaming)
+ * Handles conversational queries with real-time streaming response.
  */
 export const aiChatController = async (req: Request, res: Response) => {
   try {
-    const { query } = req.body;
+    const { query, history = [] } = req.body;
     const userId = req.userId;
 
     if (!query) {
@@ -22,7 +22,7 @@ export const aiChatController = async (req: Request, res: Response) => {
     // 1. Generate Query Embedding
     const queryEmbedding = await createEmbedding(query, true);
 
-    // 2. Retrieve Relevant Context (Top 5 for Chat)
+    // 2. Retrieve Relevant Context (Top 8 for Production RAG)
     const contents = await ContentModel.find({
       userId,
       embeddingStatus: "completed"
@@ -33,35 +33,49 @@ export const aiChatController = async (req: Request, res: Response) => {
         content: c,
         similarity: cosineSimilarity(queryEmbedding, c.embedding || [])
       }))
-      .filter(item => item.similarity > 0.3)
+      .filter(item => item.similarity > 0.25) // Threshold for relevance
       .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 5)
+      .slice(0, 8)
       .map(item => item.content);
 
+    // 3. Setup SSE for Streaming
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    // Send Sources Immediately
+    const sources = topContext.map(c => ({
+      _id: c._id,
+      title: c.title,
+      link: c.link,
+      type: c.type
+    }));
+    
+    res.write(`data: ${JSON.stringify({ type: "sources", sources })}\n\n`);
+
     if (topContext.length === 0) {
-      return res.json({
-        success: true,
-        answer: "I couldn't find any relevant notes in your brain to answer this. Try adding more content or refining your query.",
-        sources: []
-      });
+      res.write(`data: ${JSON.stringify({ type: "content", text: "I couldn't find any relevant notes in your brain to answer this." })}\n\n`);
+      res.write(`data: [DONE]\n\n`);
+      return res.end();
     }
 
-    // 3. Generate Answer using RAG
-    const answer = await generateAiChatAnswer(query, topContext);
-
-    res.json({
-      success: true,
-      answer,
-      sources: topContext.map(c => ({
-        title: c.title,
-        link: c.link,
-        type: c.type
-      }))
+    // 4. Stream AI Answer
+    await generateAiChatAnswerStream(query, topContext, history, (chunk) => {
+      res.write(`data: ${JSON.stringify({ type: "content", text: chunk })}\n\n`);
     });
 
+    res.write(`data: [DONE]\n\n`);
+    res.end();
+
   } catch (error: any) {
-    console.error(`[AI_CHAT_FAILURE]: ${error.message}`);
-    res.status(500).json({ success: false, message: "Failed to process chat request." });
+    console.error(`[AI_CHAT_STREAM_FAILURE]: ${error.message}`);
+    // If headers already sent, we can't send a JSON error
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: "Failed to process chat request." });
+    } else {
+      res.write(`data: ${JSON.stringify({ type: "error", message: "Stream interrupted." })}\n\n`);
+      res.end();
+    }
   }
 };
 
@@ -137,7 +151,8 @@ export const aiReprocessController = async (req: Request, res: Response) => {
     }
 
     // STEP 1: Quick Mode Sync Analysis (Instant Feedback)
-    const quickInsight = await getAiClassification(content.link, "quick");
+    const link = content.link || "";
+    const quickInsight = await getAiClassification(link, "quick");
     
     // Update DB with quick results immediately
     await ContentModel.updateOne({ _id: contentId }, { 
@@ -150,7 +165,7 @@ export const aiReprocessController = async (req: Request, res: Response) => {
     // STEP 2: Offload Deep Analysis to Background
     (async () => {
        try {
-         const deepInsight = await getAiClassification(content.link, "deep");
+         const deepInsight = await getAiClassification(link, "deep");
          
          await ContentModel.updateOne({ _id: contentId }, {
             tags: deepInsight.tags,

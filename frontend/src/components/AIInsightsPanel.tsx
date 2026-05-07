@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { Content } from "../hooks/useContent";
-import axios from "axios";
 import { BACKEND_URL } from "../config";
 
 interface AIInsightsPanelProps {
@@ -46,26 +45,72 @@ export function AIInsightsPanel({
 
     const userQuery = chatQuery;
     setChatQuery("");
+    
+    // Construct history for RAG (last 6 messages)
+    const history = messages.slice(-6).map(m => ({ role: m.role, content: m.content }));
+    
     setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
     setIsTyping(true);
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/v1/ai/chat`, 
-        { query: userQuery },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/v1/ai/chat`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
+        body: JSON.stringify({ query: userQuery, history })
+      });
 
-      if (response.data.success) {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: response.data.answer,
-          sources: response.data.sources 
-        }]);
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      
+      // Initialize assistant message
+      setMessages(prev => [...prev, { role: 'assistant', content: "", sources: [] }]);
+      
+      let fullContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6).trim();
+            if (dataStr === '[DONE]') break;
+
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.type === 'sources') {
+                setMessages(prev => {
+                  const last = prev[prev.length - 1];
+                  return [...prev.slice(0, -1), { ...last, sources: data.sources }];
+                });
+              } else if (data.type === 'content') {
+                fullContent += data.text;
+                setMessages(prev => {
+                  const last = prev[prev.length - 1];
+                  return [...prev.slice(0, -1), { ...last, content: fullContent }];
+                });
+              } else if (data.type === 'error') {
+                 console.error("Stream Error:", data.message);
+              }
+            } catch (e) {
+              // Partial JSON or heartbeat
+            }
+          }
+        }
       }
     } catch (err) {
+      console.error("Chat Error:", err);
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "I'm sorry, I encountered an error while searching your brain." 
+        content: "I'm sorry, I encountered a connection error while searching your brain." 
       }]);
     } finally {
       setIsTyping(false);
@@ -177,30 +222,54 @@ export function AIInsightsPanel({
               )}
               
               {messages.map((msg, i) => (
-                <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div className={`max-w-[90%] p-3.5 rounded-2xl text-[12.5px] font-medium leading-relaxed shadow-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-purple-600 text-white' 
-                      : 'bg-white border border-gray-100 text-gray-800'
-                  }`}>
-                    {msg.content}
-                  </div>
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div className="mt-2 flex flex-col gap-1.5 w-full">
-                       <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Sources</span>
-                       <div className="flex flex-wrap gap-1.5">
-                          {msg.sources.map((s, idx) => (
-                            <a 
-                              key={idx} 
-                              href={s.link} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="px-2 py-1 bg-white border border-gray-100 rounded-lg text-[10px] font-bold text-purple-600 hover:border-purple-200 transition-all shadow-xs"
-                            >
-                              [{idx + 1}] {s.title.substring(0, 20)}...
-                            </a>
-                          ))}
+                <div key={i} className={`flex flex-col gap-2 ${msg.role === 'user' ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                  {msg.role === 'user' ? (
+                    <div className="flex flex-col items-end gap-1.5">
+                       <span className="text-[8px] font-bold text-purple-400 uppercase tracking-widest mr-1">Your Query</span>
+                       <div className="max-w-[95%] p-3.5 bg-purple-600 text-white rounded-2xl rounded-tr-none text-[12.5px] font-medium leading-relaxed shadow-lg shadow-purple-100/50">
+                         {msg.content}
                        </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-start gap-3 w-full">
+                       <div className="flex items-center gap-1.5 ml-1">
+                          <div className="w-1 h-1 rounded-full bg-purple-400"></div>
+                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Brain Synthesis</span>
+                       </div>
+                       <div className="max-w-[95%] p-4 bg-white border border-gray-100 text-gray-800 rounded-2xl rounded-tl-none text-[12.5px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap">
+                         {msg.content}
+                       </div>
+                       
+                       {msg.sources && msg.sources.length > 0 && (
+                        <div className="flex flex-col gap-3 w-full px-1">
+                           <div className="flex items-center justify-between">
+                              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Retrieved Memories</span>
+                              <span className="text-[8px] font-bold text-purple-400/60 uppercase">{msg.sources.length} sources grounded</span>
+                           </div>
+                           <div className="grid grid-cols-1 gap-2">
+                              {msg.sources.map((s, idx) => (
+                                <a 
+                                  key={idx} 
+                                  href={s.link} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="group flex items-center gap-3 p-2.5 bg-gray-50/50 border border-gray-100/50 rounded-xl hover:border-purple-200 hover:bg-white transition-all duration-300 shadow-sm"
+                                >
+                                  <div className="w-8 h-8 flex-shrink-0 bg-white rounded-lg border border-gray-100 flex items-center justify-center text-purple-500 font-bold text-[10px] shadow-sm group-hover:scale-105 transition-transform">
+                                     {s.type === 'video' ? '▶' : s.type === 'document' ? '📄' : '🔗'}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                     <div className="text-[10px] font-bold text-gray-900 truncate group-hover:text-purple-700 transition-colors">{s.title}</div>
+                                     <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">{s.type} • Source [{idx + 1}]</div>
+                                  </div>
+                                  <svg className="w-3 h-3 text-gray-200 group-hover:text-purple-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </a>
+                              ))}
+                           </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

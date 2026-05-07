@@ -1425,3 +1425,363 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+[2J[3J[H7:38:44 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(2,56): error TS2724: '"../services/ai.service.js"' has no exported member named 'generateAiChatAnswer'. Did you mean 'generateAiChatAnswerStream'?
+src/controllers/ai.controller.ts(140,52): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/controllers/ai.controller.ts(153,56): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+7:38:46 PM - Found 3 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+                                                       ^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateAiChatAnswer'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+                                                       ^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateAiChatAnswer'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+                                                       ^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateAiChatAnswer'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+                                                       ^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateAiChatAnswer'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+                                                       ^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateAiChatAnswer'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H7:38:56 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(12,13): error TS2339: Property 'query' does not exist on type 'ReadableStream<Uint8Array<ArrayBuffer>> | null'.
+src/controllers/ai.controller.ts(12,20): error TS2339: Property 'history' does not exist on type 'ReadableStream<Uint8Array<ArrayBuffer>> | null'.
+src/controllers/ai.controller.ts(13,24): error TS2339: Property 'userId' does not exist on type 'Request'.
+src/controllers/ai.controller.ts(16,18): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(23,28): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(29,13): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(33,15): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(34,14): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(34,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(36,12): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(39,9): error TS2339: Property 'setHeader' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(40,9): error TS2339: Property 'setHeader' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(41,9): error TS2339: Property 'setHeader' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(44,36): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/controllers/ai.controller.ts(51,9): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(54,11): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(55,11): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(56,18): error TS2339: Property 'end' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(61,11): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(64,9): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(65,9): error TS2339: Property 'end' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(70,14): error TS2339: Property 'headersSent' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(71,11): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(73,11): error TS2339: Property 'write' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(74,11): error TS2339: Property 'end' does not exist on type 'Response'.
+src/controllers/ai.controller.ts(79,21): error TS2304: Cannot find name 'z'.
+src/controllers/ai.controller.ts(80,8): error TS2304: Cannot find name 'z'.
+src/controllers/ai.controller.ts(93,18): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(107,14): error TS2554: Expected 0 arguments, but got 1.
+src/controllers/ai.controller.ts(115,22): error TS2339: Property 'url' does not exist on type 'ReadableStream<Uint8Array<ArrayBuffer>>'.
+src/controllers/ai.controller.ts(122,9): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(137,13): error TS2339: Property 'contentId' does not exist on type 'ReadableStream<Uint8Array<ArrayBuffer>> | null'.
+src/controllers/ai.controller.ts(138,24): error TS2339: Property 'userId' does not exist on type 'Request'.
+src/controllers/ai.controller.ts(141,18): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(144,27): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(147,18): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/controllers/ai.controller.ts(154,11): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(166,16): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(176,16): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(179,16): error TS2304: Cannot find name 'ContentModel'.
+src/controllers/ai.controller.ts(187,14): error TS2554: Expected 0 arguments, but got 1.
+src/controllers/ai.controller.ts(195,9): error TS2349: This expression is not callable.
+  Type 'Number' has no call signatures.
+src/routes/ai.ts(8,39): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '(req: Request, res: Response) => Promise<any>' is not assignable to parameter of type 'RequestHandlerParams<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+      Type '(req: Request, res: Response) => Promise<any>' is not assignable to type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+        Types of parameters 'req' and 'req' are incompatible.
+          Type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is missing the following properties from type 'Request': cache, credentials, destination, integrity, and 14 more.
+src/routes/ai.ts(11,45): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '(req: Request, res: Response) => Promise<any>' is not assignable to parameter of type 'RequestHandlerParams<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+      Type '(req: Request, res: Response) => Promise<any>' is not assignable to type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+        Types of parameters 'req' and 'req' are incompatible.
+          Type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is missing the following properties from type 'Request': cache, credentials, destination, integrity, and 14 more.
+src/routes/ai.ts(14,40): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type '(req: Request, res: Response) => Promise<any>' is not assignable to parameter of type 'RequestHandlerParams<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+      Type '(req: Request, res: Response) => Promise<any>' is not assignable to type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+        Types of parameters 'req' and 'req' are incompatible.
+          Type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is missing the following properties from type 'Request': cache, credentials, destination, integrity, and 14 more.
+
+7:38:58 PM - Found 45 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67
+const aiTagSchema = z.object({
+                    ^
+
+ReferenceError: z is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67
+const aiTagSchema = z.object({
+                    ^
+
+ReferenceError: z is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67
+const aiTagSchema = z.object({
+                    ^
+
+ReferenceError: z is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H7:39:03 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67
+const aiTagSchema = z.object({
+                    ^
+
+ReferenceError: z is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:67:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+src/controllers/ai.controller.ts(154,52): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/controllers/ai.controller.ts(167,56): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+7:39:04 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:35285) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35286) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:35295) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35297) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35303) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35309) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35322) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35487) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35492) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35495) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:42:06 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(154,52): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/controllers/ai.controller.ts(167,56): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+7:42:07 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:35510) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35512) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35513) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35520) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35525) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35531) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35538) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:42:30 PM - File change detected. Starting incremental compilation...
+
+
+7:42:31 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:35554) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35558) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35559) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35560) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35562) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35568) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35586) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:42:53 PM - File change detected. Starting incremental compilation...
+
+
+7:42:54 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:35616) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35621) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35624) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:35625) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35630) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:35635) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

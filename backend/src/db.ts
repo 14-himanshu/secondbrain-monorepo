@@ -39,6 +39,11 @@ const ContentSchema = new Schema({
     aiError: String
 }, { timestamps: true });
 
+ContentSchema.index({ userId: 1 });
+ContentSchema.index({ embeddingStatus: 1 });
+ContentSchema.index({ aiStatus: 1 });
+ContentSchema.index({ createdAt: -1 });
+
 
 const LinkSchema = new Schema({
     shareId: { type: String, unique: true, sparse: true },

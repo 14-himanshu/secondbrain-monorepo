@@ -20,7 +20,7 @@ export const semanticSearchController = async (req: Request, res: Response) => {
     const contents = await ContentModel.find({
       userId,
       embeddingStatus: "completed"
-    }).select("+embedding");
+    }).select("title link type embedding"); // Optimization: only fetch essential fields
 
     // 3. Calculate similarities
     const results = contents

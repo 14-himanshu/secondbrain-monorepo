@@ -211,40 +211,48 @@ export const processContentEmbedding = async (contentId: string) => {
 };
 
 /**
- * RAG Chat Engine
- * Generates answers strictly grounded in the user's provided context.
+ * RAG Chat Engine (Production Grade)
+ * Generates streaming answers grounded in user context with conversational memory.
  */
-export const generateAiChatAnswer = async (query: string, context: any[]) => {
+export const generateAiChatAnswerStream = async (
+  query: string, 
+  context: any[], 
+  history: { role: 'user' | 'assistant', content: string }[] = [],
+  onChunk: (chunk: string) => void
+) => {
   if (!groq) throw new Error("AI service not configured.");
 
   const contextBlob = context.map((c, i) => 
-    `[Source ${i+1}]: Title: ${c.title} | Link: ${c.link} | Summary: ${c.description || "N/A"}`
+    `[Source ${i+1}]: Title: ${c.title} | Link: ${c.link} | Type: ${c.type} | ID: ${c._id}\nSummary: ${c.description || "No summary available."}`
   ).join("\n\n");
 
-  const response = await groq.chat.completions.create({
+  const systemPrompt = `You are the user's private "Second Brain" assistant.
+  Your goal is to answer questions using ONLY the provided knowledge sources below.
+  
+  Strict Production Guardrails:
+  1. Answer ONLY using the retrieved context.
+  2. If the answer is not in the context, say: "I could not find relevant information in your saved knowledge."
+  3. DO NOT use outside knowledge, DO NOT invent facts, and DO NOT hallucinate.
+  4. Always cite your sources using [1], [2] format at the end of relevant sentences.
+  5. Use markdown for structure (bolding, lists).
+  6. Tone: Intelligent, concise, and professional.
+  
+  Retrieved Context:
+  ${contextBlob}`;
+
+  const stream = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
-      {
-        role: "system",
-        content: `You are the "Second Brain Assistant". Your goal is to answer the user's question using ONLY the provided knowledge sources.
-        
-        Strict Guidelines:
-        1. If the answer is not contained within the sources, politely state that you don't have that information in your brain yet.
-        2. DO NOT use outside knowledge or hallucinate facts.
-        3. Keep the tone intelligent, helpful, and concise.
-        4. When referencing a source, use the format [1], [2], etc.
-        5. Use markdown for better readability.
-        
-        Knowledge Sources:
-        ${contextBlob}`
-      },
-      {
-        role: "user",
-        content: query
-      }
+      { role: "system", content: systemPrompt },
+      ...history.slice(-6), // Keep last 3 turns
+      { role: "user", content: query }
     ],
-    temperature: 0.2, // Low temperature for high factual accuracy
+    temperature: 0.1, // Near-zero for extreme factual consistency
+    stream: true,
   });
 
-  return response.choices?.[0]?.message?.content || "I couldn't synthesize an answer from your current notes.";
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content || "";
+    if (content) onChunk(content);
+  }
 };

@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
-import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainIntelligence } from "../services/ai.service.js";
+import mongoose from "mongoose";
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, generateAiChatAnswer, createEmbedding, generateBrainIntelligence, getDeterministicAnalytics, AIError, AIErrorCode } from "../services/ai.service.js";
 import { cosineSimilarity } from "../utils.js";
 import { ContentModel, BrainInsightModel } from "../db.js";
 import { z } from "zod";
@@ -11,81 +12,96 @@ import { z } from "zod";
  * Handles conversational queries with real-time streaming response.
  */
 export const aiChatController = async (req: Request, res: Response) => {
-  try {
-    const { query, history = [] } = req.body;
-    const userId = req.userId;
+  console.log("[CHAT_ROUTE_HIT]");
+  const { query, history = [] } = req.body;
+  const userId = req.userId;
 
+  try {
     if (!query) {
-      return res.status(400).json({ success: false, message: "Query is required." });
+      return res.status(400).json({ success: false, error: "Query is required." });
     }
 
     // 1. Generate Query Embedding
-    console.log(`[RAG_DEBUG][QUERY]: "${query}"`);
+    console.log("[GENERATING_QUERY_EMBEDDING]");
     const queryEmbedding = await createEmbedding(query, true);
-    console.log(`[RAG_DEBUG][EMBEDDING_GENERATED]`);
 
-    // 2. Retrieve Relevant Context (Top 8 for Production RAG)
-    const contents = await ContentModel.find({
-      userId,
-      embeddingStatus: "completed"
-    }).select("+embedding title link type description");
+    // 2. Hybrid Context Retrieval
+    let topContext = [];
+    try {
+      console.log("[VECTOR_SEARCH_START]");
+      
+      // Attempt 1: MongoDB Atlas Vector Search
+      try {
+        const vectorResults = await ContentModel.aggregate([
+          {
+            $vectorSearch: {
+              index: "vector_index",
+              path: "embedding",
+              queryVector: queryEmbedding,
+              numCandidates: 50,
+              limit: 5,
+              filter: { userId: new mongoose.Types.ObjectId(userId) }
+            }
+          },
+          {
+            $project: {
+              title: 1,
+              link: 1,
+              type: 1,
+              description: 1,
+              similarity: { $meta: "vectorSearchScore" }
+            }
+          }
+        ]);
 
-    const scoredContext = contents
-      .map((c) => ({
-        content: c,
-        similarity: cosineSimilarity(queryEmbedding, c.embedding || [])
-      }))
-      .filter(item => item.similarity > 0.25)
-      .sort((a, b) => b.similarity - a.similarity);
+        if (vectorResults.length > 0) {
+          topContext = vectorResults;
+        }
+      } catch (vError) {
+        console.warn("[VECTOR_SEARCH_NOT_AVAILABLE]");
+      }
 
-    console.log(`[RAG_DEBUG][RETRIEVAL]: Found ${scoredContext.length} relevant chunks above threshold.`);
-    scoredContext.slice(0, 3).forEach((item, idx) => {
-      console.log(`  [Chunk ${idx+1}] ID: ${item.content._id} | Score: ${item.similarity.toFixed(4)} | Title: ${item.content.title}`);
-    });
+      // Attempt 2: Keyword Fallback
+      if (topContext.length === 0) {
+        topContext = await ContentModel.find({
+          userId,
+          $text: { $search: query }
+        })
+        .select("title link type description")
+        .limit(5);
+      }
+    } catch (error) {
+      console.error("[CHAT_ERROR_STAGE] RETRIEVAL", error);
+      throw error;
+    }
 
-    const topContext = scoredContext.slice(0, 8).map(item => item.content);
-
-    // 3. Setup SSE for Streaming
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    // Send Sources Immediately
-    const sources = topContext.map((c, i) => ({
+    // 3. Generate Answer (Non-Streaming for Stability)
+    console.log("[OPENAI_REQUEST_START]");
+    const answer = await generateAiChatAnswer(query, topContext, history);
+    
+    const sources = topContext.map(c => ({
       _id: c._id,
       title: c.title,
       link: c.link,
-      type: c.type,
-      similarity: scoredContext?.[i]?.similarity // Include similarity for audit
+      type: c.type
     }));
-    
-    res.write(`data: ${JSON.stringify({ type: "sources", sources })}\n\n`);
 
-    if (topContext.length === 0) {
-      res.write(`data: ${JSON.stringify({ type: "content", text: "I couldn't find any relevant notes in your brain to answer this." })}\n\n`);
-      res.write(`data: [DONE]\n\n`);
-      return res.end();
-    }
-
-    // 4. Stream AI Answer
-    await generateAiChatAnswerStream(query, topContext, history, (chunk) => {
-      res.write(`data: ${JSON.stringify({ type: "content", text: chunk })}\n\n`);
+    console.log("[FINAL_RESPONSE_SENT]");
+    return res.status(200).json({
+      success: true,
+      answer,
+      sources
     });
 
-    res.write(`data: [DONE]\n\n`);
-    res.end();
-
   } catch (error: any) {
-    console.error(`[AI_CHAT_STREAM_FAILURE]: ${error.message}`);
-    // If headers already sent, we can't send a JSON error
-    if (!res.headersSent) {
-      res.status(500).json({ success: false, message: "Failed to process chat request." });
-    } else {
-      res.write(`data: ${JSON.stringify({ type: "error", message: "Stream interrupted." })}\n\n`);
-      res.end();
-    }
+    console.error("[CHAT_CRITICAL_FAILURE]", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Failed to process chat request."
+    });
   }
 };
+
 
 const aiTagSchema = z.object({
   url: z.string().url("Invalid URL"),
@@ -155,83 +171,73 @@ export const aiReprocessController = async (req: Request, res: Response) => {
     const content = await ContentModel.findOne({ _id: contentId, userId });
 
     if (!content) {
-      return res.status(404).json({ success: false, message: "Content not found or unauthorized." });
+      return res.status(404).json({ success: false, message: "Memory not found." });
     }
 
-    // STEP 1: Quick Mode Sync Analysis (Instant Feedback)
-    const link = content.link || "";
-    const quickInsight = await getAiClassification(link, "quick");
-    
-    // Update DB with quick results immediately
-    await ContentModel.updateOne({ _id: contentId }, { 
-      title: quickInsight.title || content.title,
-      description: quickInsight.description,
-      tags: quickInsight.tags,
-      aiStatus: "processing" 
-    });
+    // Skip if already deeply synthesized and not forced
+    if (content.aiStatus === "summarized") {
+      return res.json({ success: true, data: content, message: "Already synthesized." });
+    }
 
-    // STEP 2: Offload Deep Analysis to Background
-    (async () => {
-       try {
-         const deepInsight = await getAiClassification(link, "deep");
-         
-         await ContentModel.updateOne({ _id: contentId }, {
-            tags: deepInsight.tags,
-            topics: deepInsight.topics,
-            description: deepInsight.description,
-            title: deepInsight.title || quickInsight.title || content.title,
-            aiStatus: "summarized"
-         });
-         
-         await processContentEmbedding(contentId);
-         
-         await ContentModel.updateOne({ _id: contentId }, { aiStatus: "completed" });
-       } catch (err: any) {
-         console.error(`[BACKGROUND_REPROCESS_FAILED]: ${contentId}`, err);
-         await ContentModel.updateOne({ _id: contentId }, { 
-           embeddingStatus: "failed",
-           aiStatus: "failed",
-           aiError: err.message
-         });
-       }
-    })();
+    // Trigger Synthesis
+    await ContentModel.updateOne({ _id: contentId }, { aiStatus: "processing" });
+
+    // Background Task
+    processContentEmbedding(contentId).catch(err => console.error("[BG_SYNTHESIS_FAILED]", err));
 
     res.json({
       success: true,
-      message: "Initial synthesis complete. Deep analysis running in background.",
-      data: quickInsight
+      message: "Synthesis triggered."
     });
 
   } catch (error: any) {
-    console.error(`[REPROCESS_CONTROLLER_FAILURE]: ${error.message}`);
-    res.status(500).json({ success: false, message: "Failed to start analysis." });
+    console.error("[AI_REPROCESS_FAILURE]", error.message);
+    res.status(500).json({ success: false, message: "Failed to synthesize memory." });
   }
 };
 
 /**
  * AI Insights Controller (Production Grade)
- * Provides high-level brain analytics with temporal trends and semantic clustering.
+ * Orchestrates deterministic analytics, semantic clustering, and LLM synthesis with advanced caching.
  */
 export const aiInsightsController = async (req: Request, res: Response) => {
+  const userId = req.userId;
+  console.log("[AI_INSIGHTS_REQUEST_START]", { userId });
+
   try {
-    const userId = req.userId;
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    // 1. Check Cache (12 hours)
-    const cached = await BrainInsightModel.findOne({ userId });
-    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
-    
-    if (cached && (Date.now() - new Date(cached.generatedAt).getTime() < TWELVE_HOURS)) {
-      console.log(`[INSIGHT_CACHE_HIT]: ${userId}`);
+    // 1. Fetch Version & Cache State
+    const [currentCount, cached] = await Promise.all([
+      ContentModel.countDocuments({ userId }),
+      BrainInsightModel.findOne({ userId })
+    ]);
+    console.log("[DATA_METRICS]", { userId, currentCount, hasCache: !!cached });
+
+    // 2. Intelligent Cache Invalidation
+    const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+    const isVersionMatch = cached?.contentVersion === currentCount;
+    const isFresh = cached && (Date.now() - new Date(cached.generatedAt).getTime() < TWENTY_FOUR_HOURS);
+
+    if (isVersionMatch && isFresh) {
+      console.log("[AI_INSIGHTS_CACHE_HIT]", { userId, version: currentCount });
       return res.json({ success: true, data: cached });
     }
 
-    // 2. Fetch Data for Analysis
-    const contents = await ContentModel.find({ userId })
-      .select("+embedding title type tags createdAt link description")
-      .sort({ createdAt: -1 });
+    console.log("[AI_INSIGHTS_CACHE_MISS]", { 
+      reason: !cached ? "no_cache" : !isVersionMatch ? "version_mismatch" : "expired" 
+    });
+
+    // 3. Fetch Data for Analysis
+    const [contents, deterministicData] = await Promise.all([
+      ContentModel.find({ userId })
+        .select("+embedding title type tags createdAt link description")
+        .sort({ createdAt: -1 }),
+      getDeterministicAnalytics(userId.toString())
+    ]);
+    console.log("[ANALYSIS_DATA_FETCHED]", { contentCount: contents.length });
 
     if (contents.length < 3) {
       return res.json({
@@ -243,22 +249,24 @@ export const aiInsightsController = async (req: Request, res: Response) => {
             title: "Knowledge Seedling",
             description: "Continue adding content to unlock deep semantic patterns and behavioral trends.",
             confidence: "Strong",
+            qualityScore: 10,
             sources: []
           }]
         }
       });
     }
 
-    // 3. Generate Intelligence
-    const intelligence = await generateBrainIntelligence(userId.toString(), contents);
+    // 4. Generate Intelligence (Hybrid Pipeline)
+    const intelligence = await generateBrainIntelligence(userId.toString(), contents, deterministicData);
+    console.log("[INTELLIGENCE_SYNTHESIZED]", { insightCount: intelligence.insights?.length });
 
-    // 4. Persistence (Update Cache)
+    // 5. Persistence (Update Cache)
     const updated = await BrainInsightModel.findOneAndUpdate(
       { userId },
       { 
         ...intelligence,
         generatedAt: new Date(),
-        contentVersion: contents.length 
+        contentVersion: currentCount 
       },
       { upsert: true, new: true }
     );
@@ -269,7 +277,24 @@ export const aiInsightsController = async (req: Request, res: Response) => {
     });
 
   } catch (error: any) {
-    console.error(`[AI_INSIGHTS_FAILURE]: ${error.message}`);
-    res.status(500).json({ success: false, message: "Failed to generate brain insights." });
+    const isAIError = error.name === "AIError";
+    const errorCode = isAIError ? error.code : "INTERNAL_ERROR";
+    
+    console.error("[AI_INSIGHTS_FAILURE]", {
+      userId,
+      code: errorCode,
+      message: error.message
+    });
+    
+    // Return structured failure with fallback to structural data only
+    res.status(isAIError ? 503 : 500).json({ 
+      success: false, 
+      error: errorCode,
+      message: "Our neural engine is currently heavy-loaded. Deep insights are temporarily unavailable, but your structural brain metrics remain active.",
+      fallback: {
+        summary: "Neural synthesis is currently degraded. Please check back in a few minutes.",
+        insights: []
+      }
+    });
   }
 };

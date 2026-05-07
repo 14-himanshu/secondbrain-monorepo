@@ -2454,3 +2454,2648 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[RAG_DEBUG][QUERY]: "hi "
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:111:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[2J[3J[H8:02:33 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(375,28): error TS2304: Cannot find name 'mongoose'.
+
+8:02:35 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37263) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37270) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37274) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37282) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37288) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37294) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:02:50 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(253,32): error TS2554: Expected 3 arguments, but got 2.
+src/services/ai.service.ts(367,28): error TS2304: Cannot find name 'mongoose'.
+
+8:02:52 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37301) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37302) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37306) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37311) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37312) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37317) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:03:10 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(236,7): error TS2304: Cannot find name 'getDeterministicAnalytics'.
+src/services/ai.service.ts(367,28): error TS2304: Cannot find name 'mongoose'.
+
+8:03:12 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:37343) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37346) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37351) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37356) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:04:56 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(236,7): error TS2304: Cannot find name 'getDeterministicAnalytics'.
+src/services/ai.service.ts(276,19): error TS2304: Cannot find name 'Cluster'.
+src/services/ai.service.ts(317,23): error TS2304: Cannot find name 'totalCount'.
+src/services/ai.service.ts(324,92): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/services/ai.service.ts(377,28): error TS2304: Cannot find name 'mongoose'.
+
+8:04:57 PM - Found 5 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37419) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37421) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37431) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37441) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:05:08 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+(node:37446) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+src/controllers/ai.controller.ts(236,7): error TS2304: Cannot find name 'getDeterministicAnalytics'.
+src/services/ai.service.ts(388,28): error TS2304: Cannot find name 'mongoose'.
+
+8:05:09 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37449) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37450) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37452) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37453) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37459) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37463) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37469) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37497) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37498) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37503) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:05:39 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(236,7): error TS2304: Cannot find name 'getDeterministicAnalytics'.
+
+8:05:40 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:37509) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37510) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37511) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37512) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37514) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37526) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:05:49 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+(node:37531) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+8:05:50 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:37533) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37534) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37535) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37536) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37541) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37542) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:07:09 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+src/services/ai.service.ts(397,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,44): error TS1127: Invalid character.
+src/services/ai.service.ts(403,9): error TS1127: Invalid character.
+src/services/ai.service.ts(403,55): error TS1127: Invalid character.
+src/services/ai.service.ts(404,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,44): error TS1127: Invalid character.
+src/services/ai.service.ts(406,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,55): error TS1127: Invalid character.
+src/services/ai.service.ts(412,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,44): error TS1127: Invalid character.
+src/services/ai.service.ts(414,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,50): error TS1127: Invalid character.
+src/services/ai.service.ts(419,66): error TS1127: Invalid character.
+src/services/ai.service.ts(421,9): error TS1127: Invalid character.
+src/services/ai.service.ts(423,13): error TS1127: Invalid character.
+src/services/ai.service.ts(424,17): error TS1127: Invalid character.
+src/services/ai.service.ts(424,30): error TS1127: Invalid character.
+src/services/ai.service.ts(424,49): error TS1127: Invalid character.
+src/services/ai.service.ts(429,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(429,8): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(430,9): error TS1127: Invalid character.
+src/services/ai.service.ts(430,42): error TS1005: ';' expected.
+src/services/ai.service.ts(430,46): error TS1127: Invalid character.
+src/services/ai.service.ts(430,60): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(431,9): error TS1127: Invalid character.
+src/services/ai.service.ts(431,32): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(432,9): error TS1127: Invalid character.
+src/services/ai.service.ts(433,5): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,6): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(437,9): error TS1127: Invalid character.
+src/services/ai.service.ts(437,55): error TS1127: Invalid character.
+src/services/ai.service.ts(439,9): error TS1127: Invalid character.
+src/services/ai.service.ts(440,18): error TS1127: Invalid character.
+src/services/ai.service.ts(441,20): error TS1127: Invalid character.
+src/services/ai.service.ts(445,3): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(445,4): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(467,1): error TS1128: Declaration or statement expected.
+
+8:07:10 PM - Found 43 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:07:36 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(397,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,44): error TS1127: Invalid character.
+src/services/ai.service.ts(403,9): error TS1127: Invalid character.
+src/services/ai.service.ts(403,55): error TS1127: Invalid character.
+src/services/ai.service.ts(404,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,44): error TS1127: Invalid character.
+src/services/ai.service.ts(406,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,55): error TS1127: Invalid character.
+src/services/ai.service.ts(412,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,44): error TS1127: Invalid character.
+src/services/ai.service.ts(414,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,50): error TS1127: Invalid character.
+src/services/ai.service.ts(419,66): error TS1127: Invalid character.
+src/services/ai.service.ts(421,9): error TS1127: Invalid character.
+src/services/ai.service.ts(423,13): error TS1127: Invalid character.
+src/services/ai.service.ts(424,17): error TS1127: Invalid character.
+src/services/ai.service.ts(424,30): error TS1127: Invalid character.
+src/services/ai.service.ts(424,49): error TS1127: Invalid character.
+src/services/ai.service.ts(429,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(429,8): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(430,9): error TS1127: Invalid character.
+src/services/ai.service.ts(430,42): error TS1005: ';' expected.
+src/services/ai.service.ts(430,46): error TS1127: Invalid character.
+src/services/ai.service.ts(430,60): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(431,9): error TS1127: Invalid character.
+src/services/ai.service.ts(431,32): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(432,9): error TS1127: Invalid character.
+src/services/ai.service.ts(433,5): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,6): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(437,9): error TS1127: Invalid character.
+src/services/ai.service.ts(437,55): error TS1127: Invalid character.
+src/services/ai.service.ts(439,9): error TS1127: Invalid character.
+src/services/ai.service.ts(440,18): error TS1127: Invalid character.
+src/services/ai.service.ts(441,20): error TS1127: Invalid character.
+src/services/ai.service.ts(445,3): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(445,4): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(467,1): error TS1128: Declaration or statement expected.
+
+8:07:37 PM - Found 43 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:07:59 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(397,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,9): error TS1127: Invalid character.
+src/services/ai.service.ts(398,44): error TS1127: Invalid character.
+src/services/ai.service.ts(403,9): error TS1127: Invalid character.
+src/services/ai.service.ts(403,55): error TS1127: Invalid character.
+src/services/ai.service.ts(404,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,9): error TS1127: Invalid character.
+src/services/ai.service.ts(405,44): error TS1127: Invalid character.
+src/services/ai.service.ts(406,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,9): error TS1127: Invalid character.
+src/services/ai.service.ts(411,55): error TS1127: Invalid character.
+src/services/ai.service.ts(412,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,9): error TS1127: Invalid character.
+src/services/ai.service.ts(413,44): error TS1127: Invalid character.
+src/services/ai.service.ts(414,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,9): error TS1127: Invalid character.
+src/services/ai.service.ts(419,50): error TS1127: Invalid character.
+src/services/ai.service.ts(419,66): error TS1127: Invalid character.
+src/services/ai.service.ts(421,9): error TS1127: Invalid character.
+src/services/ai.service.ts(423,13): error TS1127: Invalid character.
+src/services/ai.service.ts(424,17): error TS1127: Invalid character.
+src/services/ai.service.ts(424,30): error TS1127: Invalid character.
+src/services/ai.service.ts(424,49): error TS1127: Invalid character.
+src/services/ai.service.ts(429,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(429,8): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(430,9): error TS1127: Invalid character.
+src/services/ai.service.ts(430,42): error TS1005: ';' expected.
+src/services/ai.service.ts(430,46): error TS1127: Invalid character.
+src/services/ai.service.ts(430,60): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(431,9): error TS1127: Invalid character.
+src/services/ai.service.ts(431,32): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(432,9): error TS1127: Invalid character.
+src/services/ai.service.ts(433,5): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,6): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(433,7): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(437,9): error TS1127: Invalid character.
+src/services/ai.service.ts(437,55): error TS1127: Invalid character.
+src/services/ai.service.ts(439,9): error TS1127: Invalid character.
+src/services/ai.service.ts(440,18): error TS1127: Invalid character.
+src/services/ai.service.ts(441,20): error TS1127: Invalid character.
+src/services/ai.service.ts(445,3): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(445,4): error TS1128: Declaration or statement expected.
+src/services/ai.service.ts(467,1): error TS1128: Declaration or statement expected.
+
+8:08:00 PM - Found 43 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:392
+return {
+^^^^^^
+
+SyntaxError: Illegal return statement
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:08:21 PM - File change detected. Starting incremental compilation...
+
+
+8:08:23 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37776) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37777) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37778) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37779) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37805) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[2J[3J[H8:09:00 PM - File change detected. Starting incremental compilation...
+
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hey ', history: [] } }
+[RAG_DEBUG][QUERY]: "hey "
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:112:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+
+8:09:01 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:37858) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37859) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37860) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37861) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37862) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37863) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37868) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37870) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi there', history: [ [Object], [Object] ] } }
+[RAG_DEBUG][QUERY]: "hi there"
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:112:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[2J[3J[H8:11:03 PM - File change detected. Starting incremental compilation...
+
+
+8:11:04 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38090) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38094) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38095) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38106) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38108) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[RAG_DEBUG][QUERY]: "hi "
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:112:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'how are you', history: [ [Object], [Object] ] } }
+[RAG_DEBUG][QUERY]: "how are you"
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:112:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_FAILURE]: PlanExecutor error during aggregation :: caused by :: $split requires an expression that evaluates to a string as a second argument, found: int
+[2J[3J[H8:15:45 PM - File change detected. Starting incremental compilation...
+
+
+8:15:47 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38336) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38340) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38344) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38347) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38356) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:15:58 PM - File change detected. Starting incremental compilation...
+
+
+8:16:00 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38367) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38381) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38382) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38383) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38385) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38386) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38391) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38393) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:17:52 PM - File change detected. Starting incremental compilation...
+
+
+8:17:53 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38487) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38502) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38505) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38509) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:18:00 PM - File change detected. Starting incremental compilation...
+
+
+8:18:02 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38521) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38530) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38531) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38532) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38537) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[2J[3J[H8:20:59 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(179,10): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(179,11): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(184,8): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(184,10): error TS1005: 'try' expected.
+src/controllers/ai.controller.ts(192,5): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(192,6): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(192,8): error TS1109: Expression expected.
+src/controllers/ai.controller.ts(200,3): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(200,5): error TS1005: 'try' expected.
+src/controllers/ai.controller.ts(204,1): error TS1128: Declaration or statement expected.
+
+8:21:01 PM - Found 10 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:162
+();
+ ^
+
+SyntaxError: Unexpected token ')'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:21:30 PM - File change detected. Starting incremental compilation...
+
+
+8:21:31 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38840) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38847) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38849) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38850) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38851) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38852) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2J[3J[H8:21:36 PM - File change detected. Starting incremental compilation...
+
+Cron jobs initialized.
+Server running on port 3000
+
+8:21:37 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:38857) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38858) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38859) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38860) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:38861) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38867) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:38868) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:22:31 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(2,22): error TS2307: Cannot find module 'groq-sdk' or its corresponding type declarations.
+
+8:22:33 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:22:39 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(2,22): error TS2307: Cannot find module 'groq-sdk' or its corresponding type declarations.
+src/services/ai.service.ts(412,28): error TS2304: Cannot find name 'invokeLLM'.
+
+8:22:40 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H8:22:47 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(2,22): error TS2307: Cannot find module 'groq-sdk' or its corresponding type declarations.
+src/services/ai.service.ts(412,28): error TS2304: Cannot find name 'invokeLLM'.
+
+8:22:48 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+node:internal/modules/package_json_reader:314
+  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
+        ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'groq-sdk' imported from /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:314:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:855:18)
+    at defaultResolve (node:internal/modules/esm/resolve:985:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:731:20)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:708:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:310:38)
+    at ModuleJob._link (node:internal/modules/esm/module_job:182:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+[2J[3J[H8:23:34 PM - File change detected. Starting incremental compilation...
+
+(node:39051) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39081) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+src/services/ai.service.ts(412,28): error TS2304: Cannot find name 'invokeLLM'.
+
+8:23:36 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39087) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39088) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39094) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39098) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39101) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39106) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39111) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39113) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39115) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+[2J[3J[H8:23:43 PM - File change detected. Starting incremental compilation...
+
+(node:39116) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+
+8:23:44 PM - Found 0 errors. Watching for file changes.
+(node:39117) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39118) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39120) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39125) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39139) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:24:01 PM - File change detected. Starting incremental compilation...
+
+
+8:24:02 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39181) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39185) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39186) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39191) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39195) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39207) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39270) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39279) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39282) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39291) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39293) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39301) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39321) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39322) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[CHAT_REQUEST] hi 
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:175:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[CHAT_STREAM_ERROR] HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[2J[3J[H8:27:13 PM - File change detected. Starting incremental compilation...
+
+
+8:27:15 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39370) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39385) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39386) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39393) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39405) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2J[3J[H8:27:28 PM - File change detected. Starting incremental compilation...
+
+
+8:27:28 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39407) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39409) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39416) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39421) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39422) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39430) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39431) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:29:40 PM - File change detected. Starting incremental compilation...
+
+
+8:29:41 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39547) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39553) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39554) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39557) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39558) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39565) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39569) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39576) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Running embedding cleanup cron job...
+Found 1 stuck items. Retrying...
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 1
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:189:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:229:35)
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 1: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:189:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:229:35)
+[2J[3J[H8:30:01 PM - File change detected. Starting incremental compilation...
+
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 2
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:189:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:229:35)
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 2: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:189:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:229:35)
+src/services/ai.service.ts(207,5): error TS1005: 'try' expected.
+
+8:30:02 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:39587) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39590) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39591) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39592) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39600) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39601) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:30:32 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(215,19): error TS2532: Object is possibly 'undefined'.
+
+8:30:34 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39610) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39611) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39612) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39613) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:30:40 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+src/services/ai.service.ts(215,19): error TS2532: Object is possibly 'undefined'.
+
+8:30:41 PM - Found 1 error. Watching for file changes.
+(node:39618) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39619) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39623) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39624) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39644) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39645) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39651) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39678) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39680) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39696) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:31:48 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(215,7): error TS2322: Type 'number[] | undefined' is not assignable to type 'number[]'.
+  Type 'undefined' is not assignable to type 'number[]'.
+
+8:31:48 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:39717) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39718) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39719) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39720) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39721) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39747) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39755) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:32:22 PM - File change detected. Starting incremental compilation...
+
+
+8:32:23 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39760) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39761) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39762) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39763) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39764) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39769) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39774) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39816) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:33:31 PM - File change detected. Starting incremental compilation...
+
+
+8:33:32 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39865) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39866) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39867) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39868) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39876) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:33:58 PM - File change detected. Starting incremental compilation...
+
+
+8:33:59 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39916) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39918) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39919) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39920) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39925) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39930) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2J[3J[H8:34:10 PM - File change detected. Starting incremental compilation...
+
+Cron jobs initialized.
+Server running on port 3000
+src/controllers/ai.controller.ts(51,37): error TS2304: Cannot find name 'mongoose'.
+
+8:34:12 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:39932) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39933) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39934) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39935) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39942) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39943) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39944) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39955) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39960) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39986) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:39987) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39992) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:39993) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:34:42 PM - File change detected. Starting incremental compilation...
+
+
+8:34:44 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:40000) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40002) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40004) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40009) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40013) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40014) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40019) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[CHAT_ROUTE_HIT]
+[QUERY] hi 
+[USER_ID] 69f0d2a05e5e573f352b678d
+[GENERATING_QUERY_EMBEDDING]
+[EMBEDDING_FAILURE] HF API Error: 404
+[CHAT_ERROR_STAGE] EMBEDDING_GENERATION AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:25:30) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[CHAT_ERROR_STAGE] CRITICAL_FAILURE AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:25:30) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[2J[3J[H8:37:43 PM - File change detected. Starting incremental compilation...
+
+
+8:37:45 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:40156) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40165) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40166) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40170) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40177) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40182) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:37:59 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(105,3): error TS1128: Declaration or statement expected.
+src/controllers/ai.controller.ts(105,5): error TS1005: 'try' expected.
+src/controllers/ai.controller.ts(114,1): error TS1128: Declaration or statement expected.
+
+8:38:01 PM - Found 3 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:40193) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40197) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40201) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40203) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40209) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+[2J[3J[H8:38:12 PM - File change detected. Starting incremental compilation...
+
+(node:40223) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+src/controllers/ai.controller.ts(80,26): error TS2552: Cannot find name 'generateAiChatAnswer'. Did you mean 'generateAiChatAnswerStream'?
+
+8:38:14 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:40224) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40225) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40227) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40229) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40235) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40239) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40271) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40272) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40277) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40279) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:38:47 PM - File change detected. Starting incremental compilation...
+
+
+8:38:49 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:40293) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40294) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40295) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:40301) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:40303) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40304) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:40311) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[CHAT_ROUTE_HIT]
+[GENERATING_QUERY_EMBEDDING]
+[EMBEDDING_FAILURE] HF API Error: 404
+[CHAT_CRITICAL_FAILURE] AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:21:32) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [ [Object] ] } }
+[CHAT_ROUTE_HIT]
+[GENERATING_QUERY_EMBEDDING]
+[EMBEDDING_FAILURE] HF API Error: 404
+[CHAT_CRITICAL_FAILURE] AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:21:32) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[2026-05-07T16:13:04.636Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T16:34:16.946Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T17:09:50.811Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.

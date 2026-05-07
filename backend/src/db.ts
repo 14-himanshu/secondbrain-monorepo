@@ -43,6 +43,14 @@ ContentSchema.index({ userId: 1 });
 ContentSchema.index({ embeddingStatus: 1 });
 ContentSchema.index({ aiStatus: 1 });
 ContentSchema.index({ createdAt: -1 });
+ContentSchema.index({ 
+  title: "text", 
+  description: "text", 
+  tags: "text" 
+}, { 
+  weights: { title: 10, description: 5, tags: 2 },
+  name: "TextIndex" 
+});
 
 
 const LinkSchema = new Schema({

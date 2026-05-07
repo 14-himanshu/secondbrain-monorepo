@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import type { Content } from "../hooks/useContent";
 import { BACKEND_URL } from "../config";
 
@@ -23,9 +24,15 @@ export function AIInsightsPanel({
 }: AIInsightsPanelProps) {
   const [activeTab, setActiveTab] = useState<"brain" | "note" | "chat">("brain");
   const [chatQuery, setChatQuery] = useState("");
-  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[], debugData?: any}[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
-  const [showDebug, setShowDebug] = useState(false);
+  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
+  const [isThinking, setIsThinking] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isThinking]);
 
   const aiStatus = selectedContent?.aiStatus;
   const isFailed = aiStatus === "failed";
@@ -41,6 +48,8 @@ export function AIInsightsPanel({
     }[];
   } | null>(null);
   const [isIntelligenceLoading, setIsIntelligenceLoading] = useState(false);
+  const [intelligenceError, setIntelligenceError] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
 
   useEffect(() => {
     if (selectedContent) {
@@ -57,97 +66,93 @@ export function AIInsightsPanel({
   }, [activeTab, isOpen]);
 
   const fetchIntelligence = async () => {
+    // Reset states
     setIsIntelligenceLoading(true);
+    setIntelligenceError(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/v1/ai/insights`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`Neural engine responded with status: ${response.status}`);
+      }
+
       const data = await response.json();
       if (data.success) {
         setBrainIntelligence(data.data);
+      } else {
+        throw new Error(data.message || "Failed to synthesize brain patterns.");
       }
-    } catch (err) {
-      console.error("Failed to fetch intelligence", err);
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setIntelligenceError("Intelligence synthesis timed out. Our neural engine is heavily loaded.");
+      } else {
+        console.error("Failed to fetch intelligence", err);
+        setIntelligenceError(err.message || "Unable to generate insights right now.");
+      }
     } finally {
       setIsIntelligenceLoading(false);
     }
   };
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatQuery.trim() || isTyping) return;
+  const handleSendMessage = async (e?: React.FormEvent, retryQuery?: string) => {
+    if (e) e.preventDefault();
+    
+    const userQuery = retryQuery || chatQuery;
+    if (!userQuery.trim() || isThinking) return;
 
-    const userQuery = chatQuery;
-    setChatQuery("");
+    console.log("[CHAT_REQUEST]", userQuery);
+    
+    // Clear previous error
+    setChatError(null);
+    if (!retryQuery) setChatQuery("");
     
     // Construct history for RAG (last 6 messages)
     const history = messages.slice(-6).map(m => ({ role: m.role, content: m.content }));
     
-    setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
-    setIsTyping(true);
+    if (!retryQuery) {
+      setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
+    }
+    
+    setIsThinking(true);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/ai/chat`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ query: userQuery, history })
+      const response = await axios.post(`${BACKEND_URL}/api/v1/ai/chat`, {
+        query: userQuery,
+        history
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        timeout: 15000 // 15s timeout as requested
       });
 
-      if (!response.body) throw new Error("No response body");
+      console.log("[CHAT_RESPONSE]", response.data);
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      
-      // Initialize assistant message
-      setMessages(prev => [...prev, { role: 'assistant', content: "", sources: [] }]);
-      
-      let fullContent = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const dataStr = line.slice(6).trim();
-            if (dataStr === '[DONE]') break;
-
-            try {
-              const data = JSON.parse(dataStr);
-              if (data.type === 'sources') {
-                setMessages(prev => {
-                  const last = prev[prev.length - 1];
-                  return [...prev.slice(0, -1), { ...last, sources: data.sources }];
-                });
-              } else if (data.type === 'content') {
-                fullContent += data.text;
-                setMessages(prev => {
-                  const last = prev[prev.length - 1];
-                  return [...prev.slice(0, -1), { ...last, content: fullContent }];
-                });
-              } else if (data.type === 'error') {
-                 console.error("Stream Error:", data.message);
-              }
-            } catch (e) {
-              // Partial JSON or heartbeat
-            }
-          }
-        }
+      if (response.data.success) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: response.data.answer, 
+          sources: response.data.sources 
+        }]);
+      } else {
+        throw new Error(response.data.error || "Brain synthesis failed.");
       }
-    } catch (err) {
-      console.error("Chat Error:", err);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: "I'm sorry, I encountered a connection error while searching your brain." 
-      }]);
+    } catch (error: any) {
+      console.log("[CHAT_ERROR]", error);
+      const errorMsg = error.code === 'ECONNABORTED' 
+        ? "Brain synthesis timed out. Our neural engine is heavily loaded."
+        : (error.response?.data?.error || "Brain synthesis failed. Please try again.");
+      
+      setChatError(errorMsg);
     } finally {
-      setIsTyping(false);
+      setIsThinking(false);
     }
   };
 
@@ -213,65 +218,104 @@ export function AIInsightsPanel({
 
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
         {activeTab === "brain" ? (
-          /* Global Brain Intelligence - Editorial View */
-          <div className="flex flex-col gap-7 p-5 animate-in fade-in slide-in-from-bottom-4 duration-700">
-             {/* Editorial Header */}
-             <div className="space-y-1.5 px-1">
-                <h2 className="text-[17px] font-bold text-gray-900 tracking-tight leading-tight">Intellectual Roadmap</h2>
-                <p className="text-[12px] text-gray-500 font-medium leading-relaxed">
-                  {isIntelligenceLoading ? "Synthesizing brain patterns..." : brainIntelligence?.summary || "Add more content to start detecting learning trends."}
-                </p>
+          /* Global Brain Intelligence - Human-Designed Editorial View */
+          <div className="flex flex-col gap-8 p-6 animate-in fade-in slide-in-from-bottom-2 duration-1000 custom-scrollbar overflow-y-auto max-h-full">
+             {/* Subtle Human Header */}
+             <div className="space-y-1 px-1">
+                <span className="text-[10px] font-bold text-purple-400 uppercase tracking-[0.2em]">Neural Overview</span>
+                <h2 className="text-[18px] font-semibold text-slate-900 tracking-tight leading-tight">Intellectual Roadmap</h2>
              </div>
 
              {isIntelligenceLoading ? (
-               <div className="flex flex-col gap-6">
-                  <div className="h-32 bg-gray-50 rounded-2xl animate-pulse"></div>
-                  <div className="h-32 bg-gray-50 rounded-2xl animate-pulse"></div>
-               </div>
-             ) : brainIntelligence ? (
                <div className="flex flex-col gap-8">
-                 {/* Intelligence Insights List */}
+                  {/* Staged Skeleton Loaders */}
+                  <div className="px-1 space-y-3">
+                     <div className="h-3 bg-slate-100 rounded-full w-full animate-pulse"></div>
+                     <div className="h-3 bg-slate-50 rounded-full w-5/6 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <div className="flex flex-col gap-6">
+                    <div className="h-40 bg-slate-50/50 border border-slate-100 rounded-2xl animate-pulse"></div>
+                    <div className="h-40 bg-slate-50/50 border border-slate-100 rounded-2xl animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
+               </div>
+             ) : intelligenceError ? (
+               /* ERROR STATE: Clear Recovery Path */
+               <div className="py-12 flex flex-col items-center justify-center text-center px-4 animate-in fade-in zoom-in-95 duration-500">
+                  <div className="w-14 h-14 bg-red-50 text-red-400 rounded-2xl flex items-center justify-center mb-6 border border-red-100/50">
+                     <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                     </svg>
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 mb-2 tracking-tight">Synthesis Interrupted</h3>
+                  <p className="text-[12px] text-slate-400 font-medium leading-relaxed max-w-[220px] mb-8">
+                    {intelligenceError}
+                  </p>
+                  <button 
+                    onClick={fetchIntelligence}
+                    className="px-6 py-2.5 bg-slate-900 text-white text-[11px] font-bold rounded-xl hover:bg-purple-600 transition-all shadow-lg shadow-slate-200"
+                  >
+                    Retry Synthesis
+                  </button>
+               </div>
+             ) : (brainIntelligence && brainIntelligence.insights.length > 0) ? (
+               <div className="flex flex-col gap-10">
+                 {/* Editorial Summary Statement */}
+                 <div className="px-1">
+                    <p className="text-[13px] text-slate-500 leading-relaxed font-medium antialiased">
+                      {brainIntelligence.summary}
+                    </p>
+                 </div>
+
+                 {/* Insights Feed */}
                  <div className="flex flex-col gap-6">
                    {brainIntelligence.insights.map((insight, i) => (
-                     <div key={i} className="group flex flex-col gap-4 p-5 bg-white border border-gray-100 rounded-2xl hover:border-purple-200 hover:shadow-[0_15px_35px_-12px_rgba(147,51,234,0.08)] transition-all duration-500">
+                     <div key={i} className="group flex flex-col gap-5 p-5 bg-white border border-slate-100 rounded-2xl hover:border-purple-200 hover:shadow-[0_8px_30px_rgb(0,0,0,0.02)] transition-all duration-500">
                         <div className="flex items-center justify-between">
-                           <span className={`text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full border ${
-                             insight.category === 'Knowledge Gap' ? 'bg-amber-50 text-amber-600 border-amber-100' :
-                             insight.category === 'Learning Trend' ? 'bg-purple-50 text-purple-600 border-purple-100' :
-                             'bg-blue-50 text-blue-600 border-blue-100'
-                           }`}>
-                             {insight.category}
-                           </span>
-                           <div className="flex items-center gap-1">
-                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Confidence</span>
-                              <div className={`w-1.5 h-1.5 rounded-full ${
-                                insight.confidence === 'Strong' ? 'bg-green-400' :
-                                insight.confidence === 'Moderate' ? 'bg-amber-400' :
-                                'bg-purple-400'
+                           <div className="flex items-center gap-2">
+                              <div className={`w-1 h-1 rounded-full ${
+                                insight.category === 'Knowledge Gap' ? 'bg-amber-400' :
+                                insight.category === 'Learning Trend' ? 'bg-purple-400' :
+                                'bg-blue-400'
                               }`}></div>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                                {insight.category}
+                              </span>
+                           </div>
+                           <div className="flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 rounded-full border border-slate-100">
+                              <span className="text-[8px] font-bold text-slate-400 uppercase tracking-tight">Confidence</span>
+                              <span className={`text-[8px] font-bold ${
+                                insight.confidence === 'Strong' ? 'text-emerald-600' :
+                                insight.confidence === 'Moderate' ? 'text-amber-600' :
+                                'text-purple-600'
+                              }`}>
+                                {insight.confidence}
+                              </span>
                            </div>
                         </div>
 
                         <div className="space-y-2">
-                           <h3 className="text-[14px] font-bold text-gray-900 group-hover:text-purple-700 transition-colors">{insight.title}</h3>
-                           <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
+                           <h3 className="text-[15px] font-semibold text-slate-900 group-hover:text-purple-600 transition-colors tracking-tight">{insight.title}</h3>
+                           <p className="text-[12px] text-slate-500 leading-relaxed font-medium antialiased">
                              {insight.description}
                            </p>
                         </div>
 
                         {insight.sources && insight.sources.length > 0 && (
-                          <div className="pt-3 border-t border-gray-50 flex flex-col gap-2">
-                             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Evidence Base</span>
-                             <div className="flex flex-wrap gap-1.5">
+                          <div className="pt-4 border-t border-slate-50 flex flex-col gap-3">
+                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Generated from:</span>
+                             <div className="flex flex-wrap gap-2">
                                 {insight.sources.map((s, idx) => (
                                   <a 
                                     key={idx} 
                                     href={s.link} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="px-2 py-1 bg-gray-50 hover:bg-white border border-transparent hover:border-purple-100 rounded-lg text-[9px] font-bold text-gray-500 hover:text-purple-600 transition-all truncate max-w-[120px]"
+                                    className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-50/50 hover:bg-white border border-slate-100/50 hover:border-purple-200 rounded-xl text-[10px] font-medium text-slate-600 hover:text-purple-600 transition-all group/source"
                                   >
-                                    {s.title}
+                                    <svg className="w-2.5 h-2.5 opacity-30 group-hover/source:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                    <span className="truncate max-w-[150px]">{s.title}</span>
                                   </a>
                                 ))}
                              </div>
@@ -281,34 +325,39 @@ export function AIInsightsPanel({
                    ))}
                  </div>
 
-                 {/* Capacity Summary */}
-                 <div className="p-5 bg-purple-600 rounded-2xl text-white shadow-xl shadow-purple-200/40 relative overflow-hidden group">
+                 {/* Minimalist Capacity Card */}
+                 <div className="mx-1 p-5 bg-slate-900 rounded-2xl text-white shadow-2xl shadow-slate-200/50 relative overflow-hidden group">
                     <div className="relative z-10 flex items-center justify-between">
-                       <div className="flex flex-col">
-                          <span className="text-[9px] font-bold uppercase tracking-widest opacity-70">Knowledge Capacity</span>
-                          <span className="text-2xl font-bold">{contentCount} <span className="text-sm font-medium opacity-60">Memories</span></span>
+                       <div className="flex flex-col gap-1">
+                          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Memory Depth</span>
+                          <span className="text-2xl font-semibold tracking-tight">{contentCount} <span className="text-sm font-medium text-slate-500">Items</span></span>
                        </div>
-                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                       <div className="w-9 h-9 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center backdrop-blur-md group-hover:bg-white/10 transition-all duration-500">
+                          <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                           </svg>
                        </div>
                     </div>
-                    {/* Abstract background element */}
-                    <div className="absolute -right-2 -bottom-2 w-20 h-20 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                  </div>
                </div>
              ) : (
-               <div className="py-20 flex flex-col items-center justify-center text-center px-4">
-                  <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200 mb-6 rotate-3">
-                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+               /* EMPTY STATE: Knowledge Seedling */
+               <div className="py-24 flex flex-col items-center justify-center text-center px-6 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                  <div className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-200 mb-6 shadow-sm">
+                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                      </svg>
                   </div>
-                  <h3 className="text-[15px] font-bold text-gray-900 mb-2 tracking-tight">Your brain is waking up</h3>
-                  <p className="text-[12px] text-gray-400 font-medium leading-relaxed">
-                    Once you save at least 3 knowledge items, I'll start synthesizing behavioral patterns and intellectual trends.
+                  <h3 className="text-[15px] font-semibold text-slate-900 mb-2 tracking-tight">Knowledge Seedling</h3>
+                  <p className="text-[12px] text-slate-400 font-medium leading-relaxed max-w-[200px] mx-auto">
+                    Your brain is starting to take shape. Add 3 or more knowledge items to unlock deep behavioral trends and semantic shifts.
                   </p>
+                  <button 
+                    onClick={fetchIntelligence}
+                    className="mt-8 text-[10px] font-bold text-purple-400 uppercase tracking-widest hover:text-purple-600 transition-colors"
+                  >
+                    Check again
+                  </button>
                </div>
              )}
           </div>
@@ -330,8 +379,7 @@ export function AIInsightsPanel({
                   </p>
                 </div>
               )}
-              
-              {messages.map((msg, i) => (
+                       {messages.map((msg, i) => (
                 <div key={i} className={`flex flex-col gap-2 ${msg.role === 'user' ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                   {msg.role === 'user' ? (
                     <div className="flex flex-col items-end gap-1.5">
@@ -372,16 +420,8 @@ export function AIInsightsPanel({
                                      <div className="text-[10px] font-bold text-gray-900 truncate group-hover:text-purple-700 transition-colors">{s.title}</div>
                                      <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">
                                        {s.type} • Source [{idx + 1}]
-                                       {showDebug && s.similarity && (
-                                         <span className="ml-2 text-purple-600/60 font-bold tracking-tighter">
-                                            Score: {s.similarity.toFixed(4)}
-                                         </span>
-                                       )}
                                      </div>
                                   </div>
-                                  <svg className="w-3 h-3 text-gray-200 group-hover:text-purple-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
-                                  </svg>
                                 </a>
                               ))}
                            </div>
@@ -392,13 +432,33 @@ export function AIInsightsPanel({
                 </div>
               ))}
               
-              {isTyping && (
-                <div className="flex items-center gap-1.5 px-1">
-                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce"></div>
-                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+              {isThinking && (
+                <div className="flex flex-col gap-3 animate-in fade-in duration-500">
+                  <div className="flex items-center gap-1.5 ml-1">
+                     <div className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></div>
+                     <span className="text-[8px] font-bold text-purple-400 uppercase tracking-widest">Neural Synthesis...</span>
+                  </div>
+                  <div className="max-w-[80%] p-4 bg-white border border-gray-100 rounded-2xl rounded-tl-none shadow-sm flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 bg-purple-200 rounded-full animate-bounce"></div>
+                     <div className="w-1.5 h-1.5 bg-purple-200 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                     <div className="w-1.5 h-1.5 bg-purple-200 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                  </div>
                 </div>
               )}
+
+              {chatError && (
+                <div className="p-4 bg-red-50 border border-red-100 rounded-2xl animate-in zoom-in-95 duration-300">
+                  <p className="text-[11px] text-red-600 font-medium mb-3">{chatError}</p>
+                  <button 
+                    onClick={() => handleSendMessage(undefined, messages[messages.length-1]?.role === 'user' ? messages[messages.length-1].content : undefined)}
+                    className="text-[10px] font-bold text-red-600 uppercase tracking-widest hover:underline"
+                  >
+                    Retry Synthesis
+                  </button>
+                </div>
+              )}
+              
+              <div ref={chatEndRef} />
             </div>
 
             {/* Input Area */}
@@ -409,11 +469,12 @@ export function AIInsightsPanel({
                   value={chatQuery}
                   onChange={(e) => setChatQuery(e.target.value)}
                   placeholder="Ask your brain..."
-                  className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-xl text-[12px] font-medium focus:outline-none focus:ring-2 focus:ring-purple-600/10 focus:border-purple-600 transition-all"
+                  disabled={isThinking}
+                  className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-xl text-[12px] font-medium focus:outline-none focus:ring-2 focus:ring-purple-600/10 focus:border-purple-600 transition-all disabled:opacity-50"
                 />
                 <button 
                   type="submit"
-                  disabled={!chatQuery.trim() || isTyping}
+                  disabled={!chatQuery.trim() || isThinking}
                   className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-30 transition-all shadow-md shadow-purple-100"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -240,6 +240,9 @@ export const generateAiChatAnswerStream = async (
   Retrieved Context:
   ${contextBlob}`;
 
+  console.log(`[RAG_DEBUG][SYSTEM_PROMPT_BUILT]: Context length: ${contextBlob.length} chars`);
+  console.log(`[RAG_DEBUG][PROMPT_PREVIEW]:\n${systemPrompt.substring(0, 500)}...`);
+
   const stream = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [

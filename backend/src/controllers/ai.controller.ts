@@ -20,23 +20,30 @@ export const aiChatController = async (req: Request, res: Response) => {
     }
 
     // 1. Generate Query Embedding
+    console.log(`[RAG_DEBUG][QUERY]: "${query}"`);
     const queryEmbedding = await createEmbedding(query, true);
+    console.log(`[RAG_DEBUG][EMBEDDING_GENERATED]`);
 
     // 2. Retrieve Relevant Context (Top 8 for Production RAG)
     const contents = await ContentModel.find({
       userId,
       embeddingStatus: "completed"
-    }).select("+embedding");
+    }).select("+embedding title link type description");
 
-    const topContext = contents
+    const scoredContext = contents
       .map((c) => ({
         content: c,
         similarity: cosineSimilarity(queryEmbedding, c.embedding || [])
       }))
-      .filter(item => item.similarity > 0.25) // Threshold for relevance
-      .sort((a, b) => b.similarity - a.similarity)
-      .slice(0, 8)
-      .map(item => item.content);
+      .filter(item => item.similarity > 0.25)
+      .sort((a, b) => b.similarity - a.similarity);
+
+    console.log(`[RAG_DEBUG][RETRIEVAL]: Found ${scoredContext.length} relevant chunks above threshold.`);
+    scoredContext.slice(0, 3).forEach((item, idx) => {
+      console.log(`  [Chunk ${idx+1}] ID: ${item.content._id} | Score: ${item.similarity.toFixed(4)} | Title: ${item.content.title}`);
+    });
+
+    const topContext = scoredContext.slice(0, 8).map(item => item.content);
 
     // 3. Setup SSE for Streaming
     res.setHeader("Content-Type", "text/event-stream");
@@ -44,11 +51,12 @@ export const aiChatController = async (req: Request, res: Response) => {
     res.setHeader("Connection", "keep-alive");
 
     // Send Sources Immediately
-    const sources = topContext.map(c => ({
+    const sources = topContext.map((c, i) => ({
       _id: c._id,
       title: c.title,
       link: c.link,
-      type: c.type
+      type: c.type,
+      similarity: scoredContext?.[i]?.similarity // Include similarity for audit
     }));
     
     res.write(`data: ${JSON.stringify({ type: "sources", sources })}\n\n`);

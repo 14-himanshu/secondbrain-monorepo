@@ -25,8 +25,9 @@ export function AIInsightsPanel({
 }: AIInsightsPanelProps) {
   const [activeTab, setActiveTab] = useState<"brain" | "note" | "chat">("brain");
   const [chatQuery, setChatQuery] = useState("");
-  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
+  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[], debugData?: any}[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
 
   const aiStatus = selectedContent?.aiStatus;
   const isFailed = aiStatus === "failed";
@@ -140,6 +141,17 @@ export function AIInsightsPanel({
             >
               Chat
             </button>
+            {activeTab === 'chat' && (
+              <>
+                <span className="text-gray-200 text-[10px]">•</span>
+                <button 
+                  onClick={() => setShowDebug(!showDebug)}
+                  className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${showDebug ? 'text-purple-600' : 'text-gray-300 hover:text-gray-500'}`}
+                >
+                  Debug
+                </button>
+              </>
+            )}
             {selectedContent && (
               <>
                 <span className="text-gray-200 text-[10px]">•</span>
@@ -260,7 +272,14 @@ export function AIInsightsPanel({
                                   </div>
                                   <div className="flex-1 min-w-0">
                                      <div className="text-[10px] font-bold text-gray-900 truncate group-hover:text-purple-700 transition-colors">{s.title}</div>
-                                     <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">{s.type} • Source [{idx + 1}]</div>
+                                     <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">
+                                       {s.type} • Source [{idx + 1}]
+                                       {showDebug && s.similarity && (
+                                         <span className="ml-2 text-purple-600/60 font-bold tracking-tighter">
+                                            Score: {s.similarity.toFixed(4)}
+                                         </span>
+                                       )}
+                                     </div>
                                   </div>
                                   <svg className="w-3 h-3 text-gray-200 group-hover:text-purple-300 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />

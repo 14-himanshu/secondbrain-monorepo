@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
+import { useQuery } from "@tanstack/react-query";
 
 export interface Content {
   _id: string;
@@ -22,28 +22,24 @@ export interface Content {
   topics?: string[];
 }
 
-
 export function useContent() {
-  const [contents, setContents] = useState<Content[]>([]);
-
-  const refresh = useCallback(async () => {
-    try {
+  const { data, refetch, isLoading, isError } = useQuery({
+    queryKey: ["content"],
+    queryFn: async () => {
       const response = await axios.get(`${BACKEND_URL}/api/v1/content`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setContents(response.data.content || []);
-    } catch (error) {
-      console.error("Error fetching content:", error);
-    }
-  }, []);
+      return response.data.content as Content[];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
-  // INITIAL LOAD
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-
-  return { contents, refresh, setContents };
+  return { 
+    contents: data || [], 
+    refresh: refetch, 
+    isLoading, 
+    isError 
+  };
 }

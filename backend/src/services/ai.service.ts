@@ -25,73 +25,73 @@ export interface AiClassification {
 /**
  * AI Classification Service
  * Handles metadata extraction and content categorization.
- * Optimized with caching and background processing.
+ * Supports 'quick' (latency-optimized) and 'deep' (insight-optimized) modes.
  */
-export const getAiClassification = async (url: string) => {
+export const getAiClassification = async (url: string, mode: "quick" | "deep" = "deep") => {
   if (!groq) {
     console.warn("[AI][GROQ] API key not configured. Using fallback.");
     return { title: "New Content", description: "", type: "post" as const, tags: ["untagged"], topics: [] };
   }
 
   try {
-    // CACHE CHECK: If this URL has been analyzed before by ANY user, reuse the summary
-    const existing = await ContentModel.findOne({ 
-      link: url, 
-      aiStatus: 'completed' 
-    }).sort({ createdAt: -1 });
+    // 1. CACHE CHECK (Strictly for completed deep analysis)
+    if (mode === "deep") {
+      const existing = await ContentModel.findOne({ 
+        link: url, 
+        aiStatus: 'completed' 
+      }).sort({ createdAt: -1 });
 
-    if (existing && existing.description) {
-      console.log(`[AI_CACHE_HIT]: ${url}`);
-      return {
-        title: existing.title,
-        description: existing.description,
-        tags: existing.tags,
-        topics: existing.topics,
-        type: existing.type
-      };
+      if (existing && existing.description) {
+        console.log(`[AI_CACHE_HIT]: ${url}`);
+        return {
+          title: existing.title,
+          description: existing.description,
+          tags: existing.tags,
+          topics: existing.topics,
+          type: existing.type
+        };
+      }
     }
 
     const metadata = await urlMetadata(url);
-    
-    // Specialized Handling: YouTube
     const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
     
+    // 2. Select Prompt based on Mode
+    const systemPrompt = mode === "quick" 
+      ? `You are a lightweight metadata agent. Extract a 1-line summary and 3 tags. 
+         Respond ONLY with a JSON object: { "title": string, "description": string, "tags": string[] }`
+      : `You are a high-performance knowledge engine for a "Second Brain" app.
+         Synthesize the provided content into a deep, semantic insight.
+         Guidelines:
+         - "title": Concise, editorial title.
+         - "description": High-quality synthesis. ${isYouTube ? "Focus on core takeaways from the video context." : "Summarize the key value proposition."}
+         - "type": "video", "post", or "document".
+         - "tags": 3-5 specific keywords.
+         - "topics": 2-3 broad knowledge domains.
+         Respond ONLY with a valid JSON object.`;
+
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: mode === "quick" ? "llama-3-8b-8192" : "llama-3.3-70b-versatile",
       messages: [
-        {
-          role: "system",
-          content: `You are a high-performance knowledge engine for a "Second Brain" app.
-          Analyze the provided metadata and return a JSON object.
-          
-          Guidelines:
-          - "title": Concise, editorial title.
-          - "description": High-quality synthesis. ${isYouTube ? "Focus on core educational takeaways or the central argument of the video." : "Summarize the key value proposition."}
-          - "type": "video", "post", or "document".
-          - "tags": 3-5 specific keywords.
-          - "topics": 2-3 broad knowledge domains.
-          
-          Respond ONLY with a valid JSON object.`,
-        },
-        {
-          role: "user",
-          content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}`,
-        },
+        { role: "system", content: systemPrompt },
+        { role: "user", content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}` },
       ],
       response_format: { type: "json_object" },
+      temperature: mode === "quick" ? 0.3 : 0.7, // Lower temperature for faster, more predictable quick mode
     });
 
     const result = JSON.parse(response.choices?.[0]?.message?.content || "{}");
+    
     return {
       title: result.title || metadata.title || "Untitled",
       description: result.description || metadata.description || "",
-      tags: result.tags || [],
+      tags: result.tags || (mode === "quick" ? ["web"] : []),
       topics: result.topics || [],
-      type: result.type || "post"
+      type: result.type || (isYouTube ? "video" : "post")
     };
+
   } catch (error: any) {
-    console.error(`[AI_SERVICE_ERROR]: ${error.message}`);
-    // Fallback to basic metadata
+    console.error(`[AI_SERVICE_ERROR][${mode.toUpperCase()}]: ${error.message}`);
     return {
       title: "Web Content",
       description: "Synthesis in progress...",

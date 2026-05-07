@@ -1016,3 +1016,63 @@ Delete result: { acknowledged: true, deletedCount: 1 }
     url: 'https://x.com/IndianTechGuide/status/2052267260631187799?s=20'
   }
 }
+Delete request received
+contentId: 69fc94ff7123904bf5c0f7c0
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc966c7123904bf5c0f883
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+[AI_ROUTE_HIT]: POST /tag {
+  body: { url: 'https://x.com/1no_aalsi_/status/2052335523755421985?s=20' }
+}
+[2J[3J[H7:22:56 PM - File change detected. Starting incremental compilation...
+
+
+7:22:57 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:34398) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:34405) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:34412) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:23:06 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(78,52): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/controllers/ai.controller.ts(91,56): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+7:23:07 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:34429) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:34436) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:34442) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:34443) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:34449) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:34452) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

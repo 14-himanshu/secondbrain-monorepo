@@ -74,25 +74,27 @@ export const aiReprocessController = async (req: Request, res: Response) => {
       return res.status(404).json({ success: false, message: "Content not found or unauthorized." });
     }
 
-    // Set to pending/queued immediately for UI feedback
+    // STEP 1: Quick Mode Sync Analysis (Instant Feedback)
+    const quickInsight = await getAiClassification(content.link, "quick");
+    
+    // Update DB with quick results immediately
     await ContentModel.updateOne({ _id: contentId }, { 
-      embeddingStatus: "pending",
-      aiStatus: "queued" 
+      title: quickInsight.title || content.title,
+      description: quickInsight.description,
+      tags: quickInsight.tags,
+      aiStatus: "processing" 
     });
 
-    // Fire and forget background processing
+    // STEP 2: Offload Deep Analysis to Background
     (async () => {
        try {
-         if (!content.link) throw new Error("Content link is missing.");
-         
-         await ContentModel.updateOne({ _id: contentId }, { aiStatus: "processing" });
-         const classification = await getAiClassification(content.link);
+         const deepInsight = await getAiClassification(content.link, "deep");
          
          await ContentModel.updateOne({ _id: contentId }, {
-            tags: classification.tags,
-            topics: classification.topics,
-            description: classification.description,
-            title: classification.title || content.title,
+            tags: deepInsight.tags,
+            topics: deepInsight.topics,
+            description: deepInsight.description,
+            title: deepInsight.title || quickInsight.title || content.title,
             aiStatus: "summarized"
          });
          
@@ -111,7 +113,8 @@ export const aiReprocessController = async (req: Request, res: Response) => {
 
     res.json({
       success: true,
-      message: "Analysis started. Insights will be ready shortly."
+      message: "Initial synthesis complete. Deep analysis running in background.",
+      data: quickInsight
     });
 
   } catch (error: any) {

@@ -5,11 +5,14 @@ import { ShareModal } from "../components/ShareModal";
 import { PlusIcon } from "../icons/PlusIcon";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
+import { useContentMutations } from "../hooks/useContentMutations";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { AIInsightsPanel } from "../components/AIInsightsPanel";
+import { useQueryClient } from "@tanstack/react-query";
+import type { Content } from "../hooks/useContent";
 
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
@@ -36,7 +39,9 @@ export function Dashboard() {
     return saved !== null ? JSON.parse(saved) : true;
   });
 
-  const { contents, refresh, setContents } = useContent();
+  const { contents, refresh } = useContent();
+  const { deleteContent, editContent } = useContentMutations();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const prevModalOpen = useRef(false);
 
@@ -151,10 +156,11 @@ export function Dashboard() {
   abortControllerRef.current = new AbortController();
   setIsSlowAnalysis(false);
 
-  // 1. Optimistic UI: Update state immediately
-  setContents(prev => prev.map(c => 
-    c._id === contentId ? { ...c, aiStatus: "queued" } : c
-  ));
+  // 1. Optimistic UI Update using Query Cache
+  await queryClient.cancelQueries({ queryKey: ["content"] });
+  queryClient.setQueryData<Content[]>(["content"], (old) => 
+    old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "queued" } : c) : []
+  );
   
   // 2. Open panel instantly
   setSelectedContentId(contentId);
@@ -173,21 +179,35 @@ export function Dashboard() {
         signal: abortControllerRef.current.signal
       }
     );
+    
+    // Quick Mode Hydration: If the API returned quick data, update cache instantly
+    if (response.data.data) {
+      const quick = response.data.data;
+      queryClient.setQueryData<Content[]>(["content"], (old) => 
+        old ? old.map(c => c._id === contentId ? { 
+          ...c, 
+          title: quick.title || c.title,
+          description: quick.description,
+          tags: quick.tags,
+          aiStatus: "processing" 
+        } : c) : []
+      );
+    }
+    
     console.log("Insight generation started", response.data.message);
   } catch (error: any) {
-    if (axios.isCancel(error)) {
-       console.log("[AI][REQUEST_CANCELLED]");
-       return;
-    }
+    if (axios.isCancel(error)) return;
+    
     const diagnostic = "Failed to start insight generation";
     console.error(`[INSIGHT_START_ERROR]`, error);
     
     // Revert status on failure
-    setContents(prev => prev.map(c => 
-      c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c
-    ));
+    queryClient.setQueryData<Content[]>(["content"], (old) => 
+      old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c) : []
+    );
   } finally {
     clearTimeout(slowTimer);
+    queryClient.invalidateQueries({ queryKey: ["content"] });
   }
 }
 
@@ -375,34 +395,8 @@ export function Dashboard() {
                   setSelectedContentId(prev => prev === _id ? null : _id);
                   setIsAiPanelOpen(true);
                 }}
-                onEdit={async (newTitle) => {
-                  setContents(contents.map(c => c._id === _id ? { ...c, title: newTitle } : c));
-                  try {
-                    await axios.put(
-                      `${BACKEND_URL}/api/v1/content`,
-                      { contentId: _id, title: newTitle },
-                      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-                    );
-                  } catch (error: any) {
-                    alert(`Failed to update content`);
-                    await refresh();
-                  }
-                }}
-                onDelete={async () => {
-                  setContents(contents.filter((item) => item._id !== _id));
-                  try {
-                    await axios.delete(
-                      `${BACKEND_URL}/api/v1/content`,
-                      {
-                        data: { contentId: _id },
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                      }
-                    );
-                  } catch (error: any) {
-                    alert(`Failed to delete content`);
-                    await refresh();
-                  }
-                }}
+                onEdit={(newTitle) => editContent({ contentId: _id, title: newTitle })}
+                onDelete={() => deleteContent(_id)}
               />
             ))}
           </div>

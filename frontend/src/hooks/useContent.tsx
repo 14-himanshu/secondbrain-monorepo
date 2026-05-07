@@ -44,19 +44,6 @@ export function useContent() {
     refresh();
   }, [refresh]);
 
-  // SMART POLLING: If any content is in a transient state, poll every 3 seconds
-  useEffect(() => {
-    const hasActiveJob = contents.some(c => 
-      c.aiStatus === "queued" || c.aiStatus === "processing" || c.aiStatus === "summarized"
-    );
-
-    if (hasActiveJob) {
-      const interval = setInterval(() => {
-        refresh();
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [contents, refresh]);
 
   return { contents, refresh, setContents };
 }

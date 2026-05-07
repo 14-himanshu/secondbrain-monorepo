@@ -105,7 +105,45 @@ export function AIInsightsPanel({
               <span className="text-[10px] font-bold uppercase tracking-widest">Back to Brain</span>
             </button>
 
-            {aiStatus === "queued" || aiStatus === "processing" || aiStatus === "summarized" ? (
+            {(!aiStatus) ? (
+              /* IDLE STATE: On-Demand CTA */
+              <div className="space-y-6 py-4">
+                <div className="p-6 bg-purple-50/10 border border-dashed border-purple-200/50 rounded-2xl flex flex-col items-center text-center">
+                  <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-5 rotate-3 shadow-sm">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                  </div>
+                  <h3 className="text-[14px] font-bold text-gray-900 mb-2 tracking-tight">Ready for Synthesis</h3>
+                  <p className="text-[11.5px] text-gray-500 font-medium leading-relaxed mb-6 px-4">
+                    Trigger our Neural Engine to extract semantic patterns and summarize this note.
+                  </p>
+                  <button 
+                    onClick={() => selectedContent?._id && onRetry?.(selectedContent._id)}
+                    className="w-full py-3 bg-purple-600 text-white text-[11px] font-bold rounded-xl hover:bg-purple-700 transition-all shadow-md shadow-purple-200 uppercase tracking-widest"
+                  >
+                    Generate Insight
+                  </button>
+                </div>
+                
+                {/* Instant Metadata Preview */}
+                {selectedContent?.aiMetadata && (
+                   <section className="px-1">
+                      <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Quick Preview</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                         <div className="p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                            <div className="text-[9px] font-bold text-gray-400 uppercase mb-1">Source</div>
+                            <div className="text-[11px] font-bold text-gray-900">{selectedContent.aiMetadata.domain}</div>
+                         </div>
+                         <div className="p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                            <div className="text-[9px] font-bold text-gray-400 uppercase mb-1">Type</div>
+                            <div className="text-[11px] font-bold text-gray-900 capitalize">{selectedContent.aiMetadata.contentType}</div>
+                         </div>
+                      </div>
+                   </section>
+                )}
+              </div>
+            ) : aiStatus === "queued" || aiStatus === "processing" || aiStatus === "summarized" ? (
               /* PROGRESSIVE LOADING: Staged Feedback */
               <div className="space-y-7">
                 <div className="px-4 py-4 bg-purple-50/20 rounded-2xl border border-purple-100/20">

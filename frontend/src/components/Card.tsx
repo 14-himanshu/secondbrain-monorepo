@@ -169,8 +169,11 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
             ) : (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}
-                className="px-2 py-1 text-gray-400 text-[10px] font-bold hover:text-purple-600 transition-all uppercase tracking-widest opacity-0 group-hover:opacity-100"
+                className="px-2.5 py-1.5 rounded-lg bg-purple-50/50 text-purple-600 text-[10px] font-bold hover:bg-purple-600 hover:text-white transition-all uppercase tracking-widest flex items-center gap-1.5 group/ai"
               >
+                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                </svg>
                 Analyze
               </button>
             )}

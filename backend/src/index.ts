@@ -128,7 +128,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     domain = "web";
   }
 
-  // Create content record instantly
+  // Create content record instantly (NO automatic background processing)
   const content = await ContentModel.create({
     title: title || "New Note",
     link,
@@ -136,7 +136,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     tags: tags || [],
     userId: req.userId,
     embeddingStatus: "pending",
-    aiStatus: "queued",
+    aiStatus: undefined, // Will be triggered on-demand by user
     aiMetadata: {
       domain,
       source: domain,
@@ -144,42 +144,9 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     }
   });
 
-  // STEP 2: Background Processing (Non-blocking)
-  const processInBackground = async () => {
-    try {
-      await ContentModel.updateOne({ _id: content._id }, { aiStatus: "processing" });
-      
-      // Attempt to classify (includes caching logic in service)
-      const classification = await getAiClassification(link);
-      
-      await ContentModel.updateOne({ _id: content._id }, {
-        tags: [...new Set([...(tags || []), ...classification.tags])],
-        topics: classification.topics,
-        description: classification.description,
-        title: title || classification.title,
-        type: type || classification.type,
-        aiStatus: "summarized"
-      });
-
-      // Finally, generate embedding
-      await processContentEmbedding((content._id as any).toString());
-      
-      await ContentModel.updateOne({ _id: content._id }, { aiStatus: "completed" });
-    } catch (error: any) {
-      console.error(`[BACKGROUND_PIPELINE_ERROR]: ${content._id}`, error);
-      await ContentModel.updateOne({ _id: content._id }, { 
-        aiStatus: "failed", 
-        aiError: error.message 
-      });
-    }
-  };
-
-  // Fire and forget
-  processInBackground();
-
   res.json({ 
     success: true,
-    message: "Content added. Analysis running in background.", 
+    message: "Content added. Click 'Generate Insight' to analyze.", 
     contentId: content._id 
   });
 });

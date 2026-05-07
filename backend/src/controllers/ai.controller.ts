@@ -74,25 +74,38 @@ export const aiReprocessController = async (req: Request, res: Response) => {
       return res.status(404).json({ success: false, message: "Content not found or unauthorized." });
     }
 
-    // Set to pending immediately for UI feedback
-    content.embeddingStatus = "pending";
-    await content.save();
+    // Set to pending/queued immediately for UI feedback
+    await ContentModel.updateOne({ _id: contentId }, { 
+      embeddingStatus: "pending",
+      aiStatus: "queued" 
+    });
 
     // Fire and forget background processing
     (async () => {
        try {
          if (!content.link) throw new Error("Content link is missing.");
+         
+         await ContentModel.updateOne({ _id: contentId }, { aiStatus: "processing" });
          const classification = await getAiClassification(content.link);
+         
          await ContentModel.updateOne({ _id: contentId }, {
             tags: classification.tags,
             topics: classification.topics,
             description: classification.description,
-            title: classification.title || content.title
+            title: classification.title || content.title,
+            aiStatus: "summarized"
          });
+         
          await processContentEmbedding(contentId);
-       } catch (err) {
+         
+         await ContentModel.updateOne({ _id: contentId }, { aiStatus: "completed" });
+       } catch (err: any) {
          console.error(`[BACKGROUND_REPROCESS_FAILED]: ${contentId}`, err);
-         await ContentModel.updateOne({ _id: contentId }, { embeddingStatus: "failed" });
+         await ContentModel.updateOne({ _id: contentId }, { 
+           embeddingStatus: "failed",
+           aiStatus: "failed",
+           aiError: err.message
+         });
        }
     })();
 

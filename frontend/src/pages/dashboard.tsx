@@ -10,7 +10,6 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { AIInsightsPanel } from "../components/AIInsightsPanel";
-import { aiService } from "../services/ai.service";
 
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
@@ -41,6 +40,8 @@ export function Dashboard() {
   const navigate = useNavigate();
   const prevModalOpen = useRef(false);
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   // Keyboard Shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -58,6 +59,30 @@ export function Dashboard() {
   useEffect(() => {
     localStorage.setItem(AI_PANEL_STORAGE_KEY, JSON.stringify(isAiPanelOpen));
   }, [isAiPanelOpen]);
+
+  // Handle sidebar closure / selection change (Abort current request)
+  useEffect(() => {
+    if (!isAiPanelOpen || !selectedContentId) {
+       if (abortControllerRef.current) {
+          console.log("[AI][ABORT] Sidebar closed or selection cleared.");
+          abortControllerRef.current.abort();
+          abortControllerRef.current = null;
+       }
+    }
+  }, [isAiPanelOpen, selectedContentId]);
+
+  // ON-DEMAND POLLING: Only poll for the SELECTED content if it's processing
+  useEffect(() => {
+    const selected = contents.find(c => c._id === selectedContentId);
+    const isProcessing = selected?.aiStatus && ["queued", "processing", "summarized"].includes(selected.aiStatus);
+
+    if (isProcessing) {
+      const interval = setInterval(() => {
+        refresh();
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [selectedContentId, contents, refresh]);
 
   // Refresh only when modal transitions from open → closed
   useEffect(() => {
@@ -116,13 +141,16 @@ export function Dashboard() {
   }
 
   /**
-   * Manual Insight Generation
-   * Triggers the background re-processing and provides immediate UI feedback.
+   * Manual Insight Generation (On-Demand)
    */
   async function handleGenerateInsight(contentId: string) {
+  // Cancel previous if any
+  if (abortControllerRef.current) abortControllerRef.current.abort();
+  abortControllerRef.current = new AbortController();
+
   // 1. Optimistic UI: Update state immediately
   setContents(prev => prev.map(c => 
-    c._id === contentId ? { ...c, embeddingStatus: "pending" } : c
+    c._id === contentId ? { ...c, aiStatus: "queued" } : c
   ));
   
   // 2. Open panel instantly
@@ -130,15 +158,25 @@ export function Dashboard() {
   setIsAiPanelOpen(true);
 
   try {
-    const response = await aiService.reprocessNote(contentId);
+    const response = await axios.post(`${BACKEND_URL}/api/v1/ai/reprocess`, 
+      { contentId },
+      { 
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        signal: abortControllerRef.current.signal
+      }
+    );
     console.log("Insight generation started", response.data.message);
   } catch (error: any) {
-    const diagnostic = error.diagnostic || "Failed to start insight generation";
-    console.error(`[INSIGHT_START_ERROR]: ${diagnostic}`, error.response?.data || error.message);
+    if (axios.isCancel(error)) {
+       console.log("[AI][REQUEST_CANCELLED]");
+       return;
+    }
+    const diagnostic = "Failed to start insight generation";
+    console.error(`[INSIGHT_START_ERROR]`, error);
     
-    // Revert status on failure and attach diagnostic
+    // Revert status on failure
     setContents(prev => prev.map(c => 
-      c._id === contentId ? { ...c, embeddingStatus: "failed", aiError: diagnostic } : c
+      c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c
     ));
   }
 }

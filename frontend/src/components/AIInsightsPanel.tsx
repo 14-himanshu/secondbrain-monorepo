@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Content } from "../hooks/useContent";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 interface AIInsightsPanelProps {
   isOpen: boolean;
@@ -22,17 +24,53 @@ export function AIInsightsPanel({
   onRetry,
   isSlowAnalysis
 }: AIInsightsPanelProps) {
-  const [activeTab, setActiveTab] = useState<"brain" | "note">(selectedContent ? "note" : "brain");
+  const [activeTab, setActiveTab] = useState<"brain" | "note" | "chat">("brain");
+  const [chatQuery, setChatQuery] = useState("");
+  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
+  const [isTyping, setIsTyping] = useState(false);
+
   const aiStatus = selectedContent?.aiStatus;
   const isFailed = aiStatus === "failed";
 
   useEffect(() => {
     if (selectedContent) {
       setActiveTab("note");
-    } else {
+    } else if (activeTab !== "chat") {
       setActiveTab("brain");
     }
   }, [selectedContent]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatQuery.trim() || isTyping) return;
+
+    const userQuery = chatQuery;
+    setChatQuery("");
+    setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
+    setIsTyping(true);
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/v1/ai/chat`, 
+        { query: userQuery },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+
+      if (response.data.success) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: response.data.answer,
+          sources: response.data.sources 
+        }]);
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: "I'm sorry, I encountered an error while searching your brain." 
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
 
   return (
     <div
@@ -43,9 +81,34 @@ export function AIInsightsPanel({
       {/* Header: Quiet & Contextual */}
       <div className="p-4 px-5 border-b border-gray-50 flex items-center justify-between">
         <div className="flex flex-col">
-          <h2 className="text-[13px] font-bold text-gray-900 tracking-tight">AI Insights</h2>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setActiveTab("brain")}
+              className={`text-[13px] font-bold tracking-tight transition-colors ${activeTab === 'brain' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              Brain
+            </button>
+            <span className="text-gray-200 text-[10px]">•</span>
+            <button 
+              onClick={() => setActiveTab("chat")}
+              className={`text-[13px] font-bold tracking-tight transition-colors ${activeTab === 'chat' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+            >
+              Chat
+            </button>
+            {selectedContent && (
+              <>
+                <span className="text-gray-200 text-[10px]">•</span>
+                <button 
+                  onClick={() => setActiveTab("note")}
+                  className={`text-[13px] font-bold tracking-tight transition-colors ${activeTab === 'note' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                >
+                  Note
+                </button>
+              </>
+            )}
+          </div>
           <span className="text-[9px] font-bold text-purple-400 uppercase tracking-[0.15em] mt-0.5">
-            {activeTab === "brain" ? "Neural Overview" : "Note Synthesis"}
+            {activeTab === "brain" ? "Neural Overview" : activeTab === "chat" ? "Contextual Chat" : "Note Synthesis"}
           </span>
         </div>
         <button
@@ -58,9 +121,9 @@ export function AIInsightsPanel({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
         {activeTab === "brain" ? (
-          /* Global Brain Insights: High Density Pattern Recognition */
+          /* Global Brain Insights */
           <div className="p-5 space-y-7">
              <section>
               <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3 ml-1">Distribution</h3>
@@ -94,8 +157,88 @@ export function AIInsightsPanel({
               </div>
             </section>
           </div>
+        ) : activeTab === "chat" ? (
+          /* CONTEXTUAL CHAT INTERFACE */
+          <div className="flex-1 flex flex-col min-h-0 bg-gray-50/30">
+            {/* Message List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar">
+              {messages.length === 0 && (
+                <div className="h-full flex flex-col items-center justify-center text-center px-6">
+                  <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-4 rotate-3">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-[13px] font-bold text-gray-900 mb-1">Chat with your Brain</h3>
+                  <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
+                    Ask questions about your saved notes, videos, and links. I'll search your brain for answers.
+                  </p>
+                </div>
+              )}
+              
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                  <div className={`max-w-[90%] p-3.5 rounded-2xl text-[12.5px] font-medium leading-relaxed shadow-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-purple-600 text-white' 
+                      : 'bg-white border border-gray-100 text-gray-800'
+                  }`}>
+                    {msg.content}
+                  </div>
+                  {msg.sources && msg.sources.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-1.5 w-full">
+                       <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest ml-1">Sources</span>
+                       <div className="flex flex-wrap gap-1.5">
+                          {msg.sources.map((s, idx) => (
+                            <a 
+                              key={idx} 
+                              href={s.link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="px-2 py-1 bg-white border border-gray-100 rounded-lg text-[10px] font-bold text-purple-600 hover:border-purple-200 transition-all shadow-xs"
+                            >
+                              [{idx + 1}] {s.title.substring(0, 20)}...
+                            </a>
+                          ))}
+                       </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+              
+              {isTyping && (
+                <div className="flex items-center gap-1.5 px-1">
+                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce"></div>
+                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                   <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                </div>
+              )}
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 border-t border-gray-50 bg-white">
+              <form onSubmit={handleSendMessage} className="relative">
+                <input 
+                  type="text"
+                  value={chatQuery}
+                  onChange={(e) => setChatQuery(e.target.value)}
+                  placeholder="Ask your brain..."
+                  className="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-100 rounded-xl text-[12px] font-medium focus:outline-none focus:ring-2 focus:ring-purple-600/10 focus:border-purple-600 transition-all"
+                />
+                <button 
+                  type="submit"
+                  disabled={!chatQuery.trim() || isTyping}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-30 transition-all shadow-md shadow-purple-100"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
         ) : (
-          /* Focused Note Analysis: Editorial Deep Dive */
+          /* Focused Note Analysis */
           <div className="p-5 space-y-7">
             <button 
               onClick={onClearSelection}

@@ -209,3 +209,42 @@ export const processContentEmbedding = async (contentId: string) => {
     currentlyProcessing.delete(contentId);
   }
 };
+
+/**
+ * RAG Chat Engine
+ * Generates answers strictly grounded in the user's provided context.
+ */
+export const generateAiChatAnswer = async (query: string, context: any[]) => {
+  if (!groq) throw new Error("AI service not configured.");
+
+  const contextBlob = context.map((c, i) => 
+    `[Source ${i+1}]: Title: ${c.title} | Link: ${c.link} | Summary: ${c.description || "N/A"}`
+  ).join("\n\n");
+
+  const response = await groq.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      {
+        role: "system",
+        content: `You are the "Second Brain Assistant". Your goal is to answer the user's question using ONLY the provided knowledge sources.
+        
+        Strict Guidelines:
+        1. If the answer is not contained within the sources, politely state that you don't have that information in your brain yet.
+        2. DO NOT use outside knowledge or hallucinate facts.
+        3. Keep the tone intelligent, helpful, and concise.
+        4. When referencing a source, use the format [1], [2], etc.
+        5. Use markdown for better readability.
+        
+        Knowledge Sources:
+        ${contextBlob}`
+      },
+      {
+        role: "user",
+        content: query
+      }
+    ],
+    temperature: 0.2, // Low temperature for high factual accuracy
+  });
+
+  return response.choices?.[0]?.message?.content || "I couldn't synthesize an answer from your current notes.";
+};

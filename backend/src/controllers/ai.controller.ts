@@ -1,7 +1,69 @@
 import type { Request, Response } from "express";
-import { getAiClassification, processContentEmbedding } from "../services/ai.service.js";
+import { getAiClassification, processContentEmbedding, generateAiChatAnswer, createEmbedding } from "../services/ai.service.js";
+import { cosineSimilarity } from "../utils.js";
 import { ContentModel } from "../db.js";
 import { z } from "zod";
+
+// ... existing code ...
+
+/**
+ * AI Chat Controller (RAG)
+ * Handles conversational queries over the user's Second Brain.
+ */
+export const aiChatController = async (req: Request, res: Response) => {
+  try {
+    const { query } = req.body;
+    const userId = req.userId;
+
+    if (!query) {
+      return res.status(400).json({ success: false, message: "Query is required." });
+    }
+
+    // 1. Generate Query Embedding
+    const queryEmbedding = await createEmbedding(query, true);
+
+    // 2. Retrieve Relevant Context (Top 5 for Chat)
+    const contents = await ContentModel.find({
+      userId,
+      embeddingStatus: "completed"
+    }).select("+embedding");
+
+    const topContext = contents
+      .map((c) => ({
+        content: c,
+        similarity: cosineSimilarity(queryEmbedding, c.embedding || [])
+      }))
+      .filter(item => item.similarity > 0.3)
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 5)
+      .map(item => item.content);
+
+    if (topContext.length === 0) {
+      return res.json({
+        success: true,
+        answer: "I couldn't find any relevant notes in your brain to answer this. Try adding more content or refining your query.",
+        sources: []
+      });
+    }
+
+    // 3. Generate Answer using RAG
+    const answer = await generateAiChatAnswer(query, topContext);
+
+    res.json({
+      success: true,
+      answer,
+      sources: topContext.map(c => ({
+        title: c.title,
+        link: c.link,
+        type: c.type
+      }))
+    });
+
+  } catch (error: any) {
+    console.error(`[AI_CHAT_FAILURE]: ${error.message}`);
+    res.status(500).json({ success: false, message: "Failed to process chat request." });
+  }
+};
 
 const aiTagSchema = z.object({
   url: z.string().url("Invalid URL"),

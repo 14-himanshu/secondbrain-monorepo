@@ -449,7 +449,6 @@ export function Dashboard() {
         isOpen={isAiPanelOpen}
         onClose={() => setIsAiPanelOpen(false)}
         contentCount={contents.length}
-        contents={contents}
         selectedContent={contents.find(c => c._id === selectedContentId)}
         onClearSelection={() => setSelectedContentId(null)}
         onRetry={handleGenerateInsight}

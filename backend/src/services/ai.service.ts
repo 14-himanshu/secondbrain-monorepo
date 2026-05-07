@@ -260,38 +260,107 @@ export const generateAiChatAnswerStream = async (
   }
 };
 
+import { cosineSimilarity } from "../utils.js";
+
 /**
- * Brain Insights Engine
- * Analyzes the global state of the user's knowledge base to generate dashboard analytics.
+ * Brain Intelligence Engine (Production Grade)
+ * Implements deterministic analytics + semantic clustering + LLM synthesis.
  */
-export const generateBrainInsights = async (contentMetadata: any[]) => {
+
+interface Cluster {
+  name: string;
+  count: number;
+  sources: { title: string, id: string, link: string }[];
+}
+
+export const generateBrainIntelligence = async (userId: string, contents: any[]) => {
   if (!groq) throw new Error("AI service not configured.");
 
-  const summary = contentMetadata.map(c => 
-    `- [${c.type}] ${c.title} (Tags: ${c.tags?.join(", ") || "none"})`
-  ).join("\n");
+  // 1. DETERMINISTIC ANALYTICS (No LLM yet)
+  const totalCount = contents.length;
+  const typeDistribution = contents.reduce((acc, c) => {
+    acc[c.type] = (acc[c.type] || 0) + 1;
+    return acc;
+  }, {} as any);
 
-  const systemPrompt = `You are a "Second Brain Analytics" engine. 
-  Your task is to analyze the user's saved content and generate high-level insights.
+  // Temporal Analysis (Last 30 days)
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const recentContents = contents.filter(c => new Date(c.createdAt) > thirtyDaysAgo);
   
-  Format your response as a strict JSON object:
+  // 2. SEMANTIC CLUSTERING (Centroid-based)
+  // We'll group notes that are semantically close (> 0.75 similarity)
+  const clusters: Cluster[] = [];
+  const processedIds = new Set<string>();
+
+  for (const item of contents) {
+    if (processedIds.has(item._id.toString()) || !item.embedding) continue;
+
+    const similar = contents.filter(other => {
+      if (processedIds.has(other._id.toString()) || !other.embedding) return false;
+      return cosineSimilarity(item.embedding, other.embedding) > 0.78;
+    });
+
+    if (similar.length >= 2) {
+      similar.forEach(s => processedIds.add(s._id.toString()));
+      clusters.push({
+        name: item.title, // Initial name, LLM will refine this
+        count: similar.length,
+        sources: similar.slice(0, 4).map(s => ({ title: s.title, id: s._id, link: s.link }))
+      });
+    }
+  }
+
+  // 3. ENRICHED PROMPTING (LLM Synthesis)
+  const analyticsSummary = `
+  Overall Stats:
+  - Total Memories: ${totalCount}
+  - Recent (30d): ${recentContents.length}
+  - Distribution: ${JSON.stringify(typeDistribution)}
+
+  Semantic Clusters Found:
+  ${clusters.map((cl, i) => `Cluster ${i+1}: ${cl.count} notes. Examples: ${cl.sources.map(s => s.title).join(", ")}`).join("\n")}
+
+  Recent Focus:
+  ${recentContents.slice(0, 10).map(c => `- ${c.title} (${c.type})`).join("\n")}
+  `;
+
+  const systemPrompt = `You are a "Private Intelligence Architect" for a Second Brain.
+  Your goal is to provide deep, behavioral, and editorial insights about the user's learning patterns.
+  
+  CRITICAL: 
+  - DO NOT be generic. 
+  - Detect SHIFTS in focus (e.g. from frontend to backend).
+  - Identify emerging interests.
+  - Be specific. 
+  - Each insight must cite sources.
+  - Each insight must have a confidence level: Strong, Moderate, Emerging.
+
+  Return a strict JSON object:
   {
-    "topTopics": ["topic1", "topic2", ...],
-    "insights": ["insight 1 about patterns", "insight 2 about gaps", ...],
-    "suggestions": ["suggestion to learn X", "suggestion to organize Y", ...]
+    "summary": "Short editorial summary of the current brain state.",
+    "insights": [
+      {
+        "category": "Learning Trend" | "Emerging Interest" | "Knowledge Gap" | "Behavioral Pattern",
+        "title": "Short punchy title",
+        "description": "Deep behavioral insight reasoning.",
+        "confidence": "Strong" | "Moderate" | "Emerging",
+        "sources": [{ "title": "Note Title", "id": "ID", "link": "URL" }]
+      }
+    ]
   }
   
-  Content Summary:
-  ${summary}`;
+  Data Analytics:
+  ${analyticsSummary}`;
 
   const response = await groq.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: systemPrompt },
-      { role: "user", content: "Generate insights based on my saved content." }
+      { role: "user", content: "Analyze my brain patterns." }
     ],
     response_format: { type: "json_object" },
-    temperature: 0.3
+    temperature: 0.4
   });
 
   return JSON.parse(response.choices[0]?.message?.content || "{}");

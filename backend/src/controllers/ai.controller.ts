@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainIntelligence } from "../services/ai.service.js";
 import { cosineSimilarity } from "../utils.js";
-import { ContentModel } from "../db.js";
+import { ContentModel, BrainInsightModel } from "../db.js";
 import { z } from "zod";
 
 // ... existing code ...
@@ -209,33 +209,63 @@ export const aiReprocessController = async (req: Request, res: Response) => {
 };
 
 /**
- * AI Insights Controller
- * Provides high-level brain analytics for the dashboard.
+ * AI Insights Controller (Production Grade)
+ * Provides high-level brain analytics with temporal trends and semantic clustering.
  */
 export const aiInsightsController = async (req: Request, res: Response) => {
   try {
     const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
-    // 1. Fetch metadata for all user content
-    const contents = await ContentModel.find({ userId }).select("title type tags createdAt");
+    // 1. Check Cache (12 hours)
+    const cached = await BrainInsightModel.findOne({ userId });
+    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+    
+    if (cached && (Date.now() - new Date(cached.generatedAt).getTime() < TWELVE_HOURS)) {
+      console.log(`[INSIGHT_CACHE_HIT]: ${userId}`);
+      return res.json({ success: true, data: cached });
+    }
 
-    if (contents.length === 0) {
+    // 2. Fetch Data for Analysis
+    const contents = await ContentModel.find({ userId })
+      .select("+embedding title type tags createdAt link description")
+      .sort({ createdAt: -1 });
+
+    if (contents.length < 3) {
       return res.json({
         success: true,
         data: {
-          topTopics: [],
-          insights: ["Start adding content to see brain patterns."],
-          suggestions: ["Add your first link or video to get started."]
+          summary: "Your brain is in its early stages of growth.",
+          insights: [{
+            category: "Emerging Pattern",
+            title: "Knowledge Seedling",
+            description: "Continue adding content to unlock deep semantic patterns and behavioral trends.",
+            confidence: "Strong",
+            sources: []
+          }]
         }
       });
     }
 
-    // 2. Generate Insights
-    const insights = await generateBrainInsights(contents);
+    // 3. Generate Intelligence
+    const intelligence = await generateBrainIntelligence(userId.toString(), contents);
+
+    // 4. Persistence (Update Cache)
+    const updated = await BrainInsightModel.findOneAndUpdate(
+      { userId },
+      { 
+        ...intelligence,
+        generatedAt: new Date(),
+        contentVersion: contents.length 
+      },
+      { upsert: true, new: true }
+    );
 
     res.json({
       success: true,
-      data: insights
+      data: updated
     });
 
   } catch (error: any) {

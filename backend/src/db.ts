@@ -54,3 +54,19 @@ const LinkSchema = new Schema({
 export const LinkModel = model("Link", LinkSchema);
 
 export const ContentModel = model("Content",ContentSchema);
+
+const BrainInsightSchema = new Schema({
+    userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true, unique: true },
+    summary: String,
+    insights: [{
+        category: String,
+        title: String,
+        description: String,
+        confidence: String,
+        sources: [{ title: String, id: String, link: String }]
+    }],
+    generatedAt: { type: Date, default: Date.now },
+    contentVersion: Number // To track if we need to regenerate
+}, { timestamps: true });
+
+export const BrainInsightModel = model("BrainInsight", BrainInsightSchema);

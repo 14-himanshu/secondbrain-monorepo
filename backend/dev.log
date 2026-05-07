@@ -2131,3 +2131,326 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi ', history: [] } }
+[RAG_DEBUG][QUERY]: "hi "
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:111:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'how are you ', history: [ [Object], [Object] ] } }
+[RAG_DEBUG][QUERY]: "how are you "
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:111:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:19:32)
+[AI_CHAT_STREAM_FAILURE]: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+[2J[3J[H7:57:48 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(2,101): error TS2305: Module '"../services/ai.service.js"' has no exported member 'generateBrainInsights'.
+
+7:57:50 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H7:57:56 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+src/controllers/ai.controller.ts(2,101): error TS2305: Module '"../services/ai.service.js"' has no exported member 'generateBrainInsights'.
+
+7:57:58 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:1
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
+                                                                                                    ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../services/ai.service.js' does not provide an export named 'generateBrainInsights'
+    at ModuleJob._instantiate (node:internal/modules/esm/module_job:226:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:335:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H7:58:48 PM - File change detected. Starting incremental compilation...
+
+src/controllers/ai.controller.ts(250,58): error TS18048: 'userId' is possibly 'undefined'.
+
+7:58:49 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36872) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36880) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36881) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36884) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36891) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36892) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36899) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+Restarting 'dist/index.js'
+(node:36964) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36971) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:59:47 PM - File change detected. Starting incremental compilation...
+
+
+7:59:48 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36986) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37000) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37001) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37002) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37003) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:37004) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Running embedding cleanup cron job...
+Found 1 stuck items. Retrying...
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 1
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+Restarting 'dist/index.js'
+(node:37052) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:37053) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

@@ -6,7 +6,6 @@ interface AIInsightsPanelProps {
   isOpen: boolean;
   onClose: () => void;
   contentCount: number;
-  contents: Content[];
   selectedContent?: Content;
   onClearSelection?: () => void;
   onRetry?: (id: string) => void;
@@ -17,7 +16,6 @@ export function AIInsightsPanel({
   isOpen,
   onClose,
   contentCount,
-  contents,
   selectedContent,
   onClearSelection,
   onRetry,
@@ -32,12 +30,17 @@ export function AIInsightsPanel({
   const aiStatus = selectedContent?.aiStatus;
   const isFailed = aiStatus === "failed";
 
-  const [brainInsights, setBrainInsights] = useState<{
-    topTopics: string[],
-    insights: string[],
-    suggestions: string[]
+  const [brainIntelligence, setBrainIntelligence] = useState<{
+    summary: string;
+    insights: {
+      category: string;
+      title: string;
+      description: string;
+      confidence: "Strong" | "Moderate" | "Emerging";
+      sources: { title: string, id: string, link: string }[];
+    }[];
   } | null>(null);
-  const [isInsightsLoading, setIsInsightsLoading] = useState(false);
+  const [isIntelligenceLoading, setIsIntelligenceLoading] = useState(false);
 
   useEffect(() => {
     if (selectedContent) {
@@ -48,25 +51,25 @@ export function AIInsightsPanel({
   }, [selectedContent]);
 
   useEffect(() => {
-    if (activeTab === "brain" && !brainInsights && isOpen) {
-      fetchInsights();
+    if (activeTab === "brain" && !brainIntelligence && isOpen) {
+      fetchIntelligence();
     }
   }, [activeTab, isOpen]);
 
-  const fetchInsights = async () => {
-    setIsInsightsLoading(true);
+  const fetchIntelligence = async () => {
+    setIsIntelligenceLoading(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/v1/ai/insights`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       const data = await response.json();
       if (data.success) {
-        setBrainInsights(data.data);
+        setBrainIntelligence(data.data);
       }
     } catch (err) {
-      console.error("Failed to fetch insights", err);
+      console.error("Failed to fetch intelligence", err);
     } finally {
-      setIsInsightsLoading(false);
+      setIsIntelligenceLoading(false);
     }
   };
 
@@ -210,91 +213,102 @@ export function AIInsightsPanel({
 
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
         {activeTab === "brain" ? (
-          /* Global Brain Insights */
-          <div className="flex flex-col gap-6 p-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-             {/* Knowledge Capacity Card */}
-             <div className="p-5 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl text-white shadow-xl shadow-purple-200/50 relative overflow-hidden">
-                <div className="relative z-10">
-                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mb-1">Knowledge Capacity</div>
-                  <div className="text-3xl font-bold tracking-tight mb-4">{contentCount} <span className="text-lg opacity-60">Memories</span></div>
-                  <div className="flex gap-4">
-                     <div className="flex flex-col">
-                       <span className="text-[9px] font-bold uppercase opacity-60">Videos</span>
-                       <span className="text-lg font-bold">{contents.filter(c => c.type === 'video').length}</span>
-                     </div>
-                     <div className="w-px h-8 bg-white/20"></div>
-                     <div className="flex flex-col">
-                       <span className="text-[9px] font-bold uppercase opacity-60">Posts</span>
-                       <span className="text-lg font-bold">{contents.filter(c => c.type === 'post').length}</span>
-                     </div>
-                  </div>
-                </div>
-                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+          /* Global Brain Intelligence - Editorial View */
+          <div className="flex flex-col gap-7 p-5 animate-in fade-in slide-in-from-bottom-4 duration-700">
+             {/* Editorial Header */}
+             <div className="space-y-1.5 px-1">
+                <h2 className="text-[17px] font-bold text-gray-900 tracking-tight leading-tight">Intellectual Roadmap</h2>
+                <p className="text-[12px] text-gray-500 font-medium leading-relaxed">
+                  {isIntelligenceLoading ? "Synthesizing brain patterns..." : brainIntelligence?.summary || "Add more content to start detecting learning trends."}
+                </p>
              </div>
 
-             {isInsightsLoading ? (
-               <div className="flex flex-col gap-5">
-                  <div className="h-20 bg-gray-50 rounded-2xl animate-pulse"></div>
-                  <div className="h-40 bg-gray-50 rounded-2xl animate-pulse"></div>
-               </div>
-             ) : brainInsights ? (
+             {isIntelligenceLoading ? (
                <div className="flex flex-col gap-6">
-                 {/* Top Topics */}
-                 <div className="space-y-3">
-                    <div className="flex items-center justify-between px-1">
-                      <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Semantic Clusters</h3>
-                      <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Patterns Detected</span>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {brainInsights.topTopics.map((topic) => (
-                        <div key={topic} className="px-3 py-1.5 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-700 shadow-sm hover:border-purple-200 hover:text-purple-700 transition-all cursor-default">
-                          {topic}
+                  <div className="h-32 bg-gray-50 rounded-2xl animate-pulse"></div>
+                  <div className="h-32 bg-gray-50 rounded-2xl animate-pulse"></div>
+               </div>
+             ) : brainIntelligence ? (
+               <div className="flex flex-col gap-8">
+                 {/* Intelligence Insights List */}
+                 <div className="flex flex-col gap-6">
+                   {brainIntelligence.insights.map((insight, i) => (
+                     <div key={i} className="group flex flex-col gap-4 p-5 bg-white border border-gray-100 rounded-2xl hover:border-purple-200 hover:shadow-[0_15px_35px_-12px_rgba(147,51,234,0.08)] transition-all duration-500">
+                        <div className="flex items-center justify-between">
+                           <span className={`text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full border ${
+                             insight.category === 'Knowledge Gap' ? 'bg-amber-50 text-amber-600 border-amber-100' :
+                             insight.category === 'Learning Trend' ? 'bg-purple-50 text-purple-600 border-purple-100' :
+                             'bg-blue-50 text-blue-600 border-blue-100'
+                           }`}>
+                             {insight.category}
+                           </span>
+                           <div className="flex items-center gap-1">
+                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Confidence</span>
+                              <div className={`w-1.5 h-1.5 rounded-full ${
+                                insight.confidence === 'Strong' ? 'bg-green-400' :
+                                insight.confidence === 'Moderate' ? 'bg-amber-400' :
+                                'bg-purple-400'
+                              }`}></div>
+                           </div>
                         </div>
-                      ))}
+
+                        <div className="space-y-2">
+                           <h3 className="text-[14px] font-bold text-gray-900 group-hover:text-purple-700 transition-colors">{insight.title}</h3>
+                           <p className="text-[11.5px] text-gray-500 leading-relaxed font-medium">
+                             {insight.description}
+                           </p>
+                        </div>
+
+                        {insight.sources && insight.sources.length > 0 && (
+                          <div className="pt-3 border-t border-gray-50 flex flex-col gap-2">
+                             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Evidence Base</span>
+                             <div className="flex flex-wrap gap-1.5">
+                                {insight.sources.map((s, idx) => (
+                                  <a 
+                                    key={idx} 
+                                    href={s.link} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="px-2 py-1 bg-gray-50 hover:bg-white border border-transparent hover:border-purple-100 rounded-lg text-[9px] font-bold text-gray-500 hover:text-purple-600 transition-all truncate max-w-[120px]"
+                                  >
+                                    {s.title}
+                                  </a>
+                                ))}
+                             </div>
+                          </div>
+                        )}
+                     </div>
+                   ))}
+                 </div>
+
+                 {/* Capacity Summary */}
+                 <div className="p-5 bg-purple-600 rounded-2xl text-white shadow-xl shadow-purple-200/40 relative overflow-hidden group">
+                    <div className="relative z-10 flex items-center justify-between">
+                       <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase tracking-widest opacity-70">Knowledge Capacity</span>
+                          <span className="text-2xl font-bold">{contentCount} <span className="text-sm font-medium opacity-60">Memories</span></span>
+                       </div>
+                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm group-hover:scale-110 transition-transform duration-500">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                       </div>
                     </div>
-                 </div>
-
-                 {/* Trends & Insights */}
-                 <div className="space-y-3">
-                   <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Brain Patterns</h3>
-                   <div className="space-y-2">
-                     {brainInsights.insights.map((insight, i) => (
-                       <div key={i} className="group p-3.5 bg-gray-50/30 border border-transparent hover:border-purple-100 hover:bg-white rounded-xl transition-all duration-300 shadow-xs">
-                         <div className="flex gap-3">
-                           <div className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
-                           <p className="text-[12px] font-medium text-gray-700 leading-relaxed">{insight}</p>
-                         </div>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-
-                 {/* Suggestions */}
-                 <div className="p-4 bg-purple-50/30 border border-purple-100/30 rounded-2xl space-y-3">
-                   <h3 className="text-[9px] font-bold text-purple-600 uppercase tracking-widest flex items-center gap-2">
-                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                     </svg>
-                     Actionable Growth
-                   </h3>
-                   <div className="space-y-2">
-                     {brainInsights.suggestions.map((s, i) => (
-                       <div key={i} className="text-[11px] font-bold text-purple-900/80 bg-white/60 p-2.5 rounded-xl border border-purple-100/20 shadow-xs">
-                         {s}
-                       </div>
-                     ))}
-                   </div>
+                    {/* Abstract background element */}
+                    <div className="absolute -right-2 -bottom-2 w-20 h-20 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                  </div>
                </div>
              ) : (
-               <div className="py-12 flex flex-col items-center justify-center text-center px-4">
-                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-300 mb-4">
-                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+               <div className="py-20 flex flex-col items-center justify-center text-center px-4">
+                  <div className="w-16 h-16 bg-gray-50 rounded-3xl flex items-center justify-center text-gray-200 mb-6 rotate-3">
+                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                      </svg>
                   </div>
-                  <h3 className="text-[13px] font-bold text-gray-900 mb-1">Building Patterns...</h3>
-                  <p className="text-[11px] text-gray-400 leading-relaxed font-medium">Add more content to your brain to unlock deep semantic insights.</p>
+                  <h3 className="text-[15px] font-bold text-gray-900 mb-2 tracking-tight">Your brain is waking up</h3>
+                  <p className="text-[12px] text-gray-400 font-medium leading-relaxed">
+                    Once you save at least 3 knowledge items, I'll start synthesizing behavioral patterns and intellectual trends.
+                  </p>
                </div>
              )}
           </div>

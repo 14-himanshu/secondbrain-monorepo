@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import type { Content } from "../hooks/useContent";
 
 interface AIInsightsPanelProps {
   isOpen: boolean;
   onClose: () => void;
   contentCount: number;
-  contents: any[];
-  selectedContent?: any;
+  contents: Content[];
+  selectedContent?: Content;
   onClearSelection?: () => void;
   onRetry?: (id: string) => void;
 }
@@ -20,8 +21,8 @@ export function AIInsightsPanel({
   onRetry
 }: AIInsightsPanelProps) {
   const [activeTab, setActiveTab] = useState<"brain" | "note">(selectedContent ? "note" : "brain");
-  const isGenerating = selectedContent?.embeddingStatus === "pending";
-  const isFailed = selectedContent?.embeddingStatus === "failed";
+  const aiStatus = selectedContent?.aiStatus;
+  const isFailed = aiStatus === "failed";
 
   useEffect(() => {
     if (selectedContent) {
@@ -104,28 +105,60 @@ export function AIInsightsPanel({
               <span className="text-[10px] font-bold uppercase tracking-widest">Back to Brain</span>
             </button>
 
-            {isGenerating ? (
-              /* LOADING SKELETONS: Soft Shimmer */
+            {aiStatus === "queued" || aiStatus === "processing" || aiStatus === "summarized" ? (
+              /* PROGRESSIVE LOADING: Staged Feedback */
               <div className="space-y-7">
-                <div className="animate-pulse flex items-center gap-2 px-3 py-2 bg-purple-50/20 rounded-lg border border-purple-100/10">
-                  <div className="w-1.5 h-1.5 rounded-full bg-purple-300"></div>
-                  <span className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Synthesizing...</span>
+                <div className="px-4 py-4 bg-purple-50/20 rounded-2xl border border-purple-100/20">
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></div>
+                    <span className="text-[11px] font-bold text-purple-600 uppercase tracking-[0.1em]">Neural Engine Active</span>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-[10px] font-bold">
+                      <span className={aiStatus !== "queued" ? "text-purple-600" : "text-gray-300"}>
+                        {aiStatus !== "queued" ? "✓" : "⟳"} Parsing Content
+                      </span>
+                      <span className={(aiStatus === "summarized" || (aiStatus as string) === "completed") ? "text-purple-600" : "text-gray-300"}>
+                        {(aiStatus === "summarized" || (aiStatus as string) === "completed") ? "✓" : "⟳"} Metadata
+                      </span>
+                    </div>
+                    <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-purple-500 transition-all duration-1000 ease-out"
+                        style={{ width: aiStatus === "queued" ? "20%" : aiStatus === "processing" ? "60%" : "90%" }}
+                      ></div>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-medium italic">
+                      {aiStatus === "queued" ? "Initializing knowledge extraction..." : 
+                       aiStatus === "processing" ? "Analyzing semantic patterns..." : 
+                       "Finalizing neural connections..."}
+                    </p>
+                  </div>
                 </div>
 
-                <section>
-                  <h3 className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.1em] mb-3 ml-1">Summary</h3>
-                  <div className="space-y-2 opacity-30">
-                    <div className="h-2.5 bg-gray-100 rounded-full w-full"></div>
-                    <div className="h-2.5 bg-gray-100 rounded-full w-[90%]"></div>
-                    <div className="h-2.5 bg-gray-100 rounded-full w-[75%]"></div>
-                  </div>
-                </section>
+                {/* Instant Metadata: Show what we know immediately */}
+                {selectedContent?.aiMetadata && (
+                  <section className="p-4 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Instant Metadata</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-[10px] font-bold text-gray-400 uppercase mb-1">Source</div>
+                        <div className="text-[12px] font-bold text-gray-900">{selectedContent.aiMetadata.domain}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold text-gray-400 uppercase mb-1">Format</div>
+                        <div className="text-[12px] font-bold text-gray-900 capitalize">{selectedContent.aiMetadata.contentType}</div>
+                      </div>
+                    </div>
+                  </section>
+                )}
 
-                <section>
-                  <h3 className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.1em] mb-3 ml-1">Semantic Relevance</h3>
-                  <div className="space-y-3 opacity-30">
-                    <div className="h-14 bg-gray-50 rounded-xl w-full"></div>
-                    <div className="h-14 bg-gray-50 rounded-xl w-full"></div>
+                <section className="opacity-40 grayscale">
+                  <h3 className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.1em] mb-3 ml-1">Summary Preview</h3>
+                  <div className="space-y-2">
+                    <div className="h-2.5 bg-gray-100 rounded-full w-full animate-pulse"></div>
+                    <div className="h-2.5 bg-gray-100 rounded-full w-[90%] animate-pulse" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                 </section>
               </div>

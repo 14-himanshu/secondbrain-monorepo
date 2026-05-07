@@ -19,12 +19,24 @@ const ContentSchema = new Schema({
     topics: [String], // AI-extracted themes
     type: String,
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
-    embedding: { type: [Number], select: false }, // Don't return embeddings in normal queries
+    embedding: { type: [Number], select: false },
     embeddingStatus: { 
         type: String, 
         enum: ['pending', 'completed', 'failed'], 
         default: 'pending' 
-    }
+    },
+    aiStatus: {
+        type: String,
+        enum: ['queued', 'processing', 'summarized', 'completed', 'failed'],
+        default: 'queued'
+    },
+    aiMetadata: {
+        domain: String,
+        source: String,
+        contentType: String,
+        estimatedTopics: [String]
+    },
+    aiError: String
 }, { timestamps: true });
 
 

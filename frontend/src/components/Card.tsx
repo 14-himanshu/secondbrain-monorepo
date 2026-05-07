@@ -11,6 +11,13 @@ interface CardProps {
   link: string;
   type: "video" | "post" | "document" | string;
   status?: "pending" | "completed" | "failed" | null;
+  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed";
+  aiMetadata?: {
+    domain?: string;
+    source?: string;
+    contentType?: string;
+    estimatedTopics?: string[];
+  };
   onDelete?: () => void;
   onEdit?: (newTitle: string) => void;
   onSelect?: () => void;
@@ -19,7 +26,7 @@ interface CardProps {
   description?: string;
 }
 
-export function Card({ title, link, type, status = null, onDelete, onEdit, onSelect, onGenerateInsight, isSelected }: CardProps) {
+export function Card({ title, link, type, status = null, aiStatus, aiMetadata, onDelete, onEdit, onSelect, onGenerateInsight, isSelected }: CardProps) {
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -102,8 +109,8 @@ export function Card({ title, link, type, status = null, onDelete, onEdit, onSel
               }}
             />
             <div className="flex gap-2">
-              <button onClick={handleSave} className="text-[11px] font-bold text-purple-600 hover:text-purple-700 px-2 py-1 rounded-md bg-purple-50">Save</button>
-              <button onClick={handleCancel} className="text-[11px] font-bold text-gray-400 hover:text-gray-600">Cancel</button>
+              <button onClick={(e) => { e.stopPropagation(); handleSave(); }} className="text-[11px] font-bold text-purple-600 hover:text-purple-700 px-2 py-1 rounded-md bg-purple-50">Save</button>
+              <button onClick={(e) => { e.stopPropagation(); handleCancel(); }} className="text-[11px] font-bold text-gray-400 hover:text-gray-600">Cancel</button>
             </div>
           </div>
         ) : (
@@ -111,8 +118,11 @@ export function Card({ title, link, type, status = null, onDelete, onEdit, onSel
             <h3 className="text-[14.5px] font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-purple-700 transition-colors tracking-tight" title={title}>
               {title}
             </h3>
-            <p className="text-[11.5px] text-gray-400 font-bold uppercase tracking-tight opacity-70">
-              {source}
+            <p className="text-[11.5px] text-gray-400 font-bold uppercase tracking-tight opacity-70 flex items-center gap-1.5">
+              {aiMetadata?.domain || aiMetadata?.source || source}
+              {(aiStatus === "processing" || aiStatus === "queued") && (
+                <span className="inline-block w-1 h-1 rounded-full bg-purple-400 animate-pulse" />
+              )}
             </p>
           </div>
         )}
@@ -125,6 +135,7 @@ export function Card({ title, link, type, status = null, onDelete, onEdit, onSel
             href={link}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="px-2.5 py-1.5 rounded-lg bg-gray-50/50 hover:bg-gray-100 text-[11px] font-bold text-gray-500 hover:text-gray-900 transition-all flex items-center gap-1.5 group/cta"
           >
             {ctaLabel}
@@ -134,19 +145,21 @@ export function Card({ title, link, type, status = null, onDelete, onEdit, onSel
           </a>
 
           <div className="flex items-center">
-            {status === "pending" ? (
+            {aiStatus === "queued" || aiStatus === "processing" || aiStatus === "summarized" ? (
               <div className="flex items-center gap-1.5 px-2 py-1">
                 <div className="w-1 h-1 rounded-full bg-purple-400 animate-pulse" />
-                <span className="text-[10px] font-bold text-purple-400 uppercase tracking-widest">Analyzing</span>
+                <span className="text-[9px] font-bold text-purple-400 uppercase tracking-widest">
+                   {aiStatus === "queued" ? "In Queue" : aiStatus === "summarized" ? "Almost Ready" : "Processing"}
+                </span>
               </div>
-            ) : status === "completed" ? (
+            ) : aiStatus === "completed" || status === "completed" ? (
               <button 
                 onClick={(e) => { e.stopPropagation(); onSelect?.(); }}
                 className="px-2 py-1 rounded-lg bg-purple-50/30 text-purple-600/80 text-[10px] font-bold hover:bg-purple-50 hover:text-purple-700 transition-all uppercase tracking-widest"
               >
                 Insight
               </button>
-            ) : status === "failed" ? (
+            ) : aiStatus === "failed" || status === "failed" ? (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}
                 className="px-2 py-1 text-red-400 text-[10px] font-bold hover:text-red-600 transition-all uppercase tracking-widest"

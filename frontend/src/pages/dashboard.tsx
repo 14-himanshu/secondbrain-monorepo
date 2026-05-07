@@ -143,18 +143,6 @@ export function Dashboard() {
   }
 }
 
-  // Poll for updates if any content is pending
-  useEffect(() => {
-    const hasPending = contents.some(c => c.embeddingStatus === "pending");
-    if (!hasPending) return;
-
-    const interval = setInterval(() => {
-      refresh();
-    }, 5000); // Check every 5 seconds
-
-    return () => clearInterval(interval);
-  }, [contents, refresh]);
-
   let displayContents = contents;
   
   if (semanticResults !== null) {
@@ -323,13 +311,15 @@ export function Dashboard() {
             className="grid gap-6"
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
           >
-            {filteredContents.map(({ type, link, title, _id, embeddingStatus, description }) => (
+            {filteredContents.map(({ type, link, title, _id, embeddingStatus, aiStatus, aiMetadata, description }) => (
               <Card
                 key={_id}
                 title={title}
                 link={link}
                 type={type}
                 status={embeddingStatus}
+                aiStatus={aiStatus}
+                aiMetadata={aiMetadata}
                 description={description}
                 isSelected={selectedContentId === _id}
                 onGenerateInsight={() => handleGenerateInsight(_id)}

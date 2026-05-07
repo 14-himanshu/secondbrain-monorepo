@@ -23,35 +23,54 @@ export interface AiClassification {
 }
 
 /**
- * Uses Groq to classify content and extract metadata.
+ * AI Classification Service
+ * Handles metadata extraction and content categorization.
+ * Optimized with caching and background processing.
  */
-export const getAiClassification = async (url: string): Promise<AiClassification> => {
+export const getAiClassification = async (url: string) => {
   if (!groq) {
     console.warn("[AI][GROQ] API key not configured. Using fallback.");
-    return { title: "New Content", description: "", type: "post", tags: ["untagged"], topics: [] };
+    return { title: "New Content", description: "", type: "post" as const, tags: ["untagged"], topics: [] };
   }
 
   try {
-    const metadataResult = await urlMetadata(url);
-    const metadata = {
-      title: metadataResult.title || metadataResult["og:title"] || "",
-      description: metadataResult.description || metadataResult["og:description"] || "",
-    };
+    // CACHE CHECK: If this URL has been analyzed before by ANY user, reuse the summary
+    const existing = await ContentModel.findOne({ 
+      link: url, 
+      aiStatus: 'completed' 
+    }).sort({ createdAt: -1 });
 
+    if (existing && existing.description) {
+      console.log(`[AI_CACHE_HIT]: ${url}`);
+      return {
+        title: existing.title,
+        description: existing.description,
+        tags: existing.tags,
+        topics: existing.topics,
+        type: existing.type
+      };
+    }
+
+    const metadata = await urlMetadata(url);
+    
+    // Specialized Handling: YouTube
+    const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
+    
     const response = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
         {
           role: "system",
-          content: `You are a helpful assistant that classifies web content for a "Second Brain" application.
-          Analyze the metadata provided and return a JSON object with:
-          - "title": a concise title for the content
-          - "description": a brief, high-quality summary. For VIDEOS, focus on the primary takeaway or educational value.
-          - "type": one of ["post", "video", "document"]
-          - "tags": an array of 3-5 specific short tags
-          - "topics": an array of 2-3 broader themes or categories
+          content: `You are a high-performance knowledge engine for a "Second Brain" app.
+          Analyze the provided metadata and return a JSON object.
           
-          If the URL or metadata indicates a video (e.g., YouTube), ensure the description feels like a synthesis of a lecture or presentation.
+          Guidelines:
+          - "title": Concise, editorial title.
+          - "description": High-quality synthesis. ${isYouTube ? "Focus on core educational takeaways or the central argument of the video." : "Summarize the key value proposition."}
+          - "type": "video", "post", or "document".
+          - "tags": 3-5 specific keywords.
+          - "topics": 2-3 broad knowledge domains.
+          
           Respond ONLY with a valid JSON object.`,
         },
         {
@@ -62,13 +81,24 @@ export const getAiClassification = async (url: string): Promise<AiClassification
       response_format: { type: "json_object" },
     });
 
-    const content = response.choices?.[0]?.message?.content;
-    if (!content) throw new Error("Empty response from Groq");
-
-    return JSON.parse(content) as AiClassification;
-  } catch (error) {
-    console.error("[AI][GROQ_ERROR]:", error);
-    return { title: "New Content", description: "", type: "post", tags: ["untagged"], topics: [] };
+    const result = JSON.parse(response.choices?.[0]?.message?.content || "{}");
+    return {
+      title: result.title || metadata.title || "Untitled",
+      description: result.description || metadata.description || "",
+      tags: result.tags || [],
+      topics: result.topics || [],
+      type: result.type || "post"
+    };
+  } catch (error: any) {
+    console.error(`[AI_SERVICE_ERROR]: ${error.message}`);
+    // Fallback to basic metadata
+    return {
+      title: "Web Content",
+      description: "Synthesis in progress...",
+      tags: ["web"],
+      topics: ["uncategorized"],
+      type: "post"
+    };
   }
 };
 

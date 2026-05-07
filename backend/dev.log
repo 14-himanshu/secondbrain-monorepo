@@ -1,0 +1,918 @@
+
+> brainly@1.0.0 dev
+> tsc -b && (tsc -b -w & node --watch dist/index.js)
+
+[2J[3J[H5:50:16 PM - Starting compilation in watch mode...
+
+
+5:50:16 PM - Found 0 errors. Watching for file changes.
+/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96
+            throw new PathError(`Missing parameter name at index ${index}`, str);
+                  ^
+
+PathError [TypeError]: Missing parameter name at index 9: /api/v1/*; visit https://git.new/pathToRegexpError for info
+    at name (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96:19)
+    at parse (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:113:68)
+    at pathToRegexp (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:267:58)
+    at Object.match (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:237:30)
+    at matcher (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:86:23)
+    at new Layer (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:93:62)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/index.js:398:19)
+    at Function.<anonymous> (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:222:21)
+    at Array.forEach (<anonymous>)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:219:7) {
+  originalPath: '/api/v1/*'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H5:50:32 PM - File change detected. Starting incremental compilation...
+
+
+5:50:33 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96
+            throw new PathError(`Missing parameter name at index ${index}`, str);
+                  ^
+
+PathError [TypeError]: Missing parameter name at index 15: /api/v1/:splat*; visit https://git.new/pathToRegexpError for info
+    at name (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96:19)
+    at parse (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:113:68)
+    at pathToRegexp (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:267:58)
+    at Object.match (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:237:30)
+    at matcher (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:86:23)
+    at new Layer (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:93:62)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/index.js:398:19)
+    at Function.<anonymous> (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:222:21)
+    at Array.forEach (<anonymous>)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:219:7) {
+  originalPath: '/api/v1/:splat*'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96
+            throw new PathError(`Missing parameter name at index ${index}`, str);
+                  ^
+
+PathError [TypeError]: Missing parameter name at index 15: /api/v1/:splat*; visit https://git.new/pathToRegexpError for info
+    at name (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96:19)
+    at parse (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:113:68)
+    at pathToRegexp (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:267:58)
+    at Object.match (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:237:30)
+    at matcher (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:86:23)
+    at new Layer (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:93:62)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/index.js:398:19)
+    at Function.<anonymous> (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:222:21)
+    at Array.forEach (<anonymous>)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:219:7) {
+  originalPath: '/api/v1/:splat*'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96
+            throw new PathError(`Missing parameter name at index ${index}`, str);
+                  ^
+
+PathError [TypeError]: Missing parameter name at index 15: /api/v1/:splat*; visit https://git.new/pathToRegexpError for info
+    at name (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:96:19)
+    at parse (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:113:68)
+    at pathToRegexp (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:267:58)
+    at Object.match (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/path-to-regexp/dist/index.js:237:30)
+    at matcher (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:86:23)
+    at new Layer (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/lib/layer.js:93:62)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/router/index.js:398:19)
+    at Function.<anonymous> (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:222:21)
+    at Array.forEach (<anonymous>)
+    at Function.use (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/express/lib/application.js:219:7) {
+  originalPath: '/api/v1/:splat*'
+}
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H5:50:54 PM - File change detected. Starting incremental compilation...
+
+
+5:50:54 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:32253) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32254) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32260) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32261) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32264) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32269) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32275) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: POST /reprocess { body: { contentId: 'test' } }
+[API_404_DETECTION]: GET /api/v1/content
+[API_404_DETECTION]: GET /api/v1/content
+[API_404_DETECTION]: GET /api/v1/content
+[API_404_DETECTION]: GET /api/v1/content
+[AI_ROUTE_HIT]: POST /tag {
+  body: { url: 'https://youtube.com/shorts/ve2pY5In4Qs?si=8TQFTpvf9S2-laqy' }
+}
+[API_404_DETECTION]: GET /api/v1/content
+[AI][START] contentId: 69fc83e89bf455ce702f6340, attempt: 1
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][RETRY_ERROR] contentId: 69fc83e89bf455ce702f6340, attempt: 1: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][START] contentId: 69fc83e89bf455ce702f6340, attempt: 2
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][RETRY_ERROR] contentId: 69fc83e89bf455ce702f6340, attempt: 2: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[API_404_DETECTION]: GET /api/v1/content
+[API_404_DETECTION]: GET /api/v1/content
+[AI][START] contentId: 69fc83e89bf455ce702f6340, attempt: 3
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][RETRY_ERROR] contentId: 69fc83e89bf455ce702f6340, attempt: 3: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][START] contentId: 69fc83e89bf455ce702f6340, attempt: 4
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][RETRY_ERROR] contentId: 69fc83e89bf455ce702f6340, attempt: 4: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+[AI][FATAL_ERROR] contentId: 69fc83e89bf455ce702f6340
+[2J[3J[H5:53:26 PM - File change detected. Starting incremental compilation...
+
+
+5:53:27 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:32339) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32347) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32348) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32351) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32354) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32365) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32377) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: POST /reprocess { body: { contentId: '69fc7b11e69087569014bb79' } }
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 1
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 1: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 2
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 2: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 3
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 3: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 4
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 4: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][FATAL_ERROR] contentId: 69fc7b11e69087569014bb79
+[AI_ROUTE_HIT]: POST /reprocess { body: { contentId: '69fc7b11e69087569014bb79' } }
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 1
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 1: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 2
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 2: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 3
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 3: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][START] contentId: 69fc7b11e69087569014bb79, attempt: 4
+[AI][EMBEDDING_START] HF Model: sentence-transformers/all-MiniLM-L6-v2
+[AI][HF_ERROR]: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][RETRY_ERROR] contentId: 69fc7b11e69087569014bb79, attempt: 4: Error: HF API Error: 404 - <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Cannot POST /pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2</pre>
+</body>
+</html>
+
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:86:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:126:35)
+    at async file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:78:17
+[AI][FATAL_ERROR] contentId: 69fc7b11e69087569014bb79
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-07T13:01:18.853Z] [PID: 32377] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 18:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2J[3J[H6:46:28 PM - File change detected. Starting incremental compilation...
+
+
+6:46:30 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:32856) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32863) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32864) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32873) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H6:46:40 PM - File change detected. Starting incremental compilation...
+
+
+6:46:41 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:32883) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32884) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32886) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:32888) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32893) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:32896) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H6:46:57 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+src/services/ai.service.ts(31,2): error TS1109: Expression expected.
+src/services/ai.service.ts(31,7): error TS1005: ';' expected.
+src/services/ai.service.ts(32,12): error TS1005: ';' expected.
+src/services/ai.service.ts(32,21): error TS1434: Unexpected keyword or identifier.
+src/services/ai.service.ts(32,32): error TS1434: Unexpected keyword or identifier.
+src/services/ai.service.ts(32,36): error TS1434: Unexpected keyword or identifier.
+src/services/ai.service.ts(33,2): error TS1003: Identifier expected.
+src/services/ai.service.ts(33,14): error TS1005: ';' expected.
+src/services/ai.service.ts(33,19): error TS1005: '(' expected.
+src/services/ai.service.ts(33,27): error TS1005: ')' expected.
+src/services/ai.service.ts(33,31): error TS1434: Unexpected keyword or identifier.
+src/services/ai.service.ts(34,2): error TS1003: Identifier expected.
+src/services/ai.service.ts(34,3): error TS1161: Unterminated regular expression literal.
+src/services/ai.service.ts(212,1): error TS1005: '}' expected.
+
+6:46:59 PM - Found 14 errors. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:20
+            * AI;
+            ^
+
+SyntaxError: Unexpected token '*'
+    at compileSourceTextModule (node:internal/modules/esm/utils:346:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:107:18)
+    at #translate (node:internal/modules/esm/loader:546:20)
+    at afterLoad (node:internal/modules/esm/loader:596:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:601:12)
+    at #createModuleJob (node:internal/modules/esm/loader:624:36)
+    at #getJobFromResolveResult (node:internal/modules/esm/loader:343:34)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:311:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H6:49:29 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(84,31): error TS2532: Object is possibly 'undefined'.
+
+6:49:30 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:33074) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33079) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33081) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33087) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33118) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33121) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33127) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33129) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H6:50:16 PM - File change detected. Starting incremental compilation...
+
+
+6:50:17 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:33143) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33145) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33146) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33149) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33150) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:33152) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33157) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:33160) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

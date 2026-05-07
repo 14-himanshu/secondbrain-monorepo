@@ -118,37 +118,70 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
-  let { title, link, type, tags } = parsed.data;
-  let description = "";
-  let topics: string[] = [];
+  const { title, link, type, tags } = parsed.data;
 
-  // Auto-generate tags and type if not provided
-  if (!tags || tags.length === 0) {
-    const classification = await getAiClassification(link);
-    tags = classification.tags;
-    topics = classification.topics;
-    if (!title) title = classification.title;
-    description = classification.description;
-    // @ts-ignore
-    if (!type) type = classification.type;
+  // STEP 1: Instant Metadata Extraction (Zero AI Latency)
+  let domain = "";
+  try {
+    domain = new URL(link).hostname.replace("www.", "");
+  } catch (e) {
+    domain = "web";
   }
 
+  // Create content record instantly
   const content = await ContentModel.create({
-    title,
-    description,
+    title: title || "New Note",
     link,
-    type,
+    type: type || (link.includes("youtube.com") || link.includes("youtu.be") ? "video" : "post"),
     tags: tags || [],
-    topics: topics || [],
     userId: req.userId,
-    embeddingStatus: "pending"
+    embeddingStatus: "pending",
+    aiStatus: "queued",
+    aiMetadata: {
+      domain,
+      source: domain,
+      contentType: type || "web"
+    }
   });
 
+  // STEP 2: Background Processing (Non-blocking)
+  const processInBackground = async () => {
+    try {
+      await ContentModel.updateOne({ _id: content._id }, { aiStatus: "processing" });
+      
+      // Attempt to classify (includes caching logic in service)
+      const classification = await getAiClassification(link);
+      
+      await ContentModel.updateOne({ _id: content._id }, {
+        tags: [...new Set([...(tags || []), ...classification.tags])],
+        topics: classification.topics,
+        description: classification.description,
+        title: title || classification.title,
+        type: type || classification.type,
+        aiStatus: "summarized"
+      });
 
-  // FIRE AND FORGET: Trigger background processing
-  processContentEmbedding((content._id as any).toString());
+      // Finally, generate embedding
+      await processContentEmbedding((content._id as any).toString());
+      
+      await ContentModel.updateOne({ _id: content._id }, { aiStatus: "completed" });
+    } catch (error: any) {
+      console.error(`[BACKGROUND_PIPELINE_ERROR]: ${content._id}`, error);
+      await ContentModel.updateOne({ _id: content._id }, { 
+        aiStatus: "failed", 
+        aiError: error.message 
+      });
+    }
+  };
 
-  res.json({ message: "Content added", tags });
+  // Fire and forget
+  processInBackground();
+
+  res.json({ 
+    success: true,
+    message: "Content added. Analysis running in background.", 
+    contentId: content._id 
+  });
 });
 
 

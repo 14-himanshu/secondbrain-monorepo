@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { BACKEND_URL } from "../config";
 
-interface Content {
+export interface Content {
   _id: string;
   title: string;
   link: string;
@@ -10,6 +10,14 @@ interface Content {
   tags?: string[];
   userId: string;
   embeddingStatus?: "pending" | "completed" | "failed";
+  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed";
+  aiMetadata?: {
+    domain?: string;
+    source?: string;
+    contentType?: string;
+    estimatedTopics?: string[];
+  };
+  aiError?: string;
   description?: string;
   topics?: string[];
 }
@@ -31,9 +39,24 @@ export function useContent() {
     }
   }, []);
 
+  // INITIAL LOAD
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  // SMART POLLING: If any content is in a transient state, poll every 3 seconds
+  useEffect(() => {
+    const hasActiveJob = contents.some(c => 
+      c.aiStatus === "queued" || c.aiStatus === "processing" || c.aiStatus === "summarized"
+    );
+
+    if (hasActiveJob) {
+      const interval = setInterval(() => {
+        refresh();
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [contents, refresh]);
 
   return { contents, refresh, setContents };
 }

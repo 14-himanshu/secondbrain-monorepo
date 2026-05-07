@@ -1011,3 +1011,8 @@ Delete result: { acknowledged: true, deletedCount: 1 }
 [AI_ROUTE_HIT]: POST /tag {
   body: { url: 'https://youtube.com/shorts/ve2pY5In4Qs?si=8TQFTpvf9S2-laqy' }
 }
+[AI_ROUTE_HIT]: POST /tag {
+  body: {
+    url: 'https://x.com/IndianTechGuide/status/2052267260631187799?s=20'
+  }
+}

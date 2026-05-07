@@ -140,6 +140,8 @@ export function Dashboard() {
     }
   }
 
+  const [isSlowAnalysis, setIsSlowAnalysis] = useState(false);
+
   /**
    * Manual Insight Generation (On-Demand)
    */
@@ -147,6 +149,7 @@ export function Dashboard() {
   // Cancel previous if any
   if (abortControllerRef.current) abortControllerRef.current.abort();
   abortControllerRef.current = new AbortController();
+  setIsSlowAnalysis(false);
 
   // 1. Optimistic UI: Update state immediately
   setContents(prev => prev.map(c => 
@@ -156,6 +159,11 @@ export function Dashboard() {
   // 2. Open panel instantly
   setSelectedContentId(contentId);
   setIsAiPanelOpen(true);
+
+  // Timeout handler for long-running analysis
+  const slowTimer = setTimeout(() => {
+    setIsSlowAnalysis(true);
+  }, 10000);
 
   try {
     const response = await axios.post(`${BACKEND_URL}/api/v1/ai/reprocess`, 
@@ -178,6 +186,8 @@ export function Dashboard() {
     setContents(prev => prev.map(c => 
       c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c
     ));
+  } finally {
+    clearTimeout(slowTimer);
   }
 }
 
@@ -449,6 +459,7 @@ export function Dashboard() {
         selectedContent={contents.find(c => c._id === selectedContentId)}
         onClearSelection={() => setSelectedContentId(null)}
         onRetry={handleGenerateInsight}
+        isSlowAnalysis={isSlowAnalysis}
       />
     </div>
   );

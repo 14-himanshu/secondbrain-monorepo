@@ -984,3 +984,30 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+Delete request received
+contentId: 69f5ce61e562dd132bb218ee
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc7b11e69087569014bb79
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc7b1de69087569014bb82
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc8195e69087569014bbad
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc81c9e69087569014bbba
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+Delete request received
+contentId: 69fc83e89bf455ce702f6340
+userId: 69f0d2a05e5e573f352b678d
+Delete result: { acknowledged: true, deletedCount: 1 }
+[AI_ROUTE_HIT]: POST /tag {
+  body: { url: 'https://youtube.com/shorts/ve2pY5In4Qs?si=8TQFTpvf9S2-laqy' }
+}

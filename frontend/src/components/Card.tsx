@@ -76,10 +76,10 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
   return (
     <div 
       onClick={onSelect}
-      className={`group bg-white border rounded-xl px-4 py-4 transition-all duration-300 ease-out flex flex-col h-full relative overflow-hidden cursor-pointer ${
+      className={`group bg-white border rounded-xl px-4 py-4 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] flex flex-col h-full relative overflow-hidden cursor-pointer ${
         isSelected 
           ? 'border-purple-100 ring-[3px] ring-purple-50/40 bg-purple-50/10' 
-          : 'border-gray-100 hover:border-gray-200 hover:shadow-sm'
+          : 'border-gray-100 hover:border-gray-200 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5'
       }`}
     >
       
@@ -169,9 +169,9 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
             ) : (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}
-                className="px-2.5 py-1.5 rounded-lg bg-purple-50/50 text-purple-600 text-[10px] font-bold hover:bg-purple-600 hover:text-white transition-all uppercase tracking-widest flex items-center gap-1.5 group/ai"
+                className="px-2.5 py-1.5 rounded-lg bg-gray-50/50 text-gray-500 text-[10px] font-bold hover:bg-purple-50 hover:text-purple-600 border border-transparent hover:border-purple-100/50 transition-all uppercase tracking-widest flex items-center gap-1.5 active:scale-95 group/ai"
               >
-                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <svg className="w-2.5 h-2.5 opacity-60 group-hover/ai:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                 </svg>
                 Analyze
@@ -181,26 +181,38 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
         </div>
 
         {!isEditing && (onDelete || onEdit) && (
-          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-all">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditedTitle(title);
-                setIsEditing(true);
-              }}
-              className="p-1.5 text-gray-300 hover:text-gray-900 transition-colors"
-            >
-              <EditIcon />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete?.();
-              }}
-              className="p-1.5 text-gray-300 hover:text-red-500 transition-colors"
-            >
-              <DeleteIcon />
-            </button>
+          /* ACTION CLUSTER: Redesigned for Premium Interaction */
+          <div className="flex items-center gap-1 p-1 bg-gray-50/40 backdrop-blur-[2px] rounded-xl border border-gray-100/50 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+            {onEdit && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setEditedTitle(title);
+                  setIsEditing(true);
+                }}
+                title="Edit note"
+                className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50/80 rounded-lg transition-all duration-200 active:scale-90 group/edit"
+              >
+                <div className="group-hover/edit:-translate-y-0.5 transition-transform duration-200">
+                  <EditIcon />
+                </div>
+              </button>
+            )}
+            
+            {onDelete && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.();
+                }}
+                title="Remove note"
+                className="p-1.5 text-gray-400 hover:text-rose-500 hover:bg-rose-50/80 rounded-lg transition-all duration-200 active:scale-90 group/del"
+              >
+                <div className="group-hover/del:rotate-3 transition-transform duration-200">
+                  <DeleteIcon />
+                </div>
+              </button>
+            )}
           </div>
         )}
       </div>

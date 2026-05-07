@@ -1922,3 +1922,212 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+[2J[3J[H7:52:24 PM - File change detected. Starting incremental compilation...
+
+
+7:52:26 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36349) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36352) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36357) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36358) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:52:31 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+src/controllers/ai.controller.ts(234,28): error TS2304: Cannot find name 'generateBrainInsights'.
+
+7:52:32 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36373) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36375) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36378) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36380) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:52:36 PM - File change detected. Starting incremental compilation...
+
+
+7:52:37 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36387) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36390) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36391) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36396) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36397) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36399) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36404) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H7:52:52 PM - File change detected. Starting incremental compilation...
+
+src/routes/ai.ts(4,18): error TS2552: Cannot find name 'Router'. Did you mean 'aiRouter'?
+
+7:52:54 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3
+const aiRouter = Router();
+                 ^
+
+ReferenceError: Router is not defined
+    at file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/routes/ai.js:3:18
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:665:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.22.1
+Failed running 'dist/index.js'. Waiting for file changes before restarting...
+[2J[3J[H7:54:28 PM - File change detected. Starting incremental compilation...
+
+
+7:54:29 PM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:36523) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36529) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:36531) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36537) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36582) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36588) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36596) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:36604) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding } from "../services/ai.service.js";
+import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, createEmbedding, generateBrainInsights } from "../services/ai.service.js";
 import { cosineSimilarity } from "../utils.js";
 import { ContentModel } from "../db.js";
 import { z } from "zod";
@@ -205,5 +205,41 @@ export const aiReprocessController = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error(`[REPROCESS_CONTROLLER_FAILURE]: ${error.message}`);
     res.status(500).json({ success: false, message: "Failed to start analysis." });
+  }
+};
+
+/**
+ * AI Insights Controller
+ * Provides high-level brain analytics for the dashboard.
+ */
+export const aiInsightsController = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId;
+
+    // 1. Fetch metadata for all user content
+    const contents = await ContentModel.find({ userId }).select("title type tags createdAt");
+
+    if (contents.length === 0) {
+      return res.json({
+        success: true,
+        data: {
+          topTopics: [],
+          insights: ["Start adding content to see brain patterns."],
+          suggestions: ["Add your first link or video to get started."]
+        }
+      });
+    }
+
+    // 2. Generate Insights
+    const insights = await generateBrainInsights(contents);
+
+    res.json({
+      success: true,
+      data: insights
+    });
+
+  } catch (error: any) {
+    console.error(`[AI_INSIGHTS_FAILURE]: ${error.message}`);
+    res.status(500).json({ success: false, message: "Failed to generate brain insights." });
   }
 };

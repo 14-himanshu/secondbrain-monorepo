@@ -32,6 +32,13 @@ export function AIInsightsPanel({
   const aiStatus = selectedContent?.aiStatus;
   const isFailed = aiStatus === "failed";
 
+  const [brainInsights, setBrainInsights] = useState<{
+    topTopics: string[],
+    insights: string[],
+    suggestions: string[]
+  } | null>(null);
+  const [isInsightsLoading, setIsInsightsLoading] = useState(false);
+
   useEffect(() => {
     if (selectedContent) {
       setActiveTab("note");
@@ -39,6 +46,29 @@ export function AIInsightsPanel({
       setActiveTab("brain");
     }
   }, [selectedContent]);
+
+  useEffect(() => {
+    if (activeTab === "brain" && !brainInsights && isOpen) {
+      fetchInsights();
+    }
+  }, [activeTab, isOpen]);
+
+  const fetchInsights = async () => {
+    setIsInsightsLoading(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/v1/ai/insights`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setBrainInsights(data.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch insights", err);
+    } finally {
+      setIsInsightsLoading(false);
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,38 +211,92 @@ export function AIInsightsPanel({
       <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
         {activeTab === "brain" ? (
           /* Global Brain Insights */
-          <div className="p-5 space-y-7">
-             <section>
-              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3 ml-1">Distribution</h3>
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
-                  <div className="text-[15px] font-bold text-gray-900">{contentCount}</div>
-                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">Knowledge items</div>
+          <div className="flex flex-col gap-6 p-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             {/* Knowledge Capacity Card */}
+             <div className="p-5 bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl text-white shadow-xl shadow-purple-200/50 relative overflow-hidden">
+                <div className="relative z-10">
+                  <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 mb-1">Knowledge Capacity</div>
+                  <div className="text-3xl font-bold tracking-tight mb-4">{contentCount} <span className="text-lg opacity-60">Memories</span></div>
+                  <div className="flex gap-4">
+                     <div className="flex flex-col">
+                       <span className="text-[9px] font-bold uppercase opacity-60">Videos</span>
+                       <span className="text-lg font-bold">{contents.filter(c => c.type === 'video').length}</span>
+                     </div>
+                     <div className="w-px h-8 bg-white/20"></div>
+                     <div className="flex flex-col">
+                       <span className="text-[9px] font-bold uppercase opacity-60">Posts</span>
+                       <span className="text-lg font-bold">{contents.filter(c => c.type === 'post').length}</span>
+                     </div>
+                  </div>
                 </div>
-                <div className="p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
-                  <div className="text-[15px] font-bold text-gray-900">{contents.reduce((acc, c) => acc + (c.tags?.length || 0), 0)}</div>
-                  <div className="text-[9px] font-bold text-gray-400 uppercase tracking-tight mt-0.5">Semantic Tags</div>
-                </div>
-              </div>
-            </section>
+                <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+             </div>
 
-            <section>
-              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-3 ml-1">Emerging Patterns</h3>
-              <div className="space-y-3">
-                <div className="p-3.5 bg-white border border-gray-100 rounded-xl hover:border-purple-100 transition-all cursor-default group">
-                  <div className="text-[11.5px] font-bold text-gray-900 mb-1 group-hover:text-purple-700 transition-colors">Knowledge Cluster</div>
-                  <div className="text-[11.5px] text-gray-500 leading-normal font-medium">
-                    Strong focus on "Web Development" detected across 4 recent notes.
+             {isInsightsLoading ? (
+               <div className="flex flex-col gap-5">
+                  <div className="h-20 bg-gray-50 rounded-2xl animate-pulse"></div>
+                  <div className="h-40 bg-gray-50 rounded-2xl animate-pulse"></div>
+               </div>
+             ) : brainInsights ? (
+               <div className="flex flex-col gap-6">
+                 {/* Top Topics */}
+                 <div className="space-y-3">
+                    <div className="flex items-center justify-between px-1">
+                      <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Semantic Clusters</h3>
+                      <span className="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">Patterns Detected</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {brainInsights.topTopics.map((topic) => (
+                        <div key={topic} className="px-3 py-1.5 bg-white border border-gray-100 rounded-xl text-[11px] font-bold text-gray-700 shadow-sm hover:border-purple-200 hover:text-purple-700 transition-all cursor-default">
+                          {topic}
+                        </div>
+                      ))}
+                    </div>
+                 </div>
+
+                 {/* Trends & Insights */}
+                 <div className="space-y-3">
+                   <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Brain Patterns</h3>
+                   <div className="space-y-2">
+                     {brainInsights.insights.map((insight, i) => (
+                       <div key={i} className="group p-3.5 bg-gray-50/30 border border-transparent hover:border-purple-100 hover:bg-white rounded-xl transition-all duration-300 shadow-xs">
+                         <div className="flex gap-3">
+                           <div className="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 flex-shrink-0 group-hover:scale-125 transition-transform"></div>
+                           <p className="text-[12px] font-medium text-gray-700 leading-relaxed">{insight}</p>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+
+                 {/* Suggestions */}
+                 <div className="p-4 bg-purple-50/30 border border-purple-100/30 rounded-2xl space-y-3">
+                   <h3 className="text-[9px] font-bold text-purple-600 uppercase tracking-widest flex items-center gap-2">
+                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                     </svg>
+                     Actionable Growth
+                   </h3>
+                   <div className="space-y-2">
+                     {brainInsights.suggestions.map((s, i) => (
+                       <div key={i} className="text-[11px] font-bold text-purple-900/80 bg-white/60 p-2.5 rounded-xl border border-purple-100/20 shadow-xs">
+                         {s}
+                       </div>
+                     ))}
+                   </div>
+                 </div>
+               </div>
+             ) : (
+               <div className="py-12 flex flex-col items-center justify-center text-center px-4">
+                  <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-300 mb-4">
+                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                     </svg>
                   </div>
-                </div>
-                <div className="p-3.5 bg-white border border-gray-100 rounded-xl hover:border-purple-100 transition-all cursor-default group">
-                  <div className="text-[11.5px] font-bold text-gray-900 mb-1 group-hover:text-purple-700 transition-colors">Semantic Bridge</div>
-                  <div className="text-[11.5px] text-gray-500 leading-normal font-medium">
-                    Connections found between your "Productivity" and "Note-taking" topics.
-                  </div>
-                </div>
-              </div>
-            </section>
+                  <h3 className="text-[13px] font-bold text-gray-900 mb-1">Building Patterns...</h3>
+                  <p className="text-[11px] text-gray-400 leading-relaxed font-medium">Add more content to your brain to unlock deep semantic insights.</p>
+               </div>
+             )}
           </div>
         ) : activeTab === "chat" ? (
           /* CONTEXTUAL CHAT INTERFACE */

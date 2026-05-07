@@ -259,3 +259,40 @@ export const generateAiChatAnswerStream = async (
     if (content) onChunk(content);
   }
 };
+
+/**
+ * Brain Insights Engine
+ * Analyzes the global state of the user's knowledge base to generate dashboard analytics.
+ */
+export const generateBrainInsights = async (contentMetadata: any[]) => {
+  if (!groq) throw new Error("AI service not configured.");
+
+  const summary = contentMetadata.map(c => 
+    `- [${c.type}] ${c.title} (Tags: ${c.tags?.join(", ") || "none"})`
+  ).join("\n");
+
+  const systemPrompt = `You are a "Second Brain Analytics" engine. 
+  Your task is to analyze the user's saved content and generate high-level insights.
+  
+  Format your response as a strict JSON object:
+  {
+    "topTopics": ["topic1", "topic2", ...],
+    "insights": ["insight 1 about patterns", "insight 2 about gaps", ...],
+    "suggestions": ["suggestion to learn X", "suggestion to organize Y", ...]
+  }
+  
+  Content Summary:
+  ${summary}`;
+
+  const response = await groq.chat.completions.create({
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: "Generate insights based on my saved content." }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.3
+  });
+
+  return JSON.parse(response.choices[0]?.message?.content || "{}");
+};

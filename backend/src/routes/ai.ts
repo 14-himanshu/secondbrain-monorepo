@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { aiTagController, aiReprocessController, aiChatController } from "../controllers/ai.controller.js";
+import { aiTagController, aiReprocessController, aiChatController, aiInsightsController } from "../controllers/ai.controller.js";
 import { userMiddleware } from "../middleware.js";
 
 const aiRouter = Router();
@@ -12,5 +12,8 @@ aiRouter.post("/reprocess", userMiddleware, aiReprocessController);
 
 // POST /api/v1/ai/chat
 aiRouter.post("/chat", userMiddleware, aiChatController);
+
+// GET /api/v1/ai/insights
+aiRouter.get("/insights", userMiddleware, aiInsightsController);
 
 export default aiRouter;

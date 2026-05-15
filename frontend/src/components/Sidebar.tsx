@@ -79,101 +79,145 @@ export function Sidebar({
     };
 
     return (
-        <div className="h-screen border-r border-gray-100 w-72 fixed left-0 top-0 bg-white flex flex-col z-30">
-            {/* Header: Editorial & Minimal */}
-            <div className="p-5 pt-7">
-                <div className="flex text-[19px] font-bold items-center text-gray-900 tracking-tight">
-                    <div className="pr-2.5 text-purple-600">
+        <div className="h-screen w-[280px] fixed left-0 top-0 bg-white flex flex-col z-30 border-r border-gray-100/50 font-inter">
+            {/* Header: Minimal & Elegant */}
+            <div className="p-8 pb-6">
+                <div className="flex items-center gap-3 text-gray-900 tracking-tight">
+                    <div className="text-purple-600 animate-pulse-semantic">
                         <Logo />
                     </div>
-                    Second Brain
+                    <span className="text-[17px] font-bold tracking-tight text-gray-900 font-outfit">Second Brain</span>
                 </div>
             </div>
 
-            {/* Main Navigation: High Density */}
-            <div className="px-3.5 space-y-0.5 mb-4">
+            {/* SECTION 1: ACTIVE MEMORY (Contextual Focal Point) */}
+            <div className="px-5 mb-8">
+                <div className="px-2 mb-3 flex items-center justify-between">
+                    <span className="text-[9px] font-bold text-gray-300 uppercase tracking-[0.25em]">Active Context</span>
+                    <div className="flex gap-1">
+                       <div className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></div>
+                       <div className="w-1 h-1 rounded-full bg-purple-300 animate-pulse [animation-delay:0.2s]"></div>
+                    </div>
+                </div>
+                
+                {selectedContentId ? (
+                    (() => {
+                        const activeItem = contents.find(c => c._id === selectedContentId);
+                        if (!activeItem) return null;
+                        return (
+                            <div className="p-4 rounded-[22px] bg-purple-50/50 border border-purple-100/40 shadow-[0_10px_25px_-10px_rgba(109,99,217,0.12)] animate-in fade-in zoom-in duration-500 group relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-tr from-purple-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center border border-purple-100 shadow-sm">
+                                        <svg className="w-3.5 h-3.5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="text-[12px] font-bold text-gray-800 truncate leading-none mb-1">{activeItem.title}</div>
+                                        <div className="text-[9px] font-bold text-purple-400 uppercase tracking-tighter">{activeItem.aiMetadata?.domain || "Memory Node"}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[9px] font-bold text-gray-400 flex items-center gap-1">
+                                        <div className="w-1 h-1 rounded-full bg-green-400"></div>
+                                        Synthesized
+                                    </span>
+                                    <span className="text-[9px] font-bold text-gray-300">Just now</span>
+                                </div>
+                            </div>
+                        );
+                    })()
+                ) : (
+                    <div className="p-4 rounded-[22px] border border-dashed border-gray-100 bg-gray-50/30 flex flex-col items-center justify-center text-center">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gray-200 animate-pulse mb-2"></div>
+                        <span className="text-[10px] font-medium text-gray-300">No active memory loaded</span>
+                    </div>
+                )}
+            </div>
+
+            {/* SECTION 2: INTELLIGENT NAVIGATION */}
+            <div className="px-4 space-y-1">
                 <SidebarItem
-                    text="All Notes"
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4.5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" /></svg>}
+                    text="Knowledge Base"
+                    icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>}
                     onClick={() => onFilterChange("all")}
                     active={selectedFilter === "all"}
                 />
                 <SidebarItem
-                    text="Posts"
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4.5"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>}
+                    text="Articles"
+                    icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>}
                     onClick={() => onFilterChange("post")}
                     active={selectedFilter === "post"}
                 />
                 <SidebarItem
                     text="Videos"
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4.5"><path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>}
+                    icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>}
                     onClick={() => onFilterChange("video")}
                     active={selectedFilter === "video"}
                 />
-                <SidebarItem
-                    text="Documents"
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-4.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>}
-                    onClick={() => onFilterChange("document")}
-                    active={selectedFilter === "document"}
-                />
             </div>
 
-            <div className="px-5 py-2">
-                <div className="border-t border-gray-100 w-full mb-5"></div>
-                <h3 className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-3 ml-1">AI Memory Stream</h3>
+            {/* SECTION 3: INTELLIGENT SIGNALS */}
+            <div className="px-8 mt-10 mb-4 flex items-center justify-between">
+                <span className="text-[9px] font-bold text-gray-300 uppercase tracking-[0.25em]">Neural Signals</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
             </div>
 
-            {/* AI Memory Stream Feed: Quiet & Text-Focused */}
-            <div className="flex-1 overflow-y-auto px-3.5 pb-4 custom-scrollbar">
-                <div className="space-y-0.5">
-                    {insights.map((item) => {
-                        const isSelected = item.contentId === selectedContentId;
-                        return (
-                            <button
-                                key={item.id}
-                                onClick={() => item.contentId && onSelectInsight?.(item.contentId)}
-                                className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 group ${
-                                    isSelected 
-                                        ? "bg-purple-50 text-purple-700 shadow-sm" 
-                                        : "hover:bg-gray-50 text-gray-500 hover:text-gray-900"
-                                }`}
-                            >
-                                <p className={`text-[12.5px] font-bold tracking-tight mb-0.5 truncate ${isSelected ? 'text-purple-700' : 'text-gray-700'}`}>
-                                    {item.title}
-                                </p>
-                                <p className={`text-[8.5px] font-bold uppercase tracking-[0.1em] opacity-50`}>
-                                    {item.label}
-                                </p>
-                            </button>
-                        );
-                    })}
-                    {insights.length === 0 && (
-                        <p className="text-[11px] text-gray-400 font-medium px-3 italic">
-                            Building knowledge stream...
-                        </p>
-                    )}
+            <div className="px-5 space-y-3 flex-1 overflow-y-auto custom-scrollbar pb-6">
+                {/* Recent Connection Widget */}
+                <div className="p-3.5 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-white hover:border-purple-100/50 transition-all cursor-default group">
+                    <div className="flex items-center gap-2 mb-2">
+                        <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-purple-600 transition-colors">Connection</span>
+                    </div>
+                    <p className="text-[11px] font-medium text-gray-500 leading-relaxed">
+                        Related topic detected: <span className="text-gray-900 font-bold">Semantic Search</span>
+                    </p>
+                </div>
+
+                {/* AI Signal Widget */}
+                <div className="p-3.5 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-white hover:border-purple-100/50 transition-all cursor-default group">
+                    <div className="flex items-center gap-2 mb-2">
+                        <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-purple-600 transition-colors">AI Signal</span>
+                    </div>
+                    <p className="text-[11px] font-medium text-gray-500 leading-relaxed">
+                        High overlap with <span className="text-gray-900 font-bold">AI architecture</span> notes
+                    </p>
+                </div>
+
+                {/* Knowledge Pulse */}
+                <div className="flex items-center justify-between px-3 pt-4">
+                    <div className="flex items-center gap-2">
+                         <div className="flex gap-0.5">
+                            <div className="w-0.5 h-2 bg-purple-200 animate-[pulse-semantic_1s_infinite]"></div>
+                            <div className="w-0.5 h-3 bg-purple-300 animate-[pulse-semantic_1.2s_infinite]"></div>
+                            <div className="w-0.5 h-2 bg-purple-200 animate-[pulse-semantic_1.4s_infinite]"></div>
+                         </div>
+                         <span className="text-[10px] font-bold text-gray-400">Context: Technology</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-purple-500/50">84% Sync</span>
                 </div>
             </div>
 
-            {/* User Profile: Dense & Professional */}
-            <div className="border-t border-gray-100 bg-gray-50/30">
-                <div className="p-3.5">
-                    <div className="flex items-center gap-2.5 p-1.5 rounded-lg hover:bg-white hover:shadow-sm cursor-pointer transition-all group">
-                        <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white font-bold text-xs shadow-sm transition-all group-hover:scale-105">
-                            {username.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <div className="text-[12.5px] font-bold text-gray-900 truncate leading-tight">{username}</div>
-                            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Pro Plan</div>
-                        </div>
-                        <button
-                            onClick={handleLogout}
-                            className="text-gray-300 hover:text-red-500 transition-colors p-1"
-                            title="Logout"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="size-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>
-                        </button>
+            {/* User Profile: Softer & Elegant */}
+            <div className="p-6 border-t border-gray-50/50">
+                <div className="flex items-center gap-3 p-2 group cursor-pointer">
+                    <div className="w-9 h-9 rounded-xl bg-purple-100/50 text-purple-600 flex items-center justify-center font-bold text-sm transition-transform group-hover:scale-105 border border-purple-100/30">
+                        {username.charAt(0).toUpperCase()}
                     </div>
+                    <div className="flex-1 min-w-0">
+                        <div className="text-[13px] font-bold text-gray-800 truncate">{username}</div>
+                        <div className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Neural Sync 2.0</div>
+                    </div>
+                    <button
+                        onClick={handleLogout}
+                        className="text-gray-300 hover:text-red-400 transition-colors p-2 hover:bg-red-50 rounded-lg"
+                        title="Logout"
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    </button>
                 </div>
             </div>
         </div>

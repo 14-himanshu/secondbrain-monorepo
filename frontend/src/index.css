@@ -2,11 +2,64 @@
 @tailwind utilities;
 
 @theme {
-  --color-purple-200: #d9ddee;
-  --color-purple-500: #9492db;
-  --color-purple-600: #7164c0;
+  --color-purple-50: #f8f7ff;
+  --color-purple-100: #efeeff;
+  --color-purple-200: #e5e3ff;
+  --color-purple-400: #9f96f0;
+  --color-purple-500: #8378e8;
+  --color-purple-600: #6f63d9; /* Original Primary */
+  --color-purple-700: #5b50c4;
 
-  --color-gray-100: #eeeeef;
-  --color-gray-200: #e6e9ed;
-  --color-gray-600: #95989c;
+  --color-gray-50: #fcfcfd;
+  --color-gray-100: #f5f5f7;
+  --color-gray-200: #eaeaed;
+  --color-gray-300: #d1d1d6;
+  --color-gray-400: #a1a1aa;
+  --color-gray-500: #71717a;
+  --color-gray-600: #52525b;
+
+  --font-inter: "Inter", "system-ui", "sans-serif";
+  --font-outfit: "Outfit", "system-ui", "sans-serif";
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-slate-900 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .shimmer {
+    @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 rounded-full hover:bg-purple-200 transition-colors;
+  }
+
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-semantic {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.animate-pulse-semantic {
+  animation: pulse-semantic 3s ease-in-out infinite;
 }

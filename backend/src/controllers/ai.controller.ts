@@ -11,74 +11,148 @@ import { z } from "zod";
  * AI Chat Controller (RAG + SSE Streaming)
  * Handles conversational queries with real-time streaming response.
  */
+const chatRetrievalCache = new Map<string, { results: any[], timestamp: number }>();
+const RETRIEVAL_CACHE_TTL = 5 * 60 * 1000; // 5 mins
+
 export const aiChatController = async (req: Request, res: Response) => {
-  console.log("[CHAT_ROUTE_HIT]");
-  const { query, history = [] } = req.body;
+  const { query, history = [], stream = false } = req.body;
   const userId = req.userId;
+  const cacheKey = `${userId}:${query.toLowerCase().trim()}`;
+
+  console.log("[CHAT_QUERY]", query);
 
   try {
     if (!query) {
       return res.status(400).json({ success: false, error: "Query is required." });
     }
 
-    // 1. Generate Query Embedding
-    console.log("[GENERATING_QUERY_EMBEDDING]");
-    const queryEmbedding = await createEmbedding(query, true);
-
-    // 2. Hybrid Context Retrieval
-    let topContext = [];
-    try {
-      console.log("[VECTOR_SEARCH_START]");
-      
-      // Attempt 1: MongoDB Atlas Vector Search
-      try {
-        const vectorResults = await ContentModel.aggregate([
-          {
-            $vectorSearch: {
-              index: "vector_index",
-              path: "embedding",
-              queryVector: queryEmbedding,
-              numCandidates: 50,
-              limit: 5,
-              filter: { userId: new mongoose.Types.ObjectId(userId) }
-            }
-          },
-          {
-            $project: {
-              title: 1,
-              link: 1,
-              type: 1,
-              description: 1,
-              similarity: { $meta: "vectorSearchScore" }
-            }
-          }
-        ]);
-
-        if (vectorResults.length > 0) {
-          topContext = vectorResults;
-        }
-      } catch (vError) {
-        console.warn("[VECTOR_SEARCH_NOT_AVAILABLE]");
-      }
-
-      // Attempt 2: Keyword Fallback
-      if (topContext.length === 0) {
-        topContext = await ContentModel.find({
-          userId,
-          $text: { $search: query }
-        })
-        .select("title link type description")
-        .limit(5);
-      }
-    } catch (error) {
-      console.error("[CHAT_ERROR_STAGE] RETRIEVAL", error);
-      throw error;
+    if (stream) {
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Connection", "keep-alive");
     }
 
-    // 3. Generate Answer (Non-Streaming for Stability)
-    console.log("[OPENAI_REQUEST_START]");
-    const answer = await generateAiChatAnswer(query, topContext, history);
+    // 1. Generate Query Embedding
+    console.log("[GENERATE_EMBEDDING_START]");
+    let queryEmbedding;
+    try {
+      queryEmbedding = await createEmbedding(query, true);
+      console.log("[EMBEDDING_RESULT]", queryEmbedding ? `Vector(${queryEmbedding.length})` : "null");
+    } catch (embError) {
+      console.error("[EMBEDDING_STEP_FAILED]", embError);
+      queryEmbedding = null;
+    }
+
+    // 2. Optimized Hybrid Context Retrieval (3-Tier Fallback)
+    console.log("[VECTOR_SEARCH_START]");
+    let topContext = [];
+    const cached = chatRetrievalCache.get(cacheKey);
     
+    if (cached && (Date.now() - cached.timestamp < RETRIEVAL_CACHE_TTL)) {
+      console.log("[RAG_CACHE_HIT]", cacheKey);
+      topContext = cached.results;
+    } else {
+      // ── Tier 1: MongoDB Atlas Vector Search ──────────────────────────
+      if (queryEmbedding) {
+        try {
+          const vectorResults = await ContentModel.aggregate([
+            {
+              $vectorSearch: {
+                index: "vector_index",
+                path: "embedding",
+                queryVector: queryEmbedding,
+                numCandidates: 100,
+                limit: 10,
+                filter: { userId: new mongoose.Types.ObjectId(userId) }
+              }
+            },
+            {
+              $project: {
+                title: 1, link: 1, type: 1, description: 1,
+                similarity: { $meta: "vectorSearchScore" }
+              }
+            }
+          ]);
+          if (vectorResults.length > 0) {
+            topContext = vectorResults;
+            console.log("[TIER_1_VECTOR_HIT]", vectorResults.length);
+          } else {
+            console.warn("[TIER_1_VECTOR_EMPTY]");
+          }
+        } catch (vErr: any) {
+          console.warn("[TIER_1_VECTOR_FAILED]", vErr.message);
+        }
+      }
+
+      // ── Tier 2: MongoDB Full-Text Search ─────────────────────────────
+      if (topContext.length === 0) {
+        try {
+          const textResults = await ContentModel.find({
+            userId,
+            $text: { $search: query }
+          })
+          .select("title link type description")
+          .limit(8);
+          if (textResults.length > 0) {
+            topContext = textResults;
+            console.log("[TIER_2_TEXT_HIT]", textResults.length);
+          } else {
+            console.warn("[TIER_2_TEXT_EMPTY]");
+          }
+        } catch (tErr: any) {
+          console.warn("[TIER_2_TEXT_FAILED]", tErr.message);
+        }
+      }
+
+      // ── Tier 3: In-Memory Cosine Similarity (no index required) ──────
+      if (topContext.length === 0 && queryEmbedding) {
+        try {
+          console.log("[TIER_3_COSINE_START]");
+          const allContent = await ContentModel.find({ userId })
+            .select("+embedding title link type description")
+            .limit(200);
+          
+          const withEmbeddings = allContent.filter(c => c.embedding && c.embedding.length > 0);
+          
+          if (withEmbeddings.length > 0) {
+            const scored = withEmbeddings.map(c => ({
+              doc: c,
+              score: cosineSimilarity(queryEmbedding, c.embedding as number[])
+            }));
+            scored.sort((a, b) => b.score - a.score);
+            topContext = scored.slice(0, 5).map(s => s.doc);
+            console.log("[TIER_3_COSINE_HIT]", topContext.length);
+          } else {
+            // ── Tier 3b: Recent content (absolute fallback) ───────────
+            console.warn("[TIER_3_COSINE_NO_EMBEDDINGS] Using recency fallback.");
+            topContext = await ContentModel.find({ userId })
+              .select("title link type description")
+              .sort({ createdAt: -1 })
+              .limit(5);
+            console.log("[TIER_3B_RECENCY_HIT]", topContext.length);
+          }
+        } catch (cErr: any) {
+          console.warn("[TIER_3_COSINE_FAILED]", cErr.message);
+        }
+      }
+
+      // Final recency fallback when embedding is also null
+      if (topContext.length === 0) {
+        try {
+          topContext = await ContentModel.find({ userId })
+            .select("title link type description")
+            .sort({ createdAt: -1 })
+            .limit(5);
+          console.log("[TIER_3B_RECENCY_FALLBACK_HIT]", topContext.length);
+        } catch (rErr: any) {
+          console.warn("[RECENCY_FALLBACK_FAILED]", rErr.message);
+        }
+      }
+
+      chatRetrievalCache.set(cacheKey, { results: topContext, timestamp: Date.now() });
+    }
+    console.log("[VECTOR_RESULTS]", topContext.length);
+
     const sources = topContext.map(c => ({
       _id: c._id,
       title: c.title,
@@ -86,19 +160,48 @@ export const aiChatController = async (req: Request, res: Response) => {
       type: c.type
     }));
 
-    console.log("[FINAL_RESPONSE_SENT]");
-    return res.status(200).json({
-      success: true,
-      answer,
-      sources
-    });
+    // 3. Execution (Streaming vs Non-Streaming)
+    if (stream) {
+      try {
+        console.log("[LLM_CALL_START] STREAMING");
+        res.write(`data: ${JSON.stringify({ type: "metadata", sources })}\n\n`);
+
+        await generateAiChatAnswerStream(query, topContext, history, (chunk) => {
+          res.write(`data: ${JSON.stringify({ type: "chunk", content: chunk })}\n\n`);
+        });
+
+        console.log("[CHAT_COMPLETE]");
+        res.write(`data: [DONE]\n\n`);
+        return res.end();
+      } catch (streamError) {
+        console.error("[INFERENCE_STEP_FAILED] STREAMING", streamError);
+        res.write(`data: ${JSON.stringify({ type: "error", message: "Brain synthesis degraded." })}\n\n`);
+        return res.end();
+      }
+    } else {
+      console.log("[LLM_CALL_START] NON_STREAMING");
+      const answer = await generateAiChatAnswer(query, topContext, history);
+
+      if (answer === "__LLM_FAILURE__") {
+        console.error("[INFERENCE_DEGRADED] Returning graceful fallback to client.");
+        return res.status(200).json({
+          success: true,
+          answer: "Your Second Brain is temporarily unavailable for synthesis.",
+          sources: []
+        });
+      }
+
+      console.log("[CHAT_COMPLETE]");
+      return res.status(200).json({ success: true, answer, sources });
+    }
 
   } catch (error: any) {
     console.error("[CHAT_CRITICAL_FAILURE]", error);
-    return res.status(500).json({
-      success: false,
-      error: error.message || "Failed to process chat request."
-    });
+    if (stream) {
+      res.write(`data: ${JSON.stringify({ type: "error", message: "Critical failure." })}\n\n`);
+      return res.end();
+    }
+    return res.status(200).json({ success: false, answer: "Brain synthesis temporarily unavailable.", sources: [] });
   }
 };
 
@@ -175,7 +278,7 @@ export const aiReprocessController = async (req: Request, res: Response) => {
     }
 
     // Skip if already deeply synthesized and not forced
-    if (content.aiStatus === "summarized") {
+    if (content.aiStatus === "summarized" || content.aiStatus === "completed") {
       return res.json({ success: true, data: content, message: "Already synthesized." });
     }
 

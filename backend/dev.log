@@ -5099,3 +5099,1763 @@ Server running on port 3000
 [2026-05-07T16:13:04.636Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
 [2026-05-07T16:34:16.946Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
 [2026-05-07T17:09:50.811Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 07 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+Found 1 stuck items. Retrying...
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 1
+[EMBEDDING_FAILURE] HF API Error: 404
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 1: AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:35) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 2
+[EMBEDDING_FAILURE] HF API Error: 404
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 2: AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:35) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 3
+[EMBEDDING_FAILURE] HF API Error: 404
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 3: AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:35) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI][START] contentId: 69fc9b502014b38299cf3da8, attempt: 4
+[EMBEDDING_FAILURE] HF API Error: 404
+[AI][RETRY_ERROR] contentId: 69fc9b502014b38299cf3da8, attempt: 4: AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async processContentEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:35) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI][FATAL_ERROR] contentId: 69fc9b502014b38299cf3da8
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-07T18:31:19.823Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T19:02:09.430Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T19:35:58.458Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T20:03:30.297Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T20:36:37.904Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T21:08:44.600Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T21:40:41.750Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T22:14:17.471Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T22:42:59.547Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T23:00:35.621Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-07T23:33:38.618Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 05:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T00:05:23.630Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 05:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T00:31:18.628Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T01:03:41.396Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T01:36:22.434Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T02:08:36.455Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T02:32:55.463Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T03:05:31.474Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T03:30:12.855Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-08T05:10:08.551Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T05:30:59.530Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T06:07:58.545Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T06:35:21.575Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T07:07:08.831Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T07:35:30.822Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T08:08:56.083Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T08:36:30.549Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T09:08:31.350Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T09:37:30.528Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T10:12:08.520Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 15:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T10:35:06.334Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 16:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T11:13:01.406Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 16:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+Error in embedding cleanup cron job: PoolClearedError [MongoPoolClearedError]: Connection pool for ac-tvxwswc-shard-00-02.ob0wj7i.mongodb.net:27017 was cleared because another operation failed with: "connection <monitor> to 159.41.197.72:27017 timed out"
+    at /Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cmap/connection_pool.js:366:77
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+  errorLabelSet: Set(1) { 'PoolRequstedRetry' },
+  beforeHandshake: false,
+  address: 'ac-tvxwswc-shard-00-02.ob0wj7i.mongodb.net:27017',
+  [cause]: MongoNetworkTimeoutError: connection <monitor> to 159.41.197.72:27017 timed out
+      at Timeout._onTimeout (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cmap/connection.js:126:26)
+      at listOnTimeout (node:internal/timers:585:17)
+      at process.processTimers (node:internal/timers:521:7) {
+    errorLabelSet: Set(2) { 'ResetPool', 'InterruptInUseConnections' },
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+[2026-05-08T12:01:27.276Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 17:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T12:32:28.168Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 18:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T13:04:29.793Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 18:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-08T14:34:50.098Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 20:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T15:06:03.260Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T15:37:38.993Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T16:06:17.007Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T16:38:16.275Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T17:07:20.162Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T17:44:46.346Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T18:03:29.398Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 08 2026 23:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T18:40:57.483Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T19:08:50.344Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T19:36:46.707Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T20:01:21.913Z] [PID: 40311] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi', history: [] } }
+[CHAT_ROUTE_HIT]
+[GENERATING_QUERY_EMBEDDING]
+[EMBEDDING_FAILURE] HF API Error: 404
+[CHAT_CRITICAL_FAILURE] AIError: HF API Error: 404
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:219:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:21:32) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[2J[3J[H2:09:37 AM - File change detected. Starting incremental compilation...
+
+
+2:09:38 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:44939) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44944) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44946) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44951) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:44964) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44967) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:44978) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44988) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44990) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:44993) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:10:00 AM - File change detected. Starting incremental compilation...
+
+
+2:10:01 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45008) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45012) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45016) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45018) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45022) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45025) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45027) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45036) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:10:13 AM - File change detected. Starting incremental compilation...
+
+
+2:10:15 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45045) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45052) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45054) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45058) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45063) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45069) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi', history: [ [Object] ] } }
+[CHAT_ROUTE_HIT]
+[GENERATING_QUERY_EMBEDDING]
+[MODEL_NAME] sentence-transformers/all-MiniLM-L6-v2
+[HF_URL] https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2
+[PAYLOAD] { inputs: 'hi' }
+[HF_RESPONSE] {}
+[EMBEDDING_FAILURE] HF API Error: 404 - {}
+[CHAT_CRITICAL_FAILURE] AIError: HF API Error: 404 - {}
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:21:32) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: GET /insights { body: undefined }
+[AI_INSIGHTS_REQUEST_START] { userId: '69f0d2a05e5e573f352b678d' }
+[DATA_METRICS] {
+  userId: '69f0d2a05e5e573f352b678d',
+  currentCount: 1,
+  hasCache: false
+}
+[AI_INSIGHTS_CACHE_MISS] { reason: 'no_cache' }
+[DETERMINISTIC_ANALYTICS_SUCCESS] { userId: '69f0d2a05e5e573f352b678d', distCount: 1, recentTags: 3 }
+[ANALYSIS_DATA_FETCHED] { contentCount: 1 }
+[AI_ROUTE_HIT]: POST /chat { body: { query: 'hi', history: [] } }
+[CHAT_ROUTE_HIT]
+[GENERATING_QUERY_EMBEDDING]
+[MODEL_NAME] sentence-transformers/all-MiniLM-L6-v2
+[HF_URL] https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2
+[PAYLOAD] { inputs: 'hi' }
+[HF_RESPONSE] {}
+[EMBEDDING_FAILURE] HF API Error: 404 - {}
+[CHAT_CRITICAL_FAILURE] AIError: HF API Error: 404 - {}
+    at createEmbedding (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/services/ai.service.js:243:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async aiChatController (file:///Users/himanshupandey/Desktop/secondbrain-monorepo/backend/dist/controllers/ai.controller.js:21:32) {
+  code: 'AI_EMBEDDING_FAILURE',
+  retryable: true
+}
+[2J[3J[H2:12:25 AM - File change detected. Starting incremental compilation...
+
+
+2:12:26 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45127) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45143) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45146) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45148) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45152) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2J[3J[H2:12:30 AM - File change detected. Starting incremental compilation...
+
+
+2:12:31 AM - Found 0 errors. Watching for file changes.
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45156) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45164) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45169) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45171) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45179) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45180) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45183) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45184) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45193) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:13:20 AM - File change detected. Starting incremental compilation...
+
+
+2:13:22 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45225) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45227) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45228) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45231) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45233) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45235) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45243) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:14:09 AM - File change detected. Starting incremental compilation...
+
+
+2:14:11 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45280) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45283) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45285) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45287) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2J[3J[H2:14:17 AM - File change detected. Starting incremental compilation...
+
+Cron jobs initialized.
+Server running on port 3000
+
+2:14:18 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45296) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45298) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45302) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45310) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45312) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:14:23 AM - File change detected. Starting incremental compilation...
+
+
+2:14:24 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45315) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45317) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45325) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45327) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45328) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45331) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45339) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45341) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45349) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:15:05 AM - File change detected. Starting incremental compilation...
+
+
+2:15:07 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45368) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45372) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45374) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45376) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45383) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45386) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:15:19 AM - File change detected. Starting incremental compilation...
+
+
+2:15:21 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45397) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45402) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45406) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45409) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:15:29 AM - File change detected. Starting incremental compilation...
+
+
+2:15:30 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45417) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45420) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45423) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45429) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45433) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45435) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45442) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:17:05 AM - File change detected. Starting incremental compilation...
+
+
+2:17:06 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45494) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45501) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45502) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45507) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45511) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45519) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:17:13 AM - File change detected. Starting incremental compilation...
+
+
+2:17:14 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45524) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45530) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45535) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45536) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45545) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45547) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45556) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45561) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45564) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:17:52 AM - File change detected. Starting incremental compilation...
+
+
+2:17:52 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45576) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45583) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45586) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45588) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45590) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45598) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:18:23 AM - File change detected. Starting incremental compilation...
+
+
+2:18:24 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45664) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45667) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45671) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45675) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45678) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45704) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:18:45 AM - File change detected. Starting incremental compilation...
+
+
+2:18:45 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45721) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45728) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45731) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45733) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45761) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:18:57 AM - File change detected. Starting incremental compilation...
+
+
+2:18:58 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45771) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45776) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45778) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45781) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45785) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45787) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45795) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45797) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:19:33 AM - File change detected. Starting incremental compilation...
+
+
+2:19:34 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:45832) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45838) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45840) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45841) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45843) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45875) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:19:51 AM - File change detected. Starting incremental compilation...
+
+
+2:19:52 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45892) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45894) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45899) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45901) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45902) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45935) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:20:13 AM - File change detected. Starting incremental compilation...
+
+
+2:20:14 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:45975) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45976) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45979) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45980) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:45984) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:45986) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46018) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:21:13 AM - File change detected. Starting incremental compilation...
+
+
+2:21:13 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:46052) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46060) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46062) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:46065) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46069) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46096) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:22:14 AM - File change detected. Starting incremental compilation...
+
+
+2:22:15 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:46129) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46132) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46134) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46137) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46139) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46141) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46149) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:22:28 AM - File change detected. Starting incremental compilation...
+
+
+2:22:29 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:46159) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46168) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46170) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46172) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46173) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46206) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:23:01 AM - File change detected. Starting incremental compilation...
+
+
+2:23:03 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:46285) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46286) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46289) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46291) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46293) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46295) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46297) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46344) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:24:21 AM - File change detected. Starting incremental compilation...
+
+
+2:24:22 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:46386) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46392) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46396) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46400) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46408) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46409) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46418) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46426) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46434) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H2:24:35 AM - File change detected. Starting incremental compilation...
+
+
+2:24:37 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:46438) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46445) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46447) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46449) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:46450) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46459) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:46464) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-08T22:09:23.120Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T22:42:39.358Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T23:15:38.446Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-08T23:38:36.484Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 05:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T00:13:10.366Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 05:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T00:41:06.446Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T01:12:28.482Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T01:42:24.471Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T02:00:06.280Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T02:42:52.174Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T03:02:33.522Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T03:34:13.509Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T04:04:47.398Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T04:35:42.992Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T05:05:53.374Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T05:33:59.857Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T06:14:37.409Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T06:45:59.027Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T07:04:56.213Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T07:45:43.505Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T08:07:46.494Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T08:39:49.925Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T09:13:34.364Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T09:33:38.407Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-09T14:01:48.450Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 19:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T14:34:59.256Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 20:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T15:03:25.082Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T15:41:29.318Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T16:12:25.599Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T16:36:34.703Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T17:14:38.263Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T17:40:28.055Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T18:15:29.294Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sat May 09 2026 23:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T18:30:51.199Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T19:09:19.317Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T19:34:00.154Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T20:00:44.944Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T20:35:36.074Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T21:07:13.381Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T21:30:16.515Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T22:05:03.172Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T22:31:53.505Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T23:04:14.388Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-09T23:46:53.124Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 05:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T00:03:35.501Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 05:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T00:42:43.488Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T01:13:38.243Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T01:45:21.282Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T02:00:51.323Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T02:42:40.367Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T03:09:01.464Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T03:38:27.493Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T04:10:05.395Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T04:31:50.414Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T05:04:23.401Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T05:34:47.380Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T06:01:33.206Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T06:34:43.089Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T07:07:16.197Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T07:36:41.200Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T08:07:08.099Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T08:35:35.432Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T09:01:17.737Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T09:40:04.342Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T10:15:33.341Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 15:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T10:38:56.341Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 16:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T11:01:22.330Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 16:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T11:35:19.348Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 17:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T12:09:13.367Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 17:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T12:42:14.363Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 18:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T13:15:31.228Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 18:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T13:40:46.199Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 19:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T14:12:53.616Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 19:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T14:42:55.729Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 20:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T15:00:24.950Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T15:36:44.349Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T16:08:11.763Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T16:44:40.784Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T17:01:38.731Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T17:39:40.560Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T18:11:34.213Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Sun May 10 2026 23:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T18:30:13.163Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T19:07:39.155Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T19:31:13.264Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T20:05:56.307Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T20:37:48.118Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T21:11:29.741Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T21:34:29.032Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T22:07:37.035Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T22:41:32.013Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T23:16:30.033Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-10T23:45:45.058Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 05:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T00:12:05.202Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 05:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T00:33:12.414Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T01:13:06.043Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T01:45:12.854Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T02:00:32.699Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T02:30:59.032Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T03:04:25.680Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T03:32:25.137Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T04:01:19.201Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-11T05:06:05.716Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T05:33:51.199Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T06:05:08.246Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T06:33:14.076Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T07:08:30.879Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T07:34:10.277Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T08:12:44.143Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T08:35:11.107Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T09:11:11.017Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T10:09:10.622Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T10:09:10.645Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 15:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-11T12:14:57.033Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 17:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T12:31:11.867Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 18:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T13:01:39.599Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 18:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T13:42:03.392Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 19:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T14:00:56.162Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 19:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-11T15:12:31.471Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T15:46:15.994Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T16:01:05.632Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T16:36:45.680Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T17:10:36.481Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T17:33:59.575Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T18:06:53.277Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Mon May 11 2026 23:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T18:40:33.635Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T19:04:12.363Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T19:36:58.022Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T20:14:55.123Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T20:31:36.133Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T21:05:18.187Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T21:34:58.221Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T22:05:48.715Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T22:38:57.630Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T23:12:50.952Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-11T23:45:36.943Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 05:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T00:04:37.126Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 05:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T00:37:51.310Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T01:12:36.110Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T01:44:56.073Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T02:02:31.024Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T02:44:08.906Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T03:01:54.116Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T03:44:18.715Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T04:02:01.943Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T04:40:20.940Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T05:13:58.981Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T05:30:10.724Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T06:31:13.437Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T06:31:13.448Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T07:04:34.697Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T07:30:17.956Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-12T08:37:45.908Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T09:00:04.497Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T09:44:04.103Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T10:00:53.882Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 15:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T10:46:04.076Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 16:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T11:04:32.298Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 16:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T11:39:02.847Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 17:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T12:03:14.324Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 17:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-12T14:38:10.816Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 20:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T15:02:37.308Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T15:34:34.966Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-12T16:42:43.973Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-12T17:36:03.598Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T18:08:09.135Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Tue May 12 2026 23:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T18:30:35.118Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T19:09:48.692Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T19:42:28.847Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T20:07:21.537Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T20:40:41.607Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T21:15:06.911Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T21:31:18.085Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T22:04:35.504Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T22:46:17.822Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-12T23:01:19.205Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T00:31:35.015Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T04:05:26.864Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T04:32:39.923Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T06:14:38.759Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T06:14:38.766Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T06:14:38.769Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T06:41:14.964Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T07:07:00.455Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T07:35:25.701Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T08:16:06.477Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T08:36:33.566Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T09:08:34.135Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T09:31:43.320Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T12:41:30.896Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 18:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T14:05:04.126Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 19:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T14:38:39.067Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 20:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T15:45:33.062Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-13T17:11:38.982Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T17:31:29.940Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Wed May 13 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+Error in embedding cleanup cron job: MongoServerSelectionError: connection <monitor> to 159.41.194.149:27017 timed out
+    at Topology.selectServer (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/sdam/topology.js:327:38)
+    at async tryOperation (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/operations/execute_operation.js:148:18)
+    at async executeOperation (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/operations/execute_operation.js:78:16)
+    at async FindCursor._initialize (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/find_cursor.js:62:26)
+    at async FindCursor.cursorInit (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/abstract_cursor.js:632:27)
+    at async FindCursor.fetchBatch (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/abstract_cursor.js:666:13)
+    at async FindCursor.next (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/abstract_cursor.js:342:17)
+    at async [Symbol.asyncIterator] (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/abstract_cursor.js:250:34)
+    at async FindCursor.toArray (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cursor/abstract_cursor.js:422:26)
+    at async model.Query._find (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongoose/lib/query.js:2430:14) {
+  errorLabelSet: Set(0) {},
+  reason: TopologyDescription {
+    type: 'ReplicaSetNoPrimary',
+    servers: Map(3) {
+      'ac-tvxwswc-shard-00-01.ob0wj7i.mongodb.net:27017' => [ServerDescription],
+      'ac-tvxwswc-shard-00-02.ob0wj7i.mongodb.net:27017' => [ServerDescription],
+      'ac-tvxwswc-shard-00-00.ob0wj7i.mongodb.net:27017' => [ServerDescription]
+    },
+    stale: false,
+    compatible: true,
+    heartbeatFrequencyMS: 10000,
+    localThresholdMS: 15,
+    setName: 'atlas-vwtxvg-shard-0',
+    maxElectionId: new ObjectId('7fffffff000000000000006a'),
+    maxSetVersion: 53,
+    commonWireVersion: 0,
+    logicalSessionTimeoutMinutes: null
+  },
+  code: undefined,
+  [cause]: MongoNetworkTimeoutError: connection <monitor> to 159.41.194.149:27017 timed out
+      at Timeout._onTimeout (/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/node_modules/mongodb/lib/cmap/connection.js:126:26)
+      at listOnTimeout (node:internal/timers:585:17)
+      at process.processTimers (node:internal/timers:521:7) {
+    errorLabelSet: Set(2) { 'ResetPool', 'InterruptInUseConnections' },
+    beforeHandshake: false,
+    [cause]: undefined
+  }
+}
+[2026-05-13T18:39:54.087Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T19:12:11.842Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T19:40:54.812Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T20:00:49.826Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 01:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T20:41:59.487Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T21:14:15.428Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T21:31:33.407Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T22:15:17.497Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T22:32:19.737Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 04:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-13T23:02:13.685Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 04:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-14T00:41:16.603Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T01:11:22.141Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T01:43:57.621Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T02:01:55.786Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T02:40:11.555Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T03:02:38.740Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T03:35:25.230Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T04:06:40.318Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T04:36:40.864Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T05:10:23.260Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 10:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T05:33:09.998Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T06:09:36.509Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T06:36:18.944Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 12:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T07:07:04.976Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T07:31:09.114Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T08:07:00.820Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T08:38:49.890Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T09:11:53.909Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-14T11:35:20.239Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 17:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T12:07:54.685Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 17:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T12:39:30.568Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 18:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T13:05:29.962Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 18:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-14T15:16:20.686Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 20:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T15:31:35.622Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 21:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T16:02:46.548Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 21:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T16:57:05.424Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 22:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T17:13:46.872Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 22:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T17:31:52.524Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Thu May 14 2026 23:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-14T18:30:42.041Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 00:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T19:16:16.554Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 00:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T19:33:27.478Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 01:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-14T20:35:19.489Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 02:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T21:00:56.247Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 02:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T21:33:52.715Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 03:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-14T22:00:02.675Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 03:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-15T00:41:07.677Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 06:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T01:30:27.684Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 06:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T01:30:27.699Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 07:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T02:01:20.131Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 07:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T02:34:06.188Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 08:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T03:02:19.536Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 08:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T03:31:21.447Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 09:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T04:03:24.245Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 09:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T04:40:33.539Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 10:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-15T05:37:06.695Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 11:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T06:25:51.810Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 11:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-15T07:02:27.271Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 12:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T07:35:25.526Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 13:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T08:10:27.382Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 13:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T08:43:55.524Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 14:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T09:01:49.730Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 14:30:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+[2026-05-15T09:38:04.527Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 15:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2026-05-15T11:36:49.606Z] [PID: 46464] [32m[NODE-CRON][32m [33m[WARN][0m missed execution at Fri May 15 2026 17:00:00 GMT+0530 (India Standard Time)! Possible blocking IO or high CPU user at the same process used by node-cron.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2J[3J[H8:37:32 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(362,60): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/ai.service.ts(376,13): error TS18004: No value exists in scope for the shorthand property 'embedding'. Either declare one or provide an initializer.
+
+8:37:33 PM - Found 2 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:22484) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22499) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22501) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22502) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22513) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22514) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22517) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22525) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22534) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22537) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:37:50 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(366,60): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+8:37:51 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:22539) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22543) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22551) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22553) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22555) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22559) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22561) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22568) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:38:02 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(366,60): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+8:38:03 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:22576) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22578) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22580) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22581) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22583) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22586) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22591) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H8:38:08 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(366,60): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+8:38:09 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:22595) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22602) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22604) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22605) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22610) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22612) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22620) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:22622) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:22625) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+Running embedding cleanup cron job...
+No stuck content found.
+[2J[3J[H10:15:51 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(369,62): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+10:15:53 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+Restarting 'dist/index.js'
+(node:23628) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23632) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23637) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23638) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23649) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23655) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23665) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23674) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H10:16:37 PM - File change detected. Starting incremental compilation...
+
+src/services/ai.service.ts(369,62): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+10:16:38 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:23694) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23697) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23699) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23700) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23703) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23705) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23706) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23715) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23718) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H10:26:55 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+(node:23836) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+src/services/ai.service.ts(407,62): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+10:26:58 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:23848) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23855) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23856) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23864) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23879) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+[2J[3J[H10:29:36 PM - File change detected. Starting incremental compilation...
+
+Restarting 'dist/index.js'
+(node:23939) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+src/services/ai.service.ts(419,62): error TS2345: Argument of type 'string | null | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+10:29:39 PM - Found 1 error. Watching for file changes.
+Restarting 'dist/index.js'
+(node:23952) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23958) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:23960) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23968) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:23977) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Running embedding cleanup cron job...
+Found 1 stuck items. Retrying...
+[AI][START] contentId: 6a074e5e40880fd2ea362161, attempt: 1
+[AI][SYNTHESIS_START] contentId: 6a074e5e40880fd2ea362161
+[LLM_OK] attempt=1 latency=812ms tokens=3040
+[AI][SUCCESS] contentId: 6a074e5e40880fd2ea362161, attempts: 1
+Running embedding cleanup cron job...
+Found 2 stuck items. Retrying...
+[AI][START] contentId: 6a0751132c68c0d602a722b7, attempt: 1
+[AI][SYNTHESIS_START] contentId: 6a0751132c68c0d602a722b7
+[AI][START] contentId: 6a0755b12c68c0d602a723b0, attempt: 1
+[AI][SYNTHESIS_START] contentId: 6a0755b12c68c0d602a723b0
+[LLM_OK] attempt=1 latency=3896ms tokens=1728
+[AI][SUCCESS] contentId: 6a0751132c68c0d602a722b7, attempts: 1
+[LLM_OK] attempt=1 latency=6120ms tokens=1475
+[AI][RACE_CONDITION] contentId: 6a0755b12c68c0d602a723b0. Aborting.

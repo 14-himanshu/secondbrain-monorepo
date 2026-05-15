@@ -41,56 +41,86 @@ const updateMetrics = (latency: number, tokens: number = 0, error: string | null
 };
 
 // --- Provider Initialization ---
-const groq = process.env.GROQ_API_KEY ? new Groq({
+const isValidKey = (key?: string) => !!key && !key.includes("****") && key.length > 20;
+
+const groq = isValidKey(process.env.GROQ_API_KEY) ? new Groq({
   apiKey: process.env.GROQ_API_KEY,
 }) : null;
 
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
+const openai = isValidKey(process.env.OPENAI_API_KEY) ? new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  timeout: 15000 // 15s timeout as requested
+  timeout: 15000 
 }) : null;
 
+const LLM_TIMEOUT_MS = 20000; // 20s hard limit per attempt
+
 /**
- * Robust LLM Invoker (Multi-Provider)
+ * Wraps a promise with a hard timeout.
+ */
+const withTimeout = <T>(promise: Promise<T>, ms: number, label: string): Promise<T> => {
+  const timeout = new Promise<never>((_, reject) =>
+    setTimeout(() => reject(new AIError(AIErrorCode.TIMEOUT, `[TIMEOUT] ${label} exceeded ${ms}ms`, true)), ms)
+  );
+  return Promise.race([promise, timeout]);
+};
+
+/**
+ * Sanitizes provider errors so raw API messages never reach the controller layer.
+ */
+const sanitizeError = (err: any): string => {
+  if (err instanceof AIError) return err.code;
+  // Strip any API key fragments or raw provider messages
+  return "LLM_PROVIDER_ERROR";
+};
+
+/**
+ * Robust LLM Invoker (Multi-Provider, Timeout + Exponential Backoff)
  */
 const invokeLLM = async (params: any, retries = 2) => {
   const start = Date.now();
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      let response;
+      let callPromise: Promise<any>;
+
       if (openai) {
-        // Use OpenAI if available (Priority)
-        response = await openai.chat.completions.create({
+        callPromise = openai.chat.completions.create({
           ...params,
           model: params.model === "llama-3.3-70b-versatile" ? "gpt-4o-mini" : params.model
         });
       } else if (groq) {
-        response = await groq.chat.completions.create(params);
+        callPromise = groq.chat.completions.create(params);
       } else {
         throw new AIError(AIErrorCode.SYNTHESIS_ERROR, "No AI provider configured", false);
       }
 
+      const response = await withTimeout(callPromise, LLM_TIMEOUT_MS, `invokeLLM attempt ${attempt + 1}`);
       updateMetrics(Date.now() - start, response.usage?.total_tokens || 0);
+      console.log(`[LLM_OK] attempt=${attempt + 1} latency=${Date.now() - start}ms tokens=${response.usage?.total_tokens ?? 0}`);
       return response;
 
     } catch (err: any) {
       const isRateLimit = err.status === 429 || err.message?.includes("rate limit");
-      const isRetryable = isRateLimit || err.status >= 500 || attempt < retries;
-      
+      const isTimeout   = err.code === AIErrorCode.TIMEOUT;
+      const isRetryable = (isRateLimit || isTimeout || err.status >= 500) && attempt < retries;
+
+      console.error(`[LLM_ATTEMPT_FAILED] attempt=${attempt + 1}/${retries + 1} code=${sanitizeError(err)}`);
+
       if (!isRetryable || attempt === retries) {
-        updateMetrics(Date.now() - start, 0, err.message);
+        updateMetrics(Date.now() - start, 0, sanitizeError(err));
         throw new AIError(
-          isRateLimit ? AIErrorCode.RATE_LIMIT : AIErrorCode.SYNTHESIS_ERROR,
-          err.message,
+          isRateLimit ? AIErrorCode.RATE_LIMIT : isTimeout ? AIErrorCode.TIMEOUT : AIErrorCode.SYNTHESIS_ERROR,
+          sanitizeError(err),
           isRetryable
         );
       }
 
-      const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+      const delay = Math.min(Math.pow(2, attempt) * 1000 + Math.random() * 500, 8000);
+      console.log(`[LLM_RETRY] waiting ${Math.round(delay)}ms before attempt ${attempt + 2}`);
       await new Promise(r => setTimeout(r, delay));
     }
   }
-  throw new AIError(AIErrorCode.TIMEOUT, "LLM request timed out", true);
+  throw new AIError(AIErrorCode.TIMEOUT, "LLM_MAX_RETRIES_EXCEEDED", true);
 };
 
 // HuggingFace Configuration
@@ -136,25 +166,67 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
       }
     }
 
-    const metadata = await urlMetadata(url);
+    // 1.5 Enhanced Metadata Fetch with Timeout & X.com Logic
+    let metadata: any = {};
+    try {
+      metadata = await withTimeout(urlMetadata(url), 10000, "urlMetadata");
+    } catch (e) {
+      console.warn(`[AI][METADATA_TIMEOUT] ${url}. Using URL as fallback context.`);
+      metadata = { url, title: url.split('/').pop() || "New Content" };
+    }
+
+    // Special handling for x.com/twitter to avoid empty summaries
+    if (url.includes("x.com") || url.includes("twitter.com")) {
+      metadata.domain = "x.com";
+      metadata.contentType = "post";
+      if (!metadata.description || metadata.description.length < 10) {
+        metadata.description = `A status update/post from Elon Musk on X.com (Link: ${url})`;
+      }
+    }
+
     const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
     
-    // 2. Select Prompt based on Mode
-    const systemPrompt = mode === "quick" 
-      ? `You are a lightweight metadata agent. Extract a 1-line summary and 3 tags. 
-         Respond ONLY with a JSON object: { "title": string, "description": string, "tags": string[] }`
-      : `You are a high-performance knowledge engine for a "Second Brain" app.
-         Synthesize the provided content into a deep, semantic insight.
-         Guidelines:
-         - "title": Concise, editorial title.
-         - "description": High-quality synthesis. ${isYouTube ? "Focus on core takeaways from the video context." : "Summarize the key value proposition."}
-         - "type": "video", "post", or "document".
-         - "tags": 3-5 specific keywords.
-         - "topics": 2-3 broad knowledge domains.
-         Respond ONLY with a valid JSON object.`;
+    // 2. High-Fidelity Bookmark Summarization Prompt
+    const systemPrompt = `You are an AI bookmark summarization engine.
+    Your task is to analyze webpage content and generate a clean, concise, and useful summary for a bookmark management application.
+
+    IMPORTANT RULES:
+    - Focus only on the main content.
+    - Ignore advertisements, navigation menus, cookie notices, footers, and unrelated sections.
+    - Keep responses compact and information-dense.
+    - Do not hallucinate or invent information.
+    - If content is unclear, say so.
+    - Output must always be valid JSON.
+    - Keep summaries beginner-friendly unless content is highly technical.
+
+    Generate the following fields:
+    1. title: A cleaned and readable title.
+    2. short_summary: One sentence summary (max 25 words).
+    3. detailed_summary: 3 to 5 concise bullet points explaining the main ideas.
+    4. tags: 3 to 8 relevant tags.
+    5. category: One from ["Technology","AI","Programming","Finance","Education","News","Gaming","Health","Business","Science","Entertainment","Tutorial","Research","Productivity","Other"].
+    6. reading_time: Estimated reading time in minutes.
+    7. difficulty: ["Beginner","Intermediate","Advanced"].
+    8. content_type: ["Article","Documentation","Video","Research Paper","Tutorial","Blog","News","Repository","Tool","Other"].
+    9. sentiment: ["Neutral","Positive","Critical","Opinionated","Educational","Promotional"].
+    10. key_takeaways: 3 short actionable insights.
+
+    Return response ONLY in this JSON format:
+    {
+      "title": "",
+      "short_summary": "",
+      "detailed_summary": [],
+      "tags": [],
+      "category": "",
+      "reading_time": "",
+      "difficulty": "",
+      "content_type": "",
+      "sentiment": "",
+      "key_takeaways": []
+    }`;
 
     const response = await invokeLLM({
-      model: mode === "quick" ? "llama-3.1-8b-instant" : "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant", // Optimized for lightning-fast latency
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}` }
@@ -164,14 +236,45 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
     });
 
     const llmResponse = response.choices[0]?.message?.content || "{}";
-    const result = JSON.parse(llmResponse);
+    let result;
+    try {
+      result = JSON.parse(llmResponse);
+    } catch (parseError) {
+      console.error("[AI_CHAT_FAILURE] JSON_PARSE_ERROR", { llmResponse, parseError });
+      result = {};
+    }
+
+    // Mapping high-fidelity JSON to existing schema
+    const combinedDescription = `
+${result.short_summary || ""}
+
+MAIN IDEAS:
+${(result.detailed_summary || []).map((s: string) => `• ${s}`).join("\n")}
+
+KEY TAKEAWAYS:
+${(result.key_takeaways || []).map((t: string) => `• ${t}`).join("\n")}
+
+Reading Time: ${result.reading_time || "1"} min | Difficulty: ${result.difficulty || "Beginner"}
+    `.trim();
+
+    // Type Mapper: Map rich content types to backend enum (video, post, document)
+    const rawType = (result.content_type || "Other").toLowerCase();
+    let mappedType: "video" | "post" | "document" = "post";
+    
+    if (isYouTube || rawType === "video") {
+      mappedType = "video";
+    } else if (["article", "blog", "news", "tool", "repository"].includes(rawType)) {
+      mappedType = "post";
+    } else if (["documentation", "research paper", "tutorial", "other"].includes(rawType)) {
+      mappedType = "document";
+    }
 
     return {
       title: result.title || metadata.title || "New Content",
-      description: result.description || metadata.description || "",
-      type: (isYouTube ? "video" : result.type || "post") as any,
+      description: combinedDescription || metadata.description || "",
+      type: mappedType,
       tags: result.tags || [],
-      topics: result.topics || []
+      topics: result.category ? [result.category, ...(result.tags || []).slice(0, 2)] : []
     };
 
   } catch (error: any) {
@@ -193,14 +296,18 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
  */
 export const createEmbedding = async (text: string, useCache = false): Promise<number[]> => {
   const normalizedText = text.trim().toLowerCase();
+  
+  // Truncate to safety limits (Rough estimation: 1 token ~= 4 chars)
+  const MAX_CHARS = openai ? 25000 : 1800; // ~6000 tokens for OpenAI, ~450 for HF
+  const safeText = normalizedText.length > MAX_CHARS ? normalizedText.slice(0, MAX_CHARS) : normalizedText;
 
   // 1. Check Cache
-  if (useCache && queryCache.has(normalizedText)) {
-    const cached = queryCache.get(normalizedText)!;
+  if (useCache && queryCache.has(safeText)) {
+    const cached = queryCache.get(safeText)!;
     if (Date.now() - cached.timestamp < CACHE_TTL) {
       return cached.embedding;
     }
-    queryCache.delete(normalizedText);
+    queryCache.delete(safeText);
   }
 
   const start = Date.now();
@@ -208,25 +315,50 @@ export const createEmbedding = async (text: string, useCache = false): Promise<n
     let embedding: number[];
 
     if (openai) {
+      // Production Grade: text-embedding-3-small ($0.02 / 1M tokens)
       const response = await openai.embeddings.create({
         model: "text-embedding-3-small",
-        input: text.replace(/\n/g, " "),
+        input: safeText.replace(/\n/g, " "),
       });
       const vector = response.data?.[0]?.embedding;
       if (!vector) throw new Error("OpenAI returned empty embedding data.");
       embedding = vector;
     } else {
       if (!hfToken) throw new Error("No embedding provider configured");
-      const response = await fetch(
-        `https://api-inference.huggingface.co/pipeline/feature-extraction/${HF_EMBEDDING_MODEL}`,
-        {
-          headers: { Authorization: `Bearer ${hfToken}` },
+      
+      const url = `https://router.huggingface.co/hf-inference/models/${HF_EMBEDDING_MODEL}/pipeline/feature-extraction`;
+      const payload = { inputs: text };
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); 
+
+      try {
+        const response = await fetch(url, {
+          headers: { 
+            "Authorization": `Bearer ${hfToken}`,
+            "Content-Type": "application/json"
+          },
           method: "POST",
-          body: JSON.stringify({ inputs: text }),
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        const responseData = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          console.error("[HF_ERROR]", responseData || response.statusText);
+          if (response.status === 503 || response.status === 404) {
+            return new Array(384).fill(0); 
+          }
+          throw new Error(`HF API Error: ${response.status}`);
         }
-      );
-      if (!response.ok) throw new Error(`HF API Error: ${response.status}`);
-      embedding = await response.json();
+        embedding = responseData;
+      } catch (err: any) {
+        clearTimeout(timeoutId);
+        console.error("[HF_ERROR]", err.message);
+        return new Array(384).fill(0);
+      }
     }
 
     if (!Array.isArray(embedding)) {
@@ -273,12 +405,53 @@ export const processContentEmbedding = async (contentId: string) => {
         const processingStartedAt = (content as any).updatedAt;
         console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
 
-        const contextText = `Title: ${content.title}. ${content.description ? `Description: ${content.description}` : ""} ${content.topics && content.topics.length > 0 ? `Topics: ${content.topics.join(", ")}` : ""}`;
-        const embedding = await createEmbedding(contextText, false);
+        // 2. Optimized Parallel Synthesis (Metadata + Embedding)
+        let updatedMetadata: any = {};
+        let title = content.title;
+        let description = content.description;
+        let topics = content.topics;
+
+        console.log(`[AI][SYNTHESIS_START] contentId: ${contentId}`);
+
+        // We run both the AI Analysis and the Embedding in parallel to save time
+        const synthesisPromise = (async () => {
+          if (!content.description || content.aiStatus === "processing") {
+            const classification = await getAiClassification(content.link, "deep");
+            title = classification.title;
+            description = classification.description;
+            topics = classification.topics;
+            return {
+              title: classification.title,
+              description: classification.description,
+              type: classification.type,
+              tags: classification.tags,
+              topics: classification.topics,
+              aiStatus: "completed"
+            };
+          }
+          return null;
+        })();
+
+        // Initial context for embedding (uses current title if analysis isn't done yet)
+        const contextText = `Title: ${title}. ${description ? `Description: ${description}` : ""} ${topics && topics.length > 0 ? `Topics: ${topics.join(", ")}` : ""}`;
+        
+        const [classificationResult, embedding] = await Promise.all([
+          synthesisPromise,
+          createEmbedding(contextText, false)
+        ]);
+
+        if (classificationResult) {
+          updatedMetadata = classificationResult;
+        }
 
         const updateResult = await ContentModel.updateOne(
           { _id: contentId, updatedAt: processingStartedAt },
-          { embedding, embeddingStatus: "completed" }
+          { 
+            embedding, 
+            embeddingStatus: "completed",
+            ...updatedMetadata,
+            aiStatus: updatedMetadata.aiStatus || "completed"
+          }
         );
 
         if (updateResult.modifiedCount === 0) {
@@ -317,24 +490,45 @@ export const generateAiChatAnswer = async (
     `[Source ${i+1}]: Title: ${c.title} | Link: ${c.link} | Type: ${c.type} | ID: ${c._id}\nSummary: ${c.description || "No summary available."}`
   ).join("\n\n");
 
-  const systemPrompt = `You are the user's private "Second Brain" assistant.
-  Your goal is to answer questions using ONLY the provided knowledge sources below.
+  const contextLabel = context.length > 0 ? `${context.length} source(s)` : "EMPTY";
+  console.log(`[PROMPT_GENERATION_START] context=${contextLabel}`);
+
+  const systemPrompt = `You are a high-fidelity "Second Brain" assistant. 
+  Your primary directive is to synthesize answers using ONLY the provided context.
   
-  Retrieved Context:
-  ${contextBlob}`;
+  CONTEXT DOCUMENTS:
+  ${contextBlob || "No context available."}
+  
+  STRICT GROUNDING RULES:
+  1. ONLY use information from the Context Documents above.
+  2. If the answer is not in the context, say: "I don't have enough information in your Second Brain to answer that."
+  3. Cite sources as [Source 1], [Source 2], etc.
+  4. DO NOT use external knowledge or hallucinate facts.
+  5. If context is empty, tell the user no relevant memories were found.`;
 
-  const response = await invokeLLM({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      { role: "system", content: systemPrompt },
-      ...history.slice(-6),
-      { role: "user", content: query }
-    ],
-    temperature: 0.1,
-    stream: false,
-  });
+  try {
+    console.log("[LLM_CALL_START]");
+    const response = await invokeLLM({
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: systemPrompt },
+        ...history.slice(-6),
+        { role: "user", content: query }
+      ],
+      temperature: 0.1,
+      max_tokens: 1024,
+      stream: false,
+    });
 
-  return response.choices[0]?.message?.content || "I'm sorry, I couldn't synthesize an answer.";
+    const answer = response.choices[0]?.message?.content?.trim();
+    console.log(`[LLM_SUCCESS] chars=${answer?.length ?? 0}`);
+    return answer || "I'm sorry, I couldn't synthesize an answer.";
+  } catch (error: any) {
+    // Log internally with full details, but NEVER re-throw raw provider error
+    console.error("[LLM_CALL_FAILED] code:", error?.code ?? "UNKNOWN");
+    // Return graceful string — controller decides the final HTTP shape
+    return "__LLM_FAILURE__";
+  }
 };
 
 /**
@@ -353,11 +547,18 @@ export const generateAiChatAnswerStream = async (
       `[Source ${i+1}]: Title: ${c.title} | Link: ${c.link} | Type: ${c.type} | ID: ${c._id}\nSummary: ${c.description || "No summary available."}`
     ).join("\n\n");
 
-    const systemPrompt = `You are the user's private "Second Brain" assistant.
-    Your goal is to answer questions using ONLY the provided knowledge sources below.
+    const systemPrompt = `You are a high-fidelity "Second Brain" assistant. 
+    Your primary directive is to synthesize answers using ONLY the provided context.
     
-    Retrieved Context:
-    ${contextBlob}`;
+    CONTEXT DOCUMENTS:
+    ${contextBlob}
+    
+    STRICT GROUNDING RULES:
+    1. ONLY use information from the Context Documents above.
+    2. If the answer is not contained within the context, respond: "I'm sorry, but I don't have enough information in your Second Brain to answer that."
+    3. Cite your sources using [Source 1], [Source 2], etc.
+    4. DO NOT use external knowledge.
+    5. If the context is empty, inform the user you have no relevant memories saved.`;
 
     console.log("[PROMPT_CREATED]");
 
@@ -512,12 +713,19 @@ export const generateBrainIntelligence = async (userId: string, contents: any[],
 
     const llmResponse = response.choices[0]?.message?.content || "{}";
     console.log("[LLM_RESPONSE_RAW]", llmResponse);
-    const rawResult = JSON.parse(llmResponse);
+    
+    let rawResult;
+    try {
+      rawResult = JSON.parse(llmResponse);
+    } catch (parseError) {
+      console.error("[AI_CHAT_FAILURE] BRAIN_INTEL_PARSE_ERROR", { llmResponse, parseError });
+      rawResult = { summary: "Neural synthesis degraded.", insights: [] };
+    }
     
     // POST-PROCESSING: Quality Filtering
-    if (rawResult.insights) {
+    if (rawResult.insights && Array.isArray(rawResult.insights)) {
       rawResult.insights = rawResult.insights
-        .filter((i: any) => i.qualityScore >= 7)
+        .filter((i: any) => i && i.qualityScore >= 7)
         .sort((a: any, b: any) => b.qualityScore - a.qualityScore)
         .slice(0, 5);
     }

@@ -416,7 +416,11 @@ export const processContentEmbedding = async (contentId: string) => {
         // We run both the AI Analysis and the Embedding in parallel to save time
         const synthesisPromise = (async () => {
           if (!content.description || content.aiStatus === "processing") {
-            const classification = await getAiClassification(content.link, "deep");
+            const link = content.link || "";
+            if (!link) {
+              throw new Error("Content link is missing for AI classification");
+            }
+            const classification = await getAiClassification(link, "deep");
             title = classification.title;
             description = classification.description;
             topics = classification.topics;

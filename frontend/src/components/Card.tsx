@@ -3,7 +3,6 @@ import { Shareicon } from "../icons/ShareIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
-import { EditIcon } from "../icons/EditIcon";
 import { useMemo, useState } from "react";
 
 interface CardProps {
@@ -26,7 +25,7 @@ interface CardProps {
   description?: string;
 }
 
-export function Card({ title, link, type, status = null, aiStatus, aiMetadata, onDelete, onEdit, onSelect, onGenerateInsight, isSelected, description }: CardProps) {
+export function Card({ title, link, type, aiStatus, onDelete, onEdit, onSelect, onGenerateInsight, isSelected, description }: CardProps) {
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -55,12 +54,6 @@ export function Card({ title, link, type, status = null, aiStatus, aiMetadata, o
       difficulty: metaMatch ? metaMatch[2] : "Beginner"
     };
   }, [description]);
-
-  const typeStyles = useMemo(() => {
-    if (isVideo) return "text-amber-600 bg-amber-50/50";
-    if (isPost) return "text-blue-600 bg-blue-50/50";
-    return "text-purple-600 bg-purple-50/50";
-  }, [isVideo, isPost]);
 
   const handleSave = () => {
     if (editedTitle.trim() !== "") {

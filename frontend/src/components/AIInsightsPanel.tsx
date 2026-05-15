@@ -6,27 +6,18 @@ import { BACKEND_URL } from "../config";
 interface AIInsightsPanelProps {
   isOpen: boolean;
   onClose: () => void;
-  contentCount: number;
   selectedContent?: Content;
-  onClearSelection?: () => void;
-  onRetry?: (id: string) => void;
-  isSlowAnalysis?: boolean;
 }
 
 export function AIInsightsPanel({
   isOpen,
   onClose,
-  contentCount,
-  selectedContent,
-  onClearSelection,
-  onRetry,
-  isSlowAnalysis
+  selectedContent
 }: AIInsightsPanelProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "deep-dive" | "connections" | "chat">("overview");
   const [chatQuery, setChatQuery] = useState("");
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
   const [isThinking, setIsThinking] = useState(false);
-  const [chatError, setChatError] = useState<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of chat
@@ -34,46 +25,11 @@ export function AIInsightsPanel({
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isThinking]);
 
-  const [brainIntelligence, setBrainIntelligence] = useState<{
-    summary: string;
-    insights: {
-      category: string;
-      title: string;
-      description: string;
-      confidence: "Strong" | "Moderate" | "Emerging";
-      sources: { title: string, id: string, link: string }[];
-    }[];
-  } | null>(null);
-  const [isIntelligenceLoading, setIsIntelligenceLoading] = useState(false);
-  const [intelligenceError, setIntelligenceError] = useState<string | null>(null);
-
-  const fetchIntelligence = async () => {
-    setIsIntelligenceLoading(true);
-    setIntelligenceError(null);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/ai/insights`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      if (!response.ok) throw new Error(`Neural engine error: ${response.status}`);
-      const data = await response.json();
-      if (data.success) setBrainIntelligence(data.data);
-      else throw new Error(data.message || "Failed to synthesize patterns.");
-    } catch (err: any) {
-      setIntelligenceError(err.name === 'AbortError' ? "Neural engine timed out." : err.message);
-    } finally {
-      setIsIntelligenceLoading(false);
-    }
-  };
 
   const handleSendMessage = async (e?: React.FormEvent, retryQuery?: string) => {
     if (e) e.preventDefault();
     const userQuery = retryQuery || chatQuery;
     if (!userQuery.trim() || isThinking) return;
-    setChatError(null);
     if (!retryQuery) setChatQuery("");
     const history = messages.slice(-6).map(m => ({ role: m.role, content: m.content }));
     if (!retryQuery) setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
@@ -95,7 +51,7 @@ export function AIInsightsPanel({
         }]);
       } else throw new Error(response.data.error || "Brain synthesis failed.");
     } catch (error: any) {
-      setChatError(error.code === 'ECONNABORTED' ? "Neural engine timed out." : (error.response?.data?.error || "Synthesis failed."));
+      // Error handled via UI fallback
     } finally {
       setIsThinking(false);
     }

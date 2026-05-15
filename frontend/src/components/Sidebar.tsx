@@ -1,76 +1,20 @@
 import { Logo } from "../icons/Logo";
 import { SidebarItem } from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
-
-interface InsightItem {
-  id: string;
-  title: string;
-  noteName: string;
-  summary: string;
-  label: string;
-  contentId?: string;
-}
 
 export function Sidebar({
     selectedFilter,
     onFilterChange,
     contents = [],
-    selectedContentId,
-    onSelectInsight
+    selectedContentId
 }: {
     selectedFilter: string;
     onFilterChange: (filter: string) => void;
     contents?: any[];
     selectedContentId?: string | null;
-    onSelectInsight?: (id: string) => void;
 }) {
     const navigate = useNavigate();
     const username = localStorage.getItem("username") || "User";
-
-    const insights: InsightItem[] = useMemo(() => {
-        if (contents.length === 0) return [];
-        const items: InsightItem[] = [];
-
-        // Global Pattern
-        const videoCount = contents.filter(c => c.type === 'video').length;
-        if (videoCount > 0) {
-            items.push({
-                id: 'pattern-video',
-                title: "Video-heavy learning",
-                noteName: "Multiple Sources",
-                summary: "You are consuming a high volume of video content lately.",
-                label: "Learning Pattern",
-            });
-        }
-
-        // Note-based patterns
-        contents.slice(0, 3).forEach(content => {
-            if (content.topics && content.topics.length > 0) {
-                items.push({
-                    id: `insight-${content._id}`,
-                    title: `Focus: ${content.topics[0]}`,
-                    noteName: content.title || "Untitled",
-                    summary: content.description || "",
-                    label: "Note Context",
-                    contentId: content._id
-                });
-            }
-        });
-
-        if (contents.length >= 2) {
-            items.push({
-                id: 'connection-1',
-                title: "Semantic overlap found",
-                noteName: "Multiple Notes",
-                summary: "Overlap detected in AI topics.",
-                label: "Suggested Connection",
-                contentId: contents[0]._id
-            });
-        }
-
-        return items;
-    }, [contents]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");

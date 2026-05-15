@@ -145,7 +145,6 @@ export function Dashboard() {
     }
   }
 
-  const [isSlowAnalysis, setIsSlowAnalysis] = useState(false);
 
   /**
    * Manual Insight Generation (On-Demand)
@@ -154,7 +153,6 @@ export function Dashboard() {
   // Cancel previous if any
   if (abortControllerRef.current) abortControllerRef.current.abort();
   abortControllerRef.current = new AbortController();
-  setIsSlowAnalysis(false);
 
   // 1. Optimistic UI Update using Query Cache
   await queryClient.cancelQueries({ queryKey: ["content"] });
@@ -166,10 +164,6 @@ export function Dashboard() {
   setSelectedContentId(contentId);
   setIsAiPanelOpen(true);
 
-  // Timeout handler for long-running analysis
-  const slowTimer = setTimeout(() => {
-    setIsSlowAnalysis(true);
-  }, 10000);
 
   try {
     const response = await axios.post(`${BACKEND_URL}/api/v1/ai/reprocess`, 
@@ -206,7 +200,6 @@ export function Dashboard() {
       old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c) : []
     );
   } finally {
-    clearTimeout(slowTimer);
     queryClient.invalidateQueries({ queryKey: ["content"] });
   }
 }
@@ -270,10 +263,6 @@ export function Dashboard() {
         onFilterChange={setSelectedFilter}
         contents={contents}
         selectedContentId={selectedContentId}
-        onSelectInsight={(id) => {
-          setSelectedContentId(id);
-          setIsAiPanelOpen(true);
-        }}
       />
       
       {/* Main Content Area */}
@@ -353,15 +342,13 @@ export function Dashboard() {
             className="grid gap-10 pb-20"
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
           >
-            {filteredContents.map(({ type, link, title, _id, embeddingStatus, aiStatus, aiMetadata, description }) => (
+            {filteredContents.map(({ type, link, title, _id, aiStatus, description }) => (
               <Card
                 key={_id}
                 title={title}
                 link={link}
                 type={type}
-                status={embeddingStatus}
                 aiStatus={aiStatus}
-                aiMetadata={aiMetadata}
                 description={description}
                 isSelected={selectedContentId === _id}
                 onGenerateInsight={() => handleGenerateInsight(_id)}
@@ -408,11 +395,7 @@ export function Dashboard() {
       <AIInsightsPanel
         isOpen={isAiPanelOpen}
         onClose={() => setIsAiPanelOpen(false)}
-        contentCount={contents.length}
         selectedContent={contents.find(c => c._id === selectedContentId)}
-        onClearSelection={() => setSelectedContentId(null)}
-        onRetry={handleGenerateInsight}
-        isSlowAnalysis={isSlowAnalysis}
       />
     </div>
   );

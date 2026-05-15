@@ -6977,3 +6977,43 @@ Restarting 'dist/index.js'
 (Use `node --trace-deprecation ...` to show where the warning was created)
 Cron jobs initialized.
 Server running on port 3000
+Running embedding cleanup cron job...
+No stuck content found.
+[2J[3J[H12:34:57 AM - File change detected. Starting incremental compilation...
+
+
+12:34:57 AM - Found 0 errors. Watching for file changes.
+Restarting 'dist/index.js'
+(node:26378) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26390) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26392) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26396) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26397) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26406) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26407) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26410) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Restarting 'dist/index.js'
+(node:26412) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000
+Restarting 'dist/index.js'
+(node:26418) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Cron jobs initialized.
+Server running on port 3000

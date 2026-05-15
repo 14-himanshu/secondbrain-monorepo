@@ -6,8 +6,7 @@
   "scripts": {
     "build": "tsc -b",
     "start": "node dist/index.js",
-    "dev": "tsc -b && (tsc -b -w & node --watch dist/index.js)",
-    "postinstall": "npm run build"
+    "dev": "tsc -b && (tsc -b -w & node --watch dist/index.js)"
   },
   "keywords": [],
   "author": "",

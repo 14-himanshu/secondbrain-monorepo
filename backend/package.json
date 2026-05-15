@@ -4,9 +4,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "tsc -b",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
     "start": "node dist/index.js",
-    "dev": "tsc -b && (tsc -b -w & node --watch dist/index.js)"
+    "dev": "tsc && (tsc -w & node --watch dist/index.js)"
   },
   "keywords": [],
   "author": "",

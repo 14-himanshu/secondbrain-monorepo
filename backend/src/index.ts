@@ -10,6 +10,7 @@ import { random } from "./utils.js";
 import cors from "cors";
 
 import { getAiClassification, processContentEmbedding } from "./services/ai.service.js";
+import { normalizeUrl } from "./services/ingestion/url.js";
 import { semanticSearchController } from "./controllers/search.controller.js";
 import { initCronJobs } from "./cron.js";
 import aiRouter from "./routes/ai.js";
@@ -120,6 +121,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
   }
 
   const { title, link, type, tags, description } = parsed.data;
+  const normalizedTarget = normalizeUrl(link);
 
   // STEP 1: Instant Metadata Extraction (Zero AI Latency)
   let domain = "";
@@ -133,6 +135,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
   const content = await ContentModel.create({
     title: title || "New Note",
     link,
+    normalizedLink: normalizedTarget.normalizedUrl,
     type: type || (link.includes("youtube.com") || link.includes("youtu.be") ? "video" : "post"),
     tags: tags || [],
     description: description || "",
@@ -142,7 +145,9 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     aiMetadata: {
       domain,
       source: domain,
-      contentType: type || "web"
+      contentType: type || "web",
+      normalizedLink: normalizedTarget.normalizedUrl,
+      platform: normalizedTarget.platform,
     }
   });
 

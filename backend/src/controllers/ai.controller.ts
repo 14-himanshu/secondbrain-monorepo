@@ -230,7 +230,7 @@ export const aiTagController = async (req: Request, res: Response) => {
     const { url } = parsed.data;
     
     // Attempt classification with the service
-    const classification = await getAiClassification(url);
+    const classification = await getAiClassification(url, "quick");
 
     // If classification is returned with fallback values, we still consider it a success
     // but the frontend can decide how to display it.

@@ -15,6 +15,7 @@ const ContentSchema = new Schema({
     title: String,
     description: String, // Added for semantic search context
     link: String,
+    normalizedLink: String,
     tags: [String],
     topics: [String], // AI-extracted themes
     type: String,
@@ -35,7 +36,17 @@ const ContentSchema = new Schema({
         domain: String,
         source: String,
         contentType: String,
-        estimatedTopics: [String]
+        estimatedTopics: [String],
+        normalizedLink: String,
+        platform: String,
+        extractionSource: String,
+        extractionConfidence: Number,
+        validationPassed: Boolean,
+        cacheEligible: Boolean,
+        transcriptAvailable: Boolean,
+        author: String,
+        channel: String,
+        durationSeconds: Number
     },
     aiError: String
 }, { timestamps: true });
@@ -44,6 +55,7 @@ ContentSchema.index({ userId: 1 });
 ContentSchema.index({ embeddingStatus: 1 });
 ContentSchema.index({ aiStatus: 1 });
 ContentSchema.index({ createdAt: -1 });
+ContentSchema.index({ normalizedLink: 1, aiStatus: 1 });
 ContentSchema.index({ 
   title: "text", 
   description: "text", 

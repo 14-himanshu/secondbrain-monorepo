@@ -1,12 +1,14 @@
 import OpenAI from "openai";
 import { Groq } from "groq-sdk";
-import urlMetadata from "url-metadata";
 import mongoose from "mongoose";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { pipeline } from "@xenova/transformers";
-import { getGroqApiKey, getHuggingFaceToken } from "../config.js";
+import { getGroqApiKey } from "../config.js";
 import { ContentModel, BrainInsightModel } from "../db.js";
+import { buildDeterministicDescription, deriveCategory, deriveDeterministicTags, deriveTopics, shouldUseAiSynthesis, toBackendType, truncateForSynthesis } from "./ingestion/classification.js";
+import { extractContentFromUrl } from "./ingestion/registry.js";
+import type { ClassificationMode, ExtractedContent } from "./ingestion/types.js";
 
 // --- Local Brain Engine (Zero-Cost Singleton) ---
 let extractorPromise: Promise<any> | null = null;
@@ -213,9 +215,22 @@ const invokeLLM = async (params: any, retries = 2) => {
   throw new AIError(AIErrorCode.TIMEOUT, "LLM_MAX_RETRIES_EXCEEDED", true);
 };
 
-// HuggingFace Configuration
-const hfToken = getHuggingFaceToken();
-const HF_EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2";
+interface AiMetadataSnapshot {
+  domain?: string | undefined;
+  source?: string | undefined;
+  contentType?: string | undefined;
+  estimatedTopics?: string[] | undefined;
+  normalizedLink?: string | undefined;
+  platform?: string | undefined;
+  extractionSource?: string | undefined;
+  extractionConfidence?: number | undefined;
+  validationPassed?: boolean | undefined;
+  cacheEligible?: boolean | undefined;
+  transcriptAvailable?: boolean | undefined;
+  author?: string | undefined;
+  channel?: string | undefined;
+  durationSeconds?: number | undefined;
+}
 
 export interface AiClassification {
   title: string;
@@ -223,164 +238,201 @@ export interface AiClassification {
   type: "post" | "video" | "document";
   tags: string[];
   topics: string[];
+  normalizedLink?: string;
+  aiMetadata?: AiMetadataSnapshot;
 }
+
+const trimTag = (tag: string) => tag.trim().toLowerCase().replace(/[^a-z0-9+#.\-_ ]+/g, " ").replace(/\s+/g, "-");
+
+const normalizeTags = (tags: unknown) =>
+  Array.isArray(tags)
+    ? Array.from(
+        new Set(
+          tags
+            .map((tag) => trimTag(String(tag || "")))
+            .filter(Boolean)
+            .slice(0, 8)
+        )
+      )
+    : [];
+
+const parseJsonObject = (content: string) => {
+  try {
+    return JSON.parse(content);
+  } catch {
+    return {};
+  }
+};
+
+const buildAiMetadata = (normalizedUrl: string, extraction: ExtractedContent, topics: string[]): AiMetadataSnapshot => {
+  const domain = new URL(normalizedUrl).hostname.replace(/^www\./, "");
+  const cacheEligible = extraction.cacheable && extraction.validation.passed && extraction.confidence >= 0.7;
+
+  return {
+    domain,
+    source: domain,
+    contentType: extraction.contentType,
+    estimatedTopics: topics,
+    normalizedLink: normalizedUrl,
+    platform: extraction.platform,
+    extractionSource: extraction.source,
+    extractionConfidence: extraction.confidence,
+    validationPassed: extraction.validation.passed,
+    cacheEligible,
+    transcriptAvailable: extraction.source === "youtube-transcript",
+    author: extraction.metadata.author,
+    channel: extraction.metadata.channel,
+    durationSeconds: extraction.metadata.durationSeconds,
+  };
+};
+
+const buildSynthesisDescription = (
+  result: Record<string, any>,
+  deterministicDescription: string
+) => {
+  const shortDescription = String(result.short_description || "").trim() || deterministicDescription.split("\n\n")[0] || "No summary available.";
+  const summaryPoints = Array.isArray(result.summary_points)
+    ? result.summary_points.map((item) => String(item || "").trim()).filter(Boolean).slice(0, 4)
+    : [];
+  const semanticSummary = Array.isArray(result.semantic_summary)
+    ? result.semantic_summary.map((item) => String(item || "").trim()).filter(Boolean).slice(0, 3)
+    : [];
+
+  const sections = [shortDescription];
+  if (summaryPoints.length > 0) {
+    sections.push(`MAIN IDEAS:\n${summaryPoints.map((item) => `• ${item}`).join("\n")}`);
+  }
+  if (semanticSummary.length > 0) {
+    sections.push(`KEY TAKEAWAYS:\n${semanticSummary.map((item) => `• ${item}`).join("\n")}`);
+  }
+
+  return sections.join("\n\n").trim();
+};
+
+const buildFallbackClassification = (normalizedUrl: string, extraction: ExtractedContent): AiClassification => {
+  const tags = deriveDeterministicTags(extraction);
+  const category = deriveCategory(extraction);
+  const topics = deriveTopics(tags, category);
+
+  return {
+    title: extraction.metadata.title || "New Content",
+    description: buildDeterministicDescription(extraction),
+    type: toBackendType(extraction.contentType),
+    tags,
+    topics,
+    normalizedLink: normalizedUrl,
+    aiMetadata: buildAiMetadata(normalizedUrl, extraction, topics),
+  };
+};
+
+const shouldReuseCachedSummary = (doc: any, normalizedLink: string) =>
+  Boolean(
+    doc &&
+      doc.normalizedLink === normalizedLink &&
+      doc.aiStatus === "completed" &&
+      doc.description &&
+      doc.aiMetadata?.cacheEligible === true &&
+      Number(doc.aiMetadata?.extractionConfidence || 0) >= 0.75 &&
+      doc.aiMetadata?.validationPassed === true
+  );
 
 /**
  * AI Classification Service
  * Handles metadata extraction and content categorization.
  * Supports 'quick' (latency-optimized) and 'deep' (insight-optimized) modes.
  */
-export const getAiClassification = async (url: string, mode: "quick" | "deep" = "deep") => {
-  if (!groq) {
-    console.warn("[AI][GROQ] API key not configured. Using fallback.");
-    return { title: "New Content", description: "", type: "post" as const, tags: ["untagged"], topics: [] };
-  }
-
+export const getAiClassification = async (url: string, mode: ClassificationMode = "deep") => {
   try {
-    // 1. CACHE CHECK (Strictly for completed deep analysis)
-    if (mode === "deep") {
-      const existing = await ContentModel.findOne({ 
-        link: url, 
-        aiStatus: 'completed' 
-      }).sort({ createdAt: -1 });
+    const { target, extraction } = await extractContentFromUrl(url, mode);
 
-      if (existing && existing.description) {
-        console.log(`[AI_CACHE_HIT]: ${url}`);
+    if (mode === "deep") {
+      const existing = await ContentModel.findOne({
+        normalizedLink: target.normalizedUrl,
+        aiStatus: "completed",
+        "aiMetadata.cacheEligible": true,
+        "aiMetadata.validationPassed": true,
+        "aiMetadata.extractionConfidence": { $gte: 0.75 },
+      }).sort({ "aiMetadata.extractionConfidence": -1, createdAt: -1 });
+
+      if (shouldReuseCachedSummary(existing, target.normalizedUrl)) {
+        const cached = existing!;
+        console.log(`[AI_CACHE_HIT]: ${target.normalizedUrl}`);
         return {
-          title: existing.title,
-          description: existing.description,
-          tags: existing.tags,
-          topics: existing.topics,
-          type: existing.type
+          title: cached.title,
+          description: cached.description,
+          tags: cached.tags,
+          topics: cached.topics,
+          type: cached.type,
+          normalizedLink: cached.normalizedLink || target.normalizedUrl,
+          aiMetadata: cached.aiMetadata,
         };
       }
     }
 
-    // 1.5 Enhanced Metadata Fetch with Timeout & X.com Logic
-    let metadata: any = {};
-    let fullText = "";
+    const fallbackClassification = buildFallbackClassification(target.normalizedUrl, extraction);
 
-    try {
-      // Use custom User-Agent to bypass simple bot blockers
-      metadata = await withTimeout(urlMetadata(url, {
-        requestHeaders: {
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9'
-        }
-      }), 12000, "urlMetadata");
-    } catch (e) {
-      console.warn(`[AI][METADATA_TIMEOUT] ${url}. Falling back to Deep Scraper.`);
+    if (!shouldUseAiSynthesis(extraction, mode) || (!openai && !groq)) {
+      return fallbackClassification;
     }
 
-    // 1.6 TRIGGER DEEP SCRAPER for "Hard" sites or if metadata failed
-    const isHardSite = url.includes("notion.so") || url.includes("linkedin.com") || url.includes("medium.com") || url.includes("notion.site");
-    const hasNoDescription = !metadata.description || metadata.description.length < 50;
-
-    if (isHardSite || hasNoDescription) {
-      fullText = await deepScrape(url);
-    }
-
-    // Special handling for x.com/twitter to avoid empty summaries
-    if (url.includes("x.com") || url.includes("twitter.com")) {
-      metadata.domain = "x.com";
-      metadata.contentType = "post";
-      if (!metadata.description || metadata.description.length < 10) {
-        metadata.description = `A status update/post from Elon Musk on X.com (Link: ${url})`;
-      }
-    }
-
-    const isYouTube = url.includes("youtube.com") || url.includes("youtu.be");
-    
-    // 2. High-Fidelity Bookmark Summarization Prompt
-    const systemPrompt = `You are an AI bookmark summarization engine.
-    Your task is to analyze webpage content and generate a clean, concise, and useful summary.
-
-    I will provide you with Metadata and potentially the Raw Full Text of the page.
-    Analyze the full text if available, as it is more accurate than metadata.
-
-    IMPORTANT RULES:
-    - Focus only on the main content.
-    - Ignore ads and navigation.
-    - If the content appears to be a login wall, say "Content is protected by a login wall."
-    - Output must be valid JSON.
-
-    Generate the following fields:
-    1. title: A cleaned and readable title.
-    2. short_summary: One sentence summary (max 25 words).
-    3. detailed_summary: 3 to 5 concise bullet points explaining the main ideas.
-    4. tags: 3 to 8 relevant tags.
-    5. category: One from ["Technology","AI","Programming","Finance","Education","News","Gaming","Health","Business","Science","Entertainment","Tutorial","Research","Productivity","Other"].
-    6. reading_time: Estimated reading time in minutes.
-    7. difficulty: ["Beginner","Intermediate","Advanced"].
-    8. content_type: ["Article","Documentation","Video","Research Paper","Tutorial","Blog","News","Repository","Tool","Other"].
-    9. sentiment: ["Neutral","Positive","Critical","Opinionated","Educational","Promotional"].
-    10. key_takeaways: 3 short actionable insights.
-
-    Return response ONLY in this JSON format:
-    {
-      "title": "",
-      "short_summary": "",
-      "detailed_summary": [],
-      "tags": [],
-      "category": "",
-      "reading_time": "",
-      "difficulty": "",
-      "content_type": "",
-      "sentiment": "",
-      "key_takeaways": []
-    }`;
+    const synthesisPrompt = `You summarize already-clean extracted web content.
+Return valid JSON only with:
+{
+  "title": "",
+  "short_description": "",
+  "summary_points": [],
+  "semantic_summary": [],
+  "tags": [],
+  "category": "",
+  "content_type": ""
+}
+Rules:
+- Use only the provided extracted content and metadata.
+- Keep short_description under 30 words.
+- summary_points: 2 to 4 concise bullets.
+- semantic_summary: 2 to 3 concise insights.
+- tags: 3 to 6 lowercase tags.
+- Be literal and deterministic.`;
 
     const response = await invokeLLM({
       model: "llama-3.1-8b-instant",
       messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}\nFull Page Text: ${fullText || "None provided"}` }
+        { role: "system", content: synthesisPrompt },
+        {
+          role: "user",
+          content: `URL: ${target.normalizedUrl}
+Platform: ${extraction.platform}
+Source: ${extraction.source}
+Metadata: ${JSON.stringify({
+            title: extraction.metadata.title,
+            description: extraction.metadata.description,
+            author: extraction.metadata.author,
+            channel: extraction.metadata.channel,
+            tags: extraction.metadata.tags,
+          })}
+Extracted Content:
+${truncateForSynthesis(extraction.content)}`,
+        },
       ],
       response_format: { type: "json_object" },
-      temperature: 0.3
+      temperature: 0,
     });
 
     const llmResponse = response.choices[0]?.message?.content || "{}";
-    let result;
-    try {
-      result = JSON.parse(llmResponse);
-    } catch (parseError) {
-      console.error("[AI_CHAT_FAILURE] JSON_PARSE_ERROR", { llmResponse, parseError });
-      result = {};
-    }
-
-    // Mapping high-fidelity JSON to existing schema
-    const combinedDescription = `
-${result.short_summary || ""}
-
-MAIN IDEAS:
-${(result.detailed_summary || []).map((s: string) => `• ${s}`).join("\n")}
-
-KEY TAKEAWAYS:
-${(result.key_takeaways || []).map((t: string) => `• ${t}`).join("\n")}
-
-Reading Time: ${result.reading_time || "1"} min | Difficulty: ${result.difficulty || "Beginner"}
-    `.trim();
-
-    // Type Mapper: Map rich content types to backend enum (video, post, document)
-    const rawType = (result.content_type || "Other").toLowerCase();
-    let mappedType: "video" | "post" | "document" = "post";
-    
-    if (isYouTube || rawType === "video") {
-      mappedType = "video";
-    } else if (["article", "blog", "news", "tool", "repository"].includes(rawType)) {
-      mappedType = "post";
-    } else if (["documentation", "research paper", "tutorial", "other"].includes(rawType)) {
-      mappedType = "document";
-    }
+    const result = parseJsonObject(llmResponse) as Record<string, any>;
+    const tags = normalizeTags(result.tags);
+    const finalTags = tags.length > 0 ? tags : fallbackClassification.tags;
+    const category = String(result.category || "").trim() || deriveCategory(extraction);
+    const topics = deriveTopics(finalTags, category);
 
     return {
-      title: result.title || metadata.title || "New Content",
-      description: combinedDescription || metadata.description || "",
-      type: mappedType,
-      tags: result.tags || [],
-      topics: result.category ? [result.category, ...(result.tags || []).slice(0, 2)] : []
+      title: String(result.title || "").trim() || fallbackClassification.title,
+      description: buildSynthesisDescription(result, fallbackClassification.description),
+      type: fallbackClassification.type,
+      tags: finalTags,
+      topics,
+      normalizedLink: target.normalizedUrl,
+      aiMetadata: buildAiMetadata(target.normalizedUrl, extraction, topics),
     };
 
   } catch (error: any) {
@@ -391,7 +443,13 @@ Reading Time: ${result.reading_time || "1"} min | Difficulty: ${result.difficult
       description: "Analysis temporarily unavailable.", 
       type: "post" as const, 
       tags: ["untagged"], 
-      topics: [] 
+      topics: [],
+      aiMetadata: {
+        extractionSource: "unavailable",
+        extractionConfidence: 0.05,
+        validationPassed: false,
+        cacheEligible: false,
+      },
     };
   }
 };
@@ -428,7 +486,7 @@ export const createEmbedding = async (text: string, useCache = false): Promise<n
         const firstKey = queryCache.keys().next().value;
         if (firstKey) queryCache.delete(firstKey);
       }
-      queryCache.set(normalizedText, { embedding, timestamp: Date.now() });
+      queryCache.set(safeText, { embedding, timestamp: Date.now() });
     }
 
     return embedding;
@@ -450,8 +508,8 @@ export const processContentEmbedding = async (contentId: string) => {
   if (currentlyProcessing.has(contentId)) return;
   currentlyProcessing.add(contentId);
   
-  const MAX_RETRIES = 3;
-  const BACKOFF_DELAYS = [1000, 2000, 4000];
+  const MAX_RETRIES = 1;
+  const BACKOFF_DELAYS = [800];
 
   try {
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -459,7 +517,6 @@ export const processContentEmbedding = async (contentId: string) => {
         const content = await ContentModel.findById(contentId);
         if (!content || content.embeddingStatus === "completed") break;
 
-        const processingStartedAt = (content as any).updatedAt;
         console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
 
         // 1. SCRAPE & SUMMARIZE (Sequential for stability)
@@ -469,19 +526,32 @@ export const processContentEmbedding = async (contentId: string) => {
         const classification = await withTimeout(
           getAiClassification(content.link!, "deep"),
           45000,
-          "DeepScrapeAndSummarize"
+          "ExtractAndSummarize"
         );
 
         console.log(`[AI][STEP_2] ANALYSIS_OK contentId: ${contentId}`);
+        const previousConfidence = Number((content as any).aiMetadata?.extractionConfidence || 0);
+        const nextConfidence = Number(classification.aiMetadata?.extractionConfidence || 0);
+        const shouldOverwriteSummary = !content.description || nextConfidence >= previousConfidence;
+        const mergedAiMetadata = {
+          ...((content as any).aiMetadata || {}),
+          ...(classification.aiMetadata || {}),
+        };
+
         await ContentModel.findByIdAndUpdate(contentId, { 
-          ...classification,
+          ...(shouldOverwriteSummary ? classification : {}),
+          normalizedLink: classification.normalizedLink || (content as any).normalizedLink || content.link,
+          aiMetadata: mergedAiMetadata,
           aiStatus: "analyzing", 
           aiProgress: 75 
         });
 
         // 2. EMBED (Based on the new summary)
         console.log(`[AI][STEP_3] EMBEDDING_START contentId: ${contentId}`);
-        const contextText = `Title: ${classification.title}. Description: ${classification.description}. Topics: ${classification.topics.join(", ")}`;
+        const effectiveTitle = shouldOverwriteSummary ? classification.title : content.title;
+        const effectiveDescription = shouldOverwriteSummary ? classification.description : content.description || classification.description;
+        const effectiveTopics = shouldOverwriteSummary ? classification.topics : content.topics || classification.topics;
+        const contextText = `Title: ${effectiveTitle}. Description: ${effectiveDescription}. Topics: ${effectiveTopics.join(", ")}`;
         const embedding = await createEmbedding(contextText, false);
 
         // 3. FINAL SAVE

@@ -296,28 +296,30 @@ export function Dashboard() {
 
               {/* Center: Smart Semantic Search */}
               <div className="flex-1 max-w-xl relative group">
-                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                  {isSearching ? (
-                    <div className="w-4 h-4 border-2 border-purple-500/50 border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <svg className="w-4 h-4 text-gray-300 group-focus-within:text-purple-600 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition duration-1000 group-focus-within:duration-200"></div>
+                <div className="relative flex items-center bg-white rounded-2xl border border-gray-100 shadow-sm shadow-purple-50/50 overflow-hidden transition-all group-focus-within:border-purple-200 group-focus-within:shadow-purple-100/50">
+                  <div className="pl-6 text-gray-300">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </div>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search your memories semantically..."
+                    className="w-full py-5 px-5 text-[15px] text-gray-600 focus:outline-none placeholder:text-gray-300 font-medium bg-transparent"
+                  />
+                  {isSearching && (
+                    <div className="pr-6">
+                      <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin"></div>
+                    </div>
                   )}
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search your memories semantically..."
-                  className="w-full pl-14 pr-12 py-4 bg-gray-50/30 border border-gray-100/50 rounded-2xl text-[14px] font-medium text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-600/5 focus:border-purple-200/40 focus:bg-white transition-all shadow-[0_2px_15px_rgba(0,0,0,0.01)]"
-                />
-                {searchQuery && (
-                  <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-xl text-gray-300 transition-all">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                )}
+                  {searchQuery && !isSearching && (
+                    <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-xl text-gray-300 transition-all">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  )}
               </div>
+            </div>
 
               {/* Right: Integrated Actions */}
               <div className="flex gap-3 shrink-0">

@@ -129,7 +129,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     domain = "web";
   }
 
-  // Create content record instantly (NO automatic background processing)
+  // STEP 1: Create content record
   const content = await ContentModel.create({
     title: title || "New Note",
     link,
@@ -138,7 +138,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     description: description || "",
     userId: req.userId,
     embeddingStatus: "pending",
-    aiStatus: description ? "summarized" : undefined, // Mark as summarized if content was provided manually
+    aiStatus: "queued", 
     aiMetadata: {
       domain,
       source: domain,
@@ -146,9 +146,16 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     }
   });
 
+  // STEP 2: Trigger AI Auto-Pilot (Background)
+  if (link && !description) {
+    processContentEmbedding(content._id.toString()).catch(err => 
+      console.error("[AUTO_AI_FAILED]", err.message)
+    );
+  }
+
   res.json({ 
     success: true,
-    message: "Content added. Click 'Generate Insight' to analyze.", 
+    message: "Content added. Neural synthesis triggered.", 
     contentId: content._id 
   });
 });
@@ -160,7 +167,10 @@ app.use("/api/v1/ai", (req, res, next) => {
   next();
 }, aiRouter);
 
+import { getConnectionsController } from "./controllers/connections.controller.js";
+
 app.get("/api/v1/search", userMiddleware, semanticSearchController);
+app.get("/api/v1/content/:id/connections", userMiddleware, getConnectionsController);
 
 
 

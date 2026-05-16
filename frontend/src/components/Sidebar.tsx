@@ -102,46 +102,16 @@ export function Sidebar({
                 />
             </div>
 
-            {/* SECTION 3: INTELLIGENT SIGNALS */}
-            <div className="px-8 mt-10 mb-4 flex items-center justify-between">
-                <span className="text-[9px] font-bold text-gray-300 uppercase tracking-[0.25em]">Neural Signals</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-            </div>
-
-            <div className="px-5 space-y-3 flex-1 overflow-y-auto custom-scrollbar pb-6">
-                {/* Recent Connection Widget */}
-                <div className="p-3.5 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-white hover:border-purple-100/50 transition-all cursor-default group">
-                    <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-purple-600 transition-colors">Connection</span>
+            {/* Intelligence Status: Simplified */}
+            <div className="mt-auto px-6 mb-8">
+                <div className="p-6 bg-gray-50/50 rounded-2xl border border-gray-100/50">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Neural Sync 2.0</span>
                     </div>
-                    <p className="text-[11px] font-medium text-gray-500 leading-relaxed">
-                        Related topic detected: <span className="text-gray-900 font-bold">Semantic Search</span>
-                    </p>
-                </div>
-
-                {/* AI Signal Widget */}
-                <div className="p-3.5 rounded-2xl bg-gray-50/50 border border-gray-100/50 hover:bg-white hover:border-purple-100/50 transition-all cursor-default group">
-                    <div className="flex items-center gap-2 mb-2">
-                        <svg className="w-3 h-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-purple-600 transition-colors">AI Signal</span>
+                    <div className="text-[11px] text-gray-400 font-medium leading-relaxed">
+                        Knowledge graph is healthy. Semantic search is active across your brain.
                     </div>
-                    <p className="text-[11px] font-medium text-gray-500 leading-relaxed">
-                        High overlap with <span className="text-gray-900 font-bold">AI architecture</span> notes
-                    </p>
-                </div>
-
-                {/* Knowledge Pulse */}
-                <div className="flex items-center justify-between px-3 pt-4">
-                    <div className="flex items-center gap-2">
-                         <div className="flex gap-0.5">
-                            <div className="w-0.5 h-2 bg-purple-200 animate-[pulse-semantic_1s_infinite]"></div>
-                            <div className="w-0.5 h-3 bg-purple-300 animate-[pulse-semantic_1.2s_infinite]"></div>
-                            <div className="w-0.5 h-2 bg-purple-200 animate-[pulse-semantic_1.4s_infinite]"></div>
-                         </div>
-                         <span className="text-[10px] font-bold text-gray-400">Context: Technology</span>
-                    </div>
-                    <span className="text-[10px] font-bold text-purple-500/50">84% Sync</span>
                 </div>
             </div>
 

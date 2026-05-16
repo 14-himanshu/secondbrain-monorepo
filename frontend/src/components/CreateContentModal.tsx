@@ -166,17 +166,6 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                 />
               </div>
 
-              {/* Description / Manual Content */}
-              <div>
-                <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Manual Content (Optional)</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Paste content here if the link is private or protected (e.g. Notion)..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-50 outline-none transition-all text-sm text-gray-700 placeholder:text-gray-300 min-h-[100px] resize-none"
-                />
-              </div>
-
               {/* Category Selector - FIXED STYLING */}
               <div>
                 <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Category</label>

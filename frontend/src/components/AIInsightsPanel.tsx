@@ -20,6 +20,8 @@ export function AIInsightsPanel({
   const [isThinking, setIsThinking] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [manualContent, setManualContent] = useState("");
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [connections, setConnections] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -32,8 +34,20 @@ export function AIInsightsPanel({
     if (selectedContent) {
       setManualContent(selectedContent.description || "");
       setIsEditing(false);
+      fetchConnections(selectedContent._id);
     }
   }, [selectedContent]);
+
+  const fetchConnections = async (contentId: string) => {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/api/v1/content/${contentId}/connections`, {
+            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
+        });
+        setConnections(response.data.connections || []);
+    } catch (e) {
+        console.error("Error fetching connections:", e);
+    }
+  };
 
   const handleSaveManualContent = async () => {
     if (!selectedContent) return;
@@ -204,13 +218,13 @@ export function AIInsightsPanel({
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-10">
-                    {/* Summary Section: Editorial Style */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    {/* Executive Summary Section */}
+                    <section className="space-y-4">
+                      <div className="flex items-center justify-between px-1">
                         <div className="flex items-center gap-2">
-                           <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
-                           <h4 className="text-[14px] font-bold text-gray-800 tracking-tight">Executive Summary</h4>
+                          <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Executive Summary</span>
                         </div>
                         <button 
                           onClick={() => setIsEditing(true)}
@@ -219,39 +233,69 @@ export function AIInsightsPanel({
                           Edit
                         </button>
                       </div>
-                      <p className="text-[14px] text-gray-500 font-medium leading-[1.7] antialiased">
-                        {sections.short}
-                      </p>
-                    </div>
+                      
+                      <div className="bg-gray-50/30 rounded-2xl p-6 border border-gray-100/50">
+                        <p className="text-[14px] text-gray-700 leading-relaxed font-medium antialiased">
+                          {selectedContent?.description || "Neural engine is processing this node... Click the 'Lightning' icon on the card if this note hasn't been processed yet."}
+                        </p>
+                      </div>
+                    </section>
+
+                    {/* Neural Connections Section */}
+                    {connections.length > 0 && (
+                      <div className="pt-8 border-t border-gray-50/50">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
+                            <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Neural Connections</span>
+                          </div>
+                          <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded-full">Web of Knowledge</span>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {connections.map((conn) => (
+                            <div 
+                              key={conn._id} 
+                              className="group p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 hover:bg-white hover:border-purple-200 transition-all cursor-pointer shadow-sm hover:shadow-purple-100/50"
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                  {new URL(conn.link).hostname.replace("www.", "")}
+                                </div>
+                                <div className="text-[9px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-md">
+                                  {Math.round(conn.similarity * 100)}% Match
+                                </div>
+                              </div>
+                              <div className="text-[12px] font-bold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
+                                {conn.title}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Key Takeaways */}
+                    {sections.takeaways.length > 0 && (
+                      <section className="space-y-4 pt-8 border-t border-gray-50/50">
+                        <div className="flex items-center gap-2 px-1">
+                           <div className="w-1 h-3 bg-purple-400 rounded-full"></div>
+                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Core Intelligence</span>
+                        </div>
+                        <div className="space-y-3">
+                          {sections.takeaways.map((t, i) => (
+                            <div key={i} className="flex gap-4 p-4 hover:bg-gray-50/50 rounded-2xl transition-colors group">
+                               <div className="w-5 h-5 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold text-purple-400 shrink-0">
+                                  {i+1}
+                               </div>
+                               <p className="text-[13px] font-medium text-gray-600 leading-snug antialiased">{t}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                    )}
                   </div>
                 )}
-
-                {/* Synthesis Section */}
-                <section className="space-y-4">
-                  <div className="flex items-center gap-2 px-1">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Synthesis</span>
-                  </div>
-                  <div className="bg-purple-50/20 p-6 rounded-[24px] border border-purple-100/20">
-                    <p className="text-[14px] text-gray-600 font-medium leading-relaxed antialiased">
-                      {sections.short || "Neural engine is processing this node..."}
-                    </p>
-                  </div>
-                </section>
-
-                {/* Key Takeaways */}
-                <section className="space-y-4">
-                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Core Intelligence</span>
-                   <div className="space-y-3">
-                     {sections.takeaways.map((t, i) => (
-                       <div key={i} className="flex gap-4 p-4 hover:bg-gray-50/50 rounded-2xl transition-colors group">
-                          <div className="w-5 h-5 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold text-purple-400 shrink-0">
-                             {i+1}
-                          </div>
-                          <p className="text-[13px] font-medium text-gray-600 leading-snug antialiased">{t}</p>
-                       </div>
-                     ))}
-                   </div>
-                </section>
               </div>
             )}
 

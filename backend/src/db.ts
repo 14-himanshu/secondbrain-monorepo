@@ -27,9 +27,10 @@ const ContentSchema = new Schema({
     },
     aiStatus: {
         type: String,
-        enum: ['queued', 'processing', 'summarized', 'completed', 'failed'],
+        enum: ['queued', 'processing', 'scraping', 'analyzing', 'summarized', 'completed', 'failed'],
         default: 'queued'
     },
+    aiProgress: { type: Number, default: 0 },
     aiMetadata: {
         domain: String,
         source: String,

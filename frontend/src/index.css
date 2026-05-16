@@ -63,3 +63,12 @@
 .animate-pulse-semantic {
   animation: pulse-semantic 3s ease-in-out infinite;
 }
+
+@keyframes shimmer-semantic {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-shimmer-semantic {
+  animation: shimmer-semantic 2s linear infinite;
+}

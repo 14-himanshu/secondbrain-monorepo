@@ -2,10 +2,100 @@ import OpenAI from "openai";
 import { Groq } from "groq-sdk";
 import urlMetadata from "url-metadata";
 import mongoose from "mongoose";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { pipeline } from "@xenova/transformers";
 import { getGroqApiKey, getHuggingFaceToken } from "../config.js";
 import { ContentModel, BrainInsightModel } from "../db.js";
 
+// --- Local Brain Engine (Zero-Cost Singleton) ---
+let extractorPromise: Promise<any> | null = null;
+const getExtractor = async () => {
+    if (!extractorPromise) {
+        console.log("[AI][LOCAL_MODEL_LOAD] Initializing MiniLM-L6-v2...");
+        extractorPromise = pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2').then(model => {
+            console.log("[AI][LOCAL_MODEL_LOAD] Ready.");
+            return model;
+        }).catch(err => {
+            console.error("[AI][LOCAL_MODEL_LOAD] Failed:", err.message);
+            extractorPromise = null;
+            throw err;
+        });
+    }
+    return extractorPromise;
+};
+
+// @ts-ignore
+puppeteer.use(StealthPlugin());
+
 // --- Reliability Engine (Production Errors & Metrics) ---
+// ... (existing code)
+
+/**
+ * Deep Scraper Engine (Puppeteer + Stealth)
+ * Launches a real headless browser to bypass React/Notion security walls.
+ */
+const deepScrape = async (url: string): Promise<string> => {
+  console.log(`[AI][DEEP_SCRAPE_START] ${url}`);
+  let browser;
+  try {
+    // @ts-ignore
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--blink-settings=imagesEnabled=false' 
+      ],
+    });
+    const page = await browser.newPage();
+    
+    // SPEED BOOSTER: Block stylesheets and fonts
+    await page.setRequestInterception(true);
+    page.on('request', (req: any) => {
+      if (['stylesheet', 'font', 'media', 'image'].includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+    await page.setViewport({ width: 1280, height: 800 });
+
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    
+    const isSlowSite = url.includes('notion.so') || url.includes('linkedin.com');
+    await new Promise(r => setTimeout(r, isSlowSite ? 3000 : 800));
+
+    // Robust Extraction: Try direct, fallback to content
+    let content = "";
+    try {
+      content = await page.evaluate(() => {
+        const body = document.querySelector('body');
+        if (!body) return "";
+        // Remove noise
+        const scripts = body.querySelectorAll('script, style, nav, footer, noscript');
+        scripts.forEach(s => s.remove());
+        return body.innerText;
+      });
+    } catch (evalErr) {
+      console.warn("[AI][DEEP_SCRAPE][EVAL_RETRY] Frame detached. Using content fallback.");
+      const rawHtml = await page.content();
+      content = rawHtml.replace(/<[^>]*>?/gm, ' ').slice(0, 15000); // Crude but safe text extraction
+    }
+
+    console.log(`[AI][DEEP_SCRAPE_OK] chars=${content?.length ?? 0}`);
+    return (content || "").slice(0, 10000); 
+  } catch (error: any) {
+    console.error(`[AI][DEEP_SCRAPE_FAILED] ${error.message}`);
+    return "";
+  } finally {
+    if (browser) await browser.close();
+  }
+};
 
 export enum AIErrorCode {
   RATE_LIMIT = "AI_RATE_LIMIT",
@@ -168,6 +258,8 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
 
     // 1.5 Enhanced Metadata Fetch with Timeout & X.com Logic
     let metadata: any = {};
+    let fullText = "";
+
     try {
       // Use custom User-Agent to bypass simple bot blockers
       metadata = await withTimeout(urlMetadata(url, {
@@ -178,8 +270,15 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
         }
       }), 12000, "urlMetadata");
     } catch (e) {
-      console.warn(`[AI][METADATA_TIMEOUT] ${url}. Using URL as fallback context.`);
-      metadata = { url, title: url.split('/').pop() || "New Content" };
+      console.warn(`[AI][METADATA_TIMEOUT] ${url}. Falling back to Deep Scraper.`);
+    }
+
+    // 1.6 TRIGGER DEEP SCRAPER for "Hard" sites or if metadata failed
+    const isHardSite = url.includes("notion.so") || url.includes("linkedin.com") || url.includes("medium.com") || url.includes("notion.site");
+    const hasNoDescription = !metadata.description || metadata.description.length < 50;
+
+    if (isHardSite || hasNoDescription) {
+      fullText = await deepScrape(url);
     }
 
     // Special handling for x.com/twitter to avoid empty summaries
@@ -195,16 +294,16 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
     
     // 2. High-Fidelity Bookmark Summarization Prompt
     const systemPrompt = `You are an AI bookmark summarization engine.
-    Your task is to analyze webpage content and generate a clean, concise, and useful summary for a bookmark management application.
+    Your task is to analyze webpage content and generate a clean, concise, and useful summary.
+
+    I will provide you with Metadata and potentially the Raw Full Text of the page.
+    Analyze the full text if available, as it is more accurate than metadata.
 
     IMPORTANT RULES:
     - Focus only on the main content.
-    - Ignore advertisements, navigation menus, cookie notices, footers, and unrelated sections.
-    - Keep responses compact and information-dense.
-    - Do not hallucinate or invent information.
-    - If content is unclear, say so.
-    - Output must always be valid JSON.
-    - Keep summaries beginner-friendly unless content is highly technical.
+    - Ignore ads and navigation.
+    - If the content appears to be a login wall, say "Content is protected by a login wall."
+    - Output must be valid JSON.
 
     Generate the following fields:
     1. title: A cleaned and readable title.
@@ -233,10 +332,10 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
     }`;
 
     const response = await invokeLLM({
-      model: "llama-3.1-8b-instant", // Optimized for lightning-fast latency
+      model: "llama-3.1-8b-instant",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}` }
+        { role: "user", content: `URL: ${url}\nMetadata: ${JSON.stringify(metadata)}\nFull Page Text: ${fullText || "None provided"}` }
       ],
       response_format: { type: "json_object" },
       temperature: 0.3
@@ -299,13 +398,13 @@ Reading Time: ${result.reading_time || "1"} min | Difficulty: ${result.difficult
 
 /**
  * Robust Embedding Service
- * Uses OpenAI 'text-embedding-3-small' (if configured) or HuggingFace fallback.
+ * Uses local extractor for embeddings.
  */
 export const createEmbedding = async (text: string, useCache = false): Promise<number[]> => {
   const normalizedText = text.trim().toLowerCase();
   
-  // Truncate to safety limits (Rough estimation: 1 token ~= 4 chars)
-  const MAX_CHARS = openai ? 25000 : 1800; // ~6000 tokens for OpenAI, ~450 for HF
+  // Truncate to safety limits for the model
+  const MAX_CHARS = 2000; 
   const safeText = normalizedText.length > MAX_CHARS ? normalizedText.slice(0, MAX_CHARS) : normalizedText;
 
   // 1. Check Cache
@@ -317,62 +416,13 @@ export const createEmbedding = async (text: string, useCache = false): Promise<n
     queryCache.delete(safeText);
   }
 
-  const start = Date.now();
   try {
-    let embedding: number[];
+    const model = await getExtractor();
+    const output = await model(safeText, { pooling: 'mean', normalize: true });
+    
+    // Convert tensor to regular array
+    const embedding = Array.from(output.data) as number[];
 
-    if (openai) {
-      // Production Grade: text-embedding-3-small ($0.02 / 1M tokens)
-      const response = await openai.embeddings.create({
-        model: "text-embedding-3-small",
-        input: safeText.replace(/\n/g, " "),
-      });
-      const vector = response.data?.[0]?.embedding;
-      if (!vector) throw new Error("OpenAI returned empty embedding data.");
-      embedding = vector;
-    } else {
-      if (!hfToken) throw new Error("No embedding provider configured");
-      
-      const url = `https://router.huggingface.co/hf-inference/models/${HF_EMBEDDING_MODEL}/pipeline/feature-extraction`;
-      const payload = { inputs: text };
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); 
-
-      try {
-        const response = await fetch(url, {
-          headers: { 
-            "Authorization": `Bearer ${hfToken}`,
-            "Content-Type": "application/json"
-          },
-          method: "POST",
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-        const responseData = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-          console.error("[HF_ERROR]", responseData || response.statusText);
-          if (response.status === 503 || response.status === 404) {
-            return new Array(384).fill(0); 
-          }
-          throw new Error(`HF API Error: ${response.status}`);
-        }
-        embedding = responseData;
-      } catch (err: any) {
-        clearTimeout(timeoutId);
-        console.error("[HF_ERROR]", err.message);
-        return new Array(384).fill(0);
-      }
-    }
-
-    if (!Array.isArray(embedding)) {
-      throw new Error("Invalid embedding format returned");
-    }
-
-    // 2. Save to Cache
     if (useCache) {
       if (queryCache.size >= MAX_CACHE_SIZE) {
         const firstKey = queryCache.keys().next().value;
@@ -412,56 +462,37 @@ export const processContentEmbedding = async (contentId: string) => {
         const processingStartedAt = (content as any).updatedAt;
         console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
 
-        // 2. Optimized Parallel Synthesis (Metadata + Embedding)
-        let updatedMetadata: any = {};
-        let title = content.title;
-        let description = content.description;
-        let topics = content.topics;
-
-        console.log(`[AI][SYNTHESIS_START] contentId: ${contentId}`);
-
-        // We run both the AI Analysis and the Embedding in parallel to save time
-        const synthesisPromise = (async () => {
-          if (!content.description || content.aiStatus === "processing") {
-            const link = content.link || "";
-            if (!link) {
-              throw new Error("Content link is missing for AI classification");
-            }
-            const classification = await getAiClassification(link, "deep");
-            title = classification.title;
-            description = classification.description;
-            topics = classification.topics;
-            return {
-              title: classification.title,
-              description: classification.description,
-              type: classification.type,
-              tags: classification.tags,
-              topics: classification.topics,
-              aiStatus: "completed"
-            };
-          }
-          return null;
-        })();
-
-        // Initial context for embedding (uses current title if analysis isn't done yet)
-        const contextText = `Title: ${title}. ${description ? `Description: ${description}` : ""} ${topics && topics.length > 0 ? `Topics: ${topics.join(", ")}` : ""}`;
+        // 1. SCRAPE & SUMMARIZE (Sequential for stability)
+        console.log(`[AI][STEP_1] SCRAPING_START contentId: ${contentId}`);
+        await ContentModel.findByIdAndUpdate(contentId, { aiStatus: "scraping", aiProgress: 15 });
         
-        const [classificationResult, embedding] = await Promise.all([
-          synthesisPromise,
-          createEmbedding(contextText, false)
-        ]);
+        const classification = await withTimeout(
+          getAiClassification(content.link!, "deep"),
+          45000,
+          "DeepScrapeAndSummarize"
+        );
 
-        if (classificationResult) {
-          updatedMetadata = classificationResult;
-        }
+        console.log(`[AI][STEP_2] ANALYSIS_OK contentId: ${contentId}`);
+        await ContentModel.findByIdAndUpdate(contentId, { 
+          ...classification,
+          aiStatus: "analyzing", 
+          aiProgress: 75 
+        });
 
+        // 2. EMBED (Based on the new summary)
+        console.log(`[AI][STEP_3] EMBEDDING_START contentId: ${contentId}`);
+        const contextText = `Title: ${classification.title}. Description: ${classification.description}. Topics: ${classification.topics.join(", ")}`;
+        const embedding = await createEmbedding(contextText, false);
+
+        // 3. FINAL SAVE
+        console.log(`[AI][STEP_4] FINAL_SAVE contentId: ${contentId}`);
         const updateResult = await ContentModel.updateOne(
-          { _id: contentId, updatedAt: processingStartedAt },
+          { _id: contentId },
           { 
             embedding, 
             embeddingStatus: "completed",
-            ...updatedMetadata,
-            aiStatus: updatedMetadata.aiStatus || "completed"
+            aiStatus: "completed",
+            aiProgress: 100
           }
         );
 
@@ -513,10 +544,11 @@ export const generateAiChatAnswer = async (
   STRICT GROUNDING RULES:
   1. ONLY use information from the Context Documents above.
   2. If the answer is not in the context, say: "I don't have enough information in your Second Brain to answer that."
-  3. If a source is present but says "No summary available", explain that the content couldn't be automatically retrieved (likely due to security blocks on the website like Notion/LinkedIn) and suggest the user manually paste the content into the note to help you summarize it.
-  4. Cite sources as [Source 1], [Source 2], etc.
-  5. DO NOT use external knowledge or hallucinate facts.
-  6. If context is empty, tell the user no relevant memories were found.`;
+  3. If a source is present but says "No summary available", explain that the content couldn't be automatically retrieved initially. 
+  4. IMPORTANT: Advise the user that they can try to RE-SCRAPE the link by clicking the "Lightning Bolt" icon on the card in their dashboard. This launches the "Deep Scraper" to bypass security blocks.
+  5. Cite sources as [Source 1], [Source 2], etc.
+  6. DO NOT use external knowledge or hallucinate facts.
+  7. If context is empty, tell the user no relevant memories were found.`;
 
   try {
     console.log("[LLM_CALL_START]");
@@ -568,10 +600,11 @@ export const generateAiChatAnswerStream = async (
     STRICT GROUNDING RULES:
     1. ONLY use information from the Context Documents above.
     2. If the answer is not contained within the context, respond: "I'm sorry, but I don't have enough information in your Second Brain to answer that."
-    3. If a source is present but says "No summary available", explain that the link content could not be automatically retrieved (often due to security/private walls) and suggest the user paste the text manually into the note so you can analyze it.
-    4. Cite your sources using [Source 1], [Source 2], etc.
-    5. DO NOT use external knowledge.
-    6. If the context is empty, inform the user you have no relevant memories saved.`;
+    3. If a source is present but says "No summary available", explain that the link content could not be automatically retrieved initially. 
+    4. IMPORTANT: Tell the user they can try to RE-SCRAPE the link by clicking the "Lightning Bolt" icon on the card in their dashboard to bypass security blocks.
+    5. Cite your sources using [Source 1], [Source 2], etc.
+    6. DO NOT use external knowledge.
+    7. If the context is empty, inform the user you have no relevant memories saved.`;
 
     console.log("[PROMPT_CREATED]");
 

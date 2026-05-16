@@ -3,29 +3,29 @@ import { ContentModel } from "./db.js";
 import { processContentEmbedding } from "./services/ai.service.js";
 
 export const initCronJobs = () => {
-  // Run every 30 minutes
-  cron.schedule("*/30 * * * *", async () => {
-    console.log("Running embedding cleanup cron job...");
+  // Run every 2 minutes
+  cron.schedule("*/2 * * * *", async () => {
+    console.log("[CRON][AUTO_WAKEUP] Checking for stuck or queued content...");
 
     try {
-      // Find content stuck in 'pending' for more than 5 minutes
-      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+      // Find content stuck in 'pending' or 'queued' for more than 2 minutes
+      const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
 
       const stuckContent = await ContentModel.find({
-        embeddingStatus: "pending",
-        updatedAt: { $lt: fiveMinutesAgo }
+        $or: [
+          { embeddingStatus: "pending", updatedAt: { $lt: twoMinutesAgo } },
+          { aiStatus: "queued" }
+        ]
       });
 
       if (stuckContent.length === 0) {
-        console.log("No stuck content found.");
         return;
       }
 
-      console.log(`Found ${stuckContent.length} stuck items. Retrying...`);
+      console.log(`[CRON][WAKEUP] Triggering ${stuckContent.length} items.`);
 
       for (const content of stuckContent) {
-        // Fire and forget, the concurrency control in processContentEmbedding will handle duplicates
-        processContentEmbedding((content._id as any).toString());
+        processContentEmbedding((content._id as any).toString()).catch(() => {});
       }
 
     } catch (error) {

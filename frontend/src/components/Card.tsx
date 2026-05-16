@@ -3,14 +3,15 @@ import { Shareicon } from "../icons/ShareIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 interface CardProps {
   title: string;
   link: string;
   type: "video" | "post" | "document" | string;
   status?: "pending" | "completed" | "failed" | null;
-  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed";
+  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed" | "scraping" | "analyzing";
+  aiProgress?: number;
   aiMetadata?: {
     domain?: string;
     source?: string;
@@ -23,12 +24,37 @@ interface CardProps {
   onGenerateInsight?: () => void;
   isSelected?: boolean;
   description?: string;
+  similarity?: number;
 }
 
-export function Card({ title, link, type, aiStatus, onDelete, onEdit, onSelect, onGenerateInsight, isSelected, description }: CardProps) {
+export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit, onSelect, onGenerateInsight, isSelected, description, similarity }: CardProps) {
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
+  const [creep, setCreep] = useState(0);
+
+  useEffect(() => {
+    let interval: any;
+    if (aiStatus && ["thinking", "scraping", "analyzing", "queued", "processing"].includes(aiStatus)) {
+      setCreep(0);
+      interval = setInterval(() => {
+        setCreep(prev => Math.min(prev + 0.5, 10)); // Creep forward up to 10% extra
+      }, 800);
+    } else {
+      setCreep(0);
+    }
+    return () => clearInterval(interval);
+  }, [aiStatus]);
+
+  const progressWidth = useMemo(() => {
+    if (!aiStatus) return 0;
+    // Use true backend progress if available, otherwise fallback to stage-based estimation
+    const base = aiProgress && aiProgress > 0 ? aiProgress : 
+                 (aiStatus === "queued" || aiStatus === "thinking") ? 20 : 
+                 aiStatus === "scraping" ? 40 : 
+                 aiStatus === "analyzing" ? 75 : 95;
+    return Math.min(base + creep, 98);
+  }, [aiStatus, aiProgress, creep]);
 
   const isVideo    = normalizedType === "video"    || normalizedType === "youtube";
   const isPost     = normalizedType === "post"     || normalizedType === "twitter";
@@ -42,7 +68,7 @@ export function Card({ title, link, type, aiStatus, onDelete, onEdit, onSelect, 
     }
   }, [link]);
 
-  const faviconUrl = parsedUrl ? `https://www.google.com/s2/favicons?domain=${parsedUrl.hostname}&sz=64` : null;
+  const faviconUrl = parsedUrl ? `https://icons.duckduckgo.com/ip3/${parsedUrl.hostname}.ico` : null;
   const source = parsedUrl?.hostname.replace(/^www\./, "") ?? "link";
   const badgeLabel = isVideo ? "Video" : isPost ? "Post" : "Document";
   
@@ -67,8 +93,19 @@ export function Card({ title, link, type, aiStatus, onDelete, onEdit, onSelect, 
     setIsEditing(false);
   };
 
+  const [faviconError, setFaviconError] = useState(false);
+
   const getIcon = () => {
-    if (faviconUrl) return <img src={faviconUrl} className="w-5 h-5 rounded-md object-contain" alt="icon" />;
+    if (faviconUrl && !faviconError) {
+      return (
+        <img 
+          src={faviconUrl} 
+          className="w-5 h-5 rounded-md object-contain" 
+          alt="icon" 
+          onError={() => setFaviconError(true)}
+        />
+      );
+    }
     if (isVideo)    return <YouTubeIcon />;
     if (isPost)     return <TwitterIcon />;
     if (isDocument) return <DocumentIcon />;
@@ -141,28 +178,38 @@ export function Card({ title, link, type, aiStatus, onDelete, onEdit, onSelect, 
         )}
       </div>
 
+      {/* Neural Progress Bar: Sleek & Sophisticated */}
+      {(aiStatus && ["thinking", "scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
+        <div className="absolute bottom-[68px] left-6 right-6 h-[2px] bg-purple-50/30 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-500 shadow-[0_0_12px_rgba(168,85,247,0.4)] transition-all duration-1000 ease-linear animate-shimmer-semantic"
+            style={{ 
+              width: `${progressWidth}%`,
+              backgroundSize: '200% 100%'
+            }}
+          />
+        </div>
+      )}
+
       {/* Footer: Metadata & Actions */}
       <div className="pt-5 mt-6 flex items-center justify-between border-t border-gray-50/50">
         <div className="flex items-center gap-4">
-           <div className="flex items-center gap-1.5 text-gray-300 group-hover:text-gray-400 transition-colors">
-              <svg className="w-3.5 h-3.5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-              </svg>
-              <span className="text-[10px] font-bold tracking-tight uppercase">{meta.readingTime}m</span>
-           </div>
-
            <div className="flex items-center">
-            {aiStatus === "queued" || aiStatus === "processing" || aiStatus === "summarized" ? (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-50/50 rounded-full border border-gray-100">
-                <div className="w-1.5 h-1.5 rounded-full bg-purple-300 animate-pulse" />
-                <span className="text-[9px] font-bold text-purple-400 uppercase tracking-widest">
-                   Thinking
-                </span>
+            {aiStatus && ["queued", "processing", "summarized", "thinking", "scraping", "analyzing"].includes(aiStatus) ? (
+              <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border bg-gray-50/50 border-gray-100 text-purple-400 animate-pulse`}>
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-300" />
+                {aiStatus === "thinking" || aiStatus === "queued" ? "Thinking" : 
+                 aiStatus === "scraping" ? "Reading Page" :
+                 aiStatus === "analyzing" ? "Analyzing" : "Processing"}
               </div>
-            ) : aiStatus === "completed" ? (
-              <div className="text-[9px] font-bold text-purple-300 uppercase tracking-[0.15em]">
-                 Verified Insight
+            ) : (aiStatus === "completed" || aiStatus === "summarized") ? (
+              <div className="text-[9px] font-bold text-purple-300 uppercase tracking-[0.15em] flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                {/* @ts-ignore */}
+                {similarity ? `${Math.round(similarity * 100)}% Neural Match` : "Verified Insight"}
               </div>
+            ) : aiStatus === "failed" ? (
+              <div className="text-[9px] font-bold text-red-300 uppercase tracking-[0.15em]">Synthesis Failed</div>
             ) : (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}

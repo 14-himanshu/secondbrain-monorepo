@@ -64,6 +64,7 @@ const contentSchema = z.object({
   link: z.string().url("Invalid URL"),
   type: z.enum(["video", "post", "document"]),
   tags: z.array(z.string()).optional(),
+  description: z.string().optional(),
 });
 
 app.post("/api/v1/signup", async (req, res) => {
@@ -118,7 +119,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
-  const { title, link, type, tags } = parsed.data;
+  const { title, link, type, tags, description } = parsed.data;
 
   // STEP 1: Instant Metadata Extraction (Zero AI Latency)
   let domain = "";
@@ -134,9 +135,10 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     link,
     type: type || (link.includes("youtube.com") || link.includes("youtu.be") ? "video" : "post"),
     tags: tags || [],
+    description: description || "",
     userId: req.userId,
     embeddingStatus: "pending",
-    aiStatus: undefined, // Will be triggered on-demand by user
+    aiStatus: description ? "summarized" : undefined, // Mark as summarized if content was provided manually
     aiMetadata: {
       domain,
       source: domain,

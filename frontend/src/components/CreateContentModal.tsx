@@ -24,6 +24,8 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   
+  const [description, setDescription] = useState("");
+  
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
@@ -41,6 +43,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
       setAiError(null);
       setIsAnalyzing(false);
       setTagInput("");
+      setDescription("");
     }
   }, [open]);
 
@@ -52,10 +55,10 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
     try {
       await axios.post(
         BACKEND_URL + "/api/v1/content",
-        { link, title, type, tags },
+        { link, title, type, tags, description },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
-      setTitle(""); setLink(""); setType(ContentType.Video); setTags([]); setTagInput("");
+      setTitle(""); setLink(""); setType(ContentType.Video); setTags([]); setTagInput(""); setDescription("");
       onClose();
     } catch (error: any) {
       alert("Failed to add content");
@@ -160,6 +163,17 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Note title..."
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-50 outline-none transition-all text-sm text-gray-700 placeholder:text-gray-300"
+                />
+              </div>
+
+              {/* Description / Manual Content */}
+              <div>
+                <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Manual Content (Optional)</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Paste content here if the link is private or protected (e.g. Notion)..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-50 outline-none transition-all text-sm text-gray-700 placeholder:text-gray-300 min-h-[100px] resize-none"
                 />
               </div>
 

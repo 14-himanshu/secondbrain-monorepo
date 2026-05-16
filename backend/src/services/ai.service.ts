@@ -506,9 +506,10 @@ export const generateAiChatAnswer = async (
   STRICT GROUNDING RULES:
   1. ONLY use information from the Context Documents above.
   2. If the answer is not in the context, say: "I don't have enough information in your Second Brain to answer that."
-  3. Cite sources as [Source 1], [Source 2], etc.
-  4. DO NOT use external knowledge or hallucinate facts.
-  5. If context is empty, tell the user no relevant memories were found.`;
+  3. If a source is present but says "No summary available", explain that the content couldn't be automatically retrieved (likely due to security blocks on the website like Notion/LinkedIn) and suggest the user manually paste the content into the note to help you summarize it.
+  4. Cite sources as [Source 1], [Source 2], etc.
+  5. DO NOT use external knowledge or hallucinate facts.
+  6. If context is empty, tell the user no relevant memories were found.`;
 
   try {
     console.log("[LLM_CALL_START]");
@@ -560,9 +561,10 @@ export const generateAiChatAnswerStream = async (
     STRICT GROUNDING RULES:
     1. ONLY use information from the Context Documents above.
     2. If the answer is not contained within the context, respond: "I'm sorry, but I don't have enough information in your Second Brain to answer that."
-    3. Cite your sources using [Source 1], [Source 2], etc.
-    4. DO NOT use external knowledge.
-    5. If the context is empty, inform the user you have no relevant memories saved.`;
+    3. If a source is present but says "No summary available", explain that the link content could not be automatically retrieved (often due to security/private walls) and suggest the user paste the text manually into the note so you can analyze it.
+    4. Cite your sources using [Source 1], [Source 2], etc.
+    5. DO NOT use external knowledge.
+    6. If the context is empty, inform the user you have no relevant memories saved.`;
 
     console.log("[PROMPT_CREATED]");
 

@@ -179,23 +179,32 @@ app.get("/api/v1/content", userMiddleware, async (req, res) => {
 });
 
 app.put("/api/v1/content", userMiddleware, async (req, res) => {
-  const { contentId, title } = req.body;
+  const { contentId, title, description, tags } = req.body;
 
-  if (!contentId || !title) {
-    return res.status(400).json({ message: "Content ID and title are required" });
+  if (!contentId) {
+    return res.status(400).json({ message: "Content ID is required" });
   }
 
   try {
+    const updateData: any = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) {
+      updateData.description = description;
+      // If we manually provide description, we implicitly mark it as summarized
+      updateData.aiStatus = "summarized";
+    }
+    if (tags !== undefined) updateData.tags = tags;
+
     const result = await ContentModel.updateOne(
       { _id: contentId, userId: req.userId },
-      { title }
+      { $set: updateData }
     );
 
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Content not found or unauthorized" });
     }
 
-    res.json({ message: "Content updated" });
+    res.json({ message: "Content updated", success: true });
   } catch (e) {
     res.status(500).json({ message: "Internal server error" });
   }

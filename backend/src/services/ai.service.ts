@@ -169,7 +169,14 @@ export const getAiClassification = async (url: string, mode: "quick" | "deep" = 
     // 1.5 Enhanced Metadata Fetch with Timeout & X.com Logic
     let metadata: any = {};
     try {
-      metadata = await withTimeout(urlMetadata(url), 10000, "urlMetadata");
+      // Use custom User-Agent to bypass simple bot blockers
+      metadata = await withTimeout(urlMetadata(url, {
+        requestHeaders: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9'
+        }
+      }), 12000, "urlMetadata");
     } catch (e) {
       console.warn(`[AI][METADATA_TIMEOUT] ${url}. Using URL as fallback context.`);
       metadata = { url, title: url.split('/').pop() || "New Content" };

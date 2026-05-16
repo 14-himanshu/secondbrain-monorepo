@@ -18,12 +18,41 @@ export function AIInsightsPanel({
   const [chatQuery, setChatQuery] = useState("");
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
   const [isThinking, setIsThinking] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [manualContent, setManualContent] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isThinking]);
+
+  useEffect(() => {
+    if (selectedContent) {
+      setManualContent(selectedContent.description || "");
+      setIsEditing(false);
+    }
+  }, [selectedContent]);
+
+  const handleSaveManualContent = async () => {
+    if (!selectedContent) return;
+    setIsSaving(true);
+    try {
+      await axios.put(`${BACKEND_URL}/api/v1/content`, {
+        contentId: selectedContent._id,
+        description: manualContent
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+      });
+      setIsEditing(false);
+      // Trigger a light refresh would be ideal here, but for now we rely on the next select
+    } catch (error) {
+      console.error("Failed to save manual content", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
 
   const handleSendMessage = async (e?: React.FormEvent, retryQuery?: string) => {
@@ -150,6 +179,52 @@ export function AIInsightsPanel({
                     <span className="text-[12px] font-bold text-purple-400 uppercase">{sections.metadata.difficulty}</span>
                   </div>
                 </div>
+
+                {/* Main Content Area: Conditional Rendering */}
+                {(!selectedContent.description || isEditing) ? (
+                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="p-6 bg-purple-50/30 rounded-2xl border border-purple-100/30">
+                       <h4 className="text-[13px] font-bold text-gray-800 mb-2">Neural Link Protected</h4>
+                       <p className="text-[11px] text-gray-400 font-medium leading-relaxed mb-4">
+                         This link (Notion/protected site) could not be read automatically. Paste the content below to synthesize deep insights.
+                       </p>
+                       <textarea
+                         value={manualContent}
+                         onChange={(e) => setManualContent(e.target.value)}
+                         placeholder="Paste page content here..."
+                         className="w-full h-40 bg-white/50 border border-purple-100/50 rounded-xl p-4 text-[13px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-200/50 transition-all resize-none custom-scrollbar"
+                       />
+                       <button
+                         onClick={handleSaveManualContent}
+                         disabled={isSaving || !manualContent.trim()}
+                         className="mt-4 w-full py-3 bg-purple-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
+                       >
+                         {isSaving ? "Syncing..." : "Synthesize Content"}
+                       </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-10">
+                    {/* Summary Section: Editorial Style */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                           <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
+                           <h4 className="text-[14px] font-bold text-gray-800 tracking-tight">Executive Summary</h4>
+                        </div>
+                        <button 
+                          onClick={() => setIsEditing(true)}
+                          className="text-[10px] font-bold text-gray-300 hover:text-purple-500 transition-all uppercase tracking-widest"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                      <p className="text-[14px] text-gray-500 font-medium leading-[1.7] antialiased">
+                        {sections.short}
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Synthesis Section */}
                 <section className="space-y-4">

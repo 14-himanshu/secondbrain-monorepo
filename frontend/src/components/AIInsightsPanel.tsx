@@ -20,7 +20,6 @@ export function AIInsightsPanel({
   const [isThinking, setIsThinking] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [manualContent, setManualContent] = useState("");
-  const [isSynthesizing, setIsSynthesizing] = useState(false);
   const [connections, setConnections] = useState<any[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);

@@ -35,7 +35,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
 
   useEffect(() => {
     let interval: any;
-    if (aiStatus && ["thinking", "scraping", "analyzing", "queued", "processing"].includes(aiStatus)) {
+    if (aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) {
       setCreep(0);
       interval = setInterval(() => {
         setCreep(prev => Math.min(prev + 0.5, 10)); // Creep forward up to 10% extra
@@ -50,7 +50,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
     if (!aiStatus) return 0;
     // Use true backend progress if available, otherwise fallback to stage-based estimation
     const base = aiProgress && aiProgress > 0 ? aiProgress : 
-                 (aiStatus === "queued" || aiStatus === "thinking") ? 20 : 
+                 (aiStatus === "queued") ? 20 : 
                  aiStatus === "scraping" ? 40 : 
                  aiStatus === "analyzing" ? 75 : 95;
     return Math.min(base + creep, 98);
@@ -72,14 +72,6 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   const source = parsedUrl?.hostname.replace(/^www\./, "") ?? "link";
   const badgeLabel = isVideo ? "Video" : isPost ? "Post" : "Document";
   
-  // Dynamic Metadata Extraction
-  const meta = useMemo(() => {
-    const metaMatch = description?.match(/Reading Time: (\d+) min \| Difficulty: (\w+)/);
-    return {
-      readingTime: metaMatch ? metaMatch[1] : "1",
-      difficulty: metaMatch ? metaMatch[2] : "Beginner"
-    };
-  }, [description]);
 
   const handleSave = () => {
     if (editedTitle.trim() !== "") {
@@ -179,7 +171,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
       </div>
 
       {/* Neural Progress Bar: Sleek & Sophisticated */}
-      {(aiStatus && ["thinking", "scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
+      {(aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
         <div className="absolute bottom-[68px] left-6 right-6 h-[2px] bg-purple-50/30 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-500 shadow-[0_0_12px_rgba(168,85,247,0.4)] transition-all duration-1000 ease-linear animate-shimmer-semantic"
@@ -195,10 +187,10 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
       <div className="pt-5 mt-6 flex items-center justify-between border-t border-gray-50/50">
         <div className="flex items-center gap-4">
            <div className="flex items-center">
-            {aiStatus && ["queued", "processing", "summarized", "thinking", "scraping", "analyzing"].includes(aiStatus) ? (
+            {aiStatus && ["queued", "processing", "summarized", "scraping", "analyzing"].includes(aiStatus) ? (
               <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border bg-gray-50/50 border-gray-100 text-purple-400 animate-pulse`}>
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-300" />
-                {aiStatus === "thinking" || aiStatus === "queued" ? "Thinking" : 
+                {aiStatus === "queued" ? "Thinking" : 
                  aiStatus === "scraping" ? "Reading Page" :
                  aiStatus === "analyzing" ? "Analyzing" : "Processing"}
               </div>

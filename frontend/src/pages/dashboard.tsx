@@ -37,6 +37,8 @@ export function Dashboard() {
   const google = useIntegration('google');
   const [googleActionLoading, setGoogleActionLoading] = useState(false);
   const [googleActionError, setGoogleActionError] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [signedInWithGoogle, setSignedInWithGoogle] = useState(false);
   
   /**
    * AI Panel State Management
@@ -111,6 +113,16 @@ export function Dashboard() {
       navigate("/signup");
     }
     fetchShareStatus();
+
+    // fetch user profile for auth-provider hints
+    (async () => {
+      try {
+        const me = await import('../services/user.api').then(m => m.getMe());
+        setSignedInWithGoogle(Boolean(me?.google?.loginOnly));
+      } catch (e) {
+        // ignore - user might not be logged in yet
+      }
+    })();
   }, [navigate]);
 
 
@@ -258,11 +270,22 @@ export function Dashboard() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen relative overflow-hidden">
+      {/* Mobile open sidebar button */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-md bg-white border border-gray-100 shadow-sm"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Open navigation"
+      >
+        <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+
       <Sidebar
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
         contents={contents}
         selectedContentId={selectedContentId}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       
       {/* Main Content Area */}
@@ -329,52 +352,59 @@ export function Dashboard() {
                   startIcon={<PlusIcon />}
                   onClick={() => setModalOpen(true)}
                 />
-                {google.normalized.state === 'connected' ? (
-                  <div className="flex items-center gap-3">
+                {/* Auth provider vs Integration status */}
+                <div className="flex items-center gap-3">
+                  {signedInWithGoogle && (
+                    <div className="text-sm text-gray-500">Signed in with Google</div>
+                  )}
+
+                  {google.normalized.state === 'connected' ? (
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={async () => {
+                          const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
+                          if (!ok) return;
+                          setGoogleActionError(null);
+                          setGoogleActionLoading(true);
+                          try {
+                            await google.disconnect();
+                            await google.refresh();
+                          } catch (err) {
+                            console.error('Disconnect failed', err);
+                            setGoogleActionError('Failed to disconnect Google.');
+                          } finally {
+                            setGoogleActionLoading(false);
+                          }
+                        }}
+                        className={`px-3.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+                        disabled={googleActionLoading}
+                      >
+                        {googleActionLoading ? 'Disconnecting...' : 'Disconnect Google'}
+                      </button>
+                      <span className="text-sm text-gray-500">Drive connected</span>
+                    </div>
+                  ) : (
                     <button
                       onClick={async () => {
-                        const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
-                        if (!ok) return;
                         setGoogleActionError(null);
                         setGoogleActionLoading(true);
                         try {
-                          await google.disconnect();
-                          await google.refresh();
+                          const url = await google.connect();
+                          if (url) window.location.href = url;
                         } catch (err) {
-                          console.error('Disconnect failed', err);
-                          setGoogleActionError('Failed to disconnect Google.');
+                          console.error('Failed to start Google connect', err);
+                          setGoogleActionError('Failed to start Google connect.');
                         } finally {
                           setGoogleActionLoading(false);
                         }
                       }}
-                      className={`px-3.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+                      className={`p-3.5 bg-white border border-gray-100 text-gray-500 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
                       disabled={googleActionLoading}
                     >
-                      {googleActionLoading ? 'Disconnecting...' : 'Disconnect Google'}
+                      {googleActionLoading ? 'Connecting...' : 'Enable Google Drive'}
                     </button>
-                    <span className="text-sm text-gray-500">Connected</span>
-                  </div>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      setGoogleActionError(null);
-                      setGoogleActionLoading(true);
-                      try {
-                        const url = await google.connect();
-                        if (url) window.location.href = url;
-                      } catch (err) {
-                        console.error('Failed to start Google connect', err);
-                        setGoogleActionError('Failed to start Google connect.');
-                      } finally {
-                        setGoogleActionLoading(false);
-                      }
-                    }}
-                    className={`p-3.5 bg-white border border-gray-100 text-gray-500 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
-                    disabled={googleActionLoading}
-                  >
-                    {googleActionLoading ? 'Connecting...' : 'Connect Google'}
-                  </button>
-                )}
+                  )}
+                </div>
                 {googleActionError && <div className="text-red-600 text-sm ml-2">{googleActionError}</div>}
                 <button
                   onClick={() => setShareModalOpen(true)}

@@ -13,14 +13,14 @@ export function SidebarItem({
 }) {
     return (
         <div
-            className={`flex items-center py-2.5 px-4 cursor-pointer rounded-xl transition-all duration-300 font-inter ${active
-                ? "bg-purple-100/60 text-purple-600 font-bold shadow-sm"
-                : "text-gray-500 hover:bg-gray-100/50 hover:text-gray-900"
-                } active:scale-[0.97]`}
+            className={`flex items-center py-2.5 px-3 cursor-pointer rounded-md transition-colors duration-150 font-inter ${active
+                ? "bg-purple-50 ring-1 ring-purple-50 border-l-4 border-purple-500 text-purple-700 font-semibold"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                }`} 
             onClick={onClick}
         >
-            <div className={`pr-3 transition-colors ${active ? 'text-purple-600' : 'text-gray-400 group-hover:text-gray-600'}`}>{icon}</div>
-            <div className="text-[13.5px] tracking-tight">{text}</div>
+            <div className={`pr-3 transition-colors ${active ? 'text-purple-600' : 'text-gray-400'}`}>{icon}</div>
+            <div className="text-[13px] tracking-tight leading-none">{text}</div>
         </div>
     );
 }

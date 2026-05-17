@@ -302,11 +302,11 @@ export function Dashboard() {
 
         <div className="p-8 max-w-[1400px] mx-auto font-inter">
           {/* Header Section: Restored hierarchy */}
-          <header className="mb-12 sticky top-0 bg-[#FDFDFD]/80 z-20 py-4 px-0 border-b border-gray-100/40">
+          <header className="mb-12 sticky top-0 bg-[#FBFBFC]/80 z-20 py-4 px-0 border-b border-gray-50/40">
             <div className="flex items-center justify-between gap-8">
               {/* Left: Elegant Title */}
               <div className="shrink-0">
-                <h1 className="text-[28px] font-semibold text-gray-900 tracking-tight mb-1 font-outfit">
+                <h1 className="text-[26px] font-semibold text-gray-800 tracking-tight mb-1 font-outfit">
                   {selectedFilter === "all"      && "Memory Stream"}
                   {selectedFilter === "post"     && "Articles"}
                   {selectedFilter === "video"    && "Videos"}

@@ -93,30 +93,30 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   return (
     <div 
       onClick={onSelect}
-      className={`group bg-white border border-gray-100 rounded-xl p-4 transition-all duration-200 flex flex-col h-full relative cursor-pointer ${
+      className={`group bg-white border border-gray-50 rounded-lg p-4 transition-shadow duration-200 flex flex-col h-full relative cursor-pointer ${
         isSelected 
-          ? 'border-purple-200 ring-2 ring-purple-50 shadow-[0_18px_40px_-18px_rgba(124,58,237,0.08)]' 
-          : 'hover:border-purple-100 hover:shadow-[0_10px_30px_-12px_rgba(99,102,241,0.06)]'
+          ? 'border-purple-100 ring-1 ring-purple-50 shadow-[0_12px_30px_-14px_rgba(124,58,237,0.06)]' 
+          : 'hover:shadow-[0_8px_24px_-12px_rgba(99,102,241,0.04)]'
       }`}
     >
       
       {/* Header: Intelligence Row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 group-hover:scale-105 transition-transform duration-200">
+          <div className="w-8 h-8 bg-gray-50 rounded-md flex items-center justify-center border border-gray-50 transition-transform duration-150">
             {getIcon()}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">{badgeLabel}</span>
-            <span className="text-[13px] font-semibold text-gray-700 truncate max-w-[160px] antialiased leading-none">{source}</span>
+            <span className="text-[9px] font-semibold text-gray-400 uppercase tracking-widest leading-none mb-1">{badgeLabel}</span>
+            <span className="text-[13px] font-semibold text-gray-700 truncate max-w-[180px] antialiased leading-none">{source}</span>
           </div>
         </div>
         
         {/* Pulse Indicator */}
         {description && (
-          <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-100/30">
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-50/40">
              <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic" />
-             <span className="text-[10px] font-bold text-purple-500 uppercase tracking-tight">Synthesized</span>
+             <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-tight">Synthesized</span>
           </div>
         )}
       </div>
@@ -160,18 +160,18 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
       {(aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
         <div className="mt-4 w-full h-1 bg-purple-50 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-500 transition-all duration-500 ease-linear"
+            className="h-full bg-gradient-to-r from-purple-300 via-purple-400 to-indigo-400 transition-all duration-400 ease-linear"
             style={{ width: `${progressWidth}%` }}
           />
         </div>
       )}
 
       {/* Footer: Metadata & Actions */}
-      <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-100">
+      <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-50">
         <div className="flex items-center gap-4">
            <div className="flex items-center">
             {aiStatus && ["queued", "processing", "summarized", "scraping", "analyzing"].includes(aiStatus) ? (
-              <div className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest flex items-center gap-2 border bg-gray-50/50 border-gray-100 text-purple-400 animate-pulse`}>
+              <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest flex items-center gap-2 border bg-gray-50/40 border-gray-50 text-purple-500 animate-pulse`}>
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-300" />
                 {aiStatus === "queued" ? "Thinking" : 
                  aiStatus === "scraping" ? "Reading Page" :

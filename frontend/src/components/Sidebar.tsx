@@ -46,9 +46,6 @@ export function Sidebar({
       {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
 
       <aside className="h-screen w-72 fixed left-0 top-0 bg-white/95 flex flex-col z-30 border-r border-gray-50 shadow-sm">
-        {/* Subtle layered tint along left edge */}
-        <div className="absolute left-0 top-0 h-full w-2 bg-purple-600/80 shadow-sm" aria-hidden />
-
         <div className="pt-6 px-5 pb-4">
           <div className="flex items-center gap-3">
             <div className="text-purple-600">

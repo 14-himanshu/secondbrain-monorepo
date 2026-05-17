@@ -7,7 +7,7 @@ import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { useContentMutations } from "../hooks/useContentMutations";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AIInsightsPanel } from "../components/AIInsightsPanel";
 
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,7 +38,6 @@ export function Dashboard() {
   const [googleActionLoading, setGoogleActionLoading] = useState(false);
   const [googleActionError, setGoogleActionError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [signedInWithGoogle, setSignedInWithGoogle] = useState(false);
   
   /**
    * AI Panel State Management
@@ -54,6 +53,7 @@ export function Dashboard() {
   const { deleteContent, editContent } = useContentMutations();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
   const prevModalOpen = useRef(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -117,13 +117,22 @@ export function Dashboard() {
     // fetch user profile for auth-provider hints
     (async () => {
       try {
-        const me = await import('../services/user.api').then(m => m.getMe());
-        setSignedInWithGoogle(Boolean(me?.google?.loginOnly));
+        await import('../services/user.api').then(m => m.getMe());
+        /* preserve backend check for google login provider; not showing inline hint currently */
       } catch (e) {
         // ignore - user might not be logged in yet
       }
     })();
-  }, [navigate]);
+
+    // If navigated here with state.openId (from Recents), open panel
+    const openId = (location.state as any)?.openId;
+    if (openId) {
+      setSelectedContentId(openId);
+      setIsAiPanelOpen(true);
+      // remove transient navigation state
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [navigate, location]);
 
 
 
@@ -303,8 +312,8 @@ export function Dashboard() {
 
         <div className="p-8 max-w-[1400px] mx-auto font-inter">
           {/* Header Section: Restored hierarchy */}
-          <header className="mb-12 sticky top-0 bg-[#FBFBFC]/80 z-20 py-4 px-0 border-b border-gray-50/40">
-            <div className="flex items-center justify-between gap-8">
+          <header className="mb-12 sticky top-0 bg-white/60 z-20 py-4 px-0 backdrop-blur-sm border-b border-gray-50/30">
+            <div className="flex items-center justify-between gap-6">
               {/* Left: Elegant Title */}
               <div className="shrink-0">
                 <h1 className="text-[26px] font-semibold text-gray-800 tracking-tight mb-1 font-outfit">
@@ -313,7 +322,7 @@ export function Dashboard() {
                   {selectedFilter === "video"    && "Videos"}
                   {selectedFilter === "document" && "Deep Files"}
                 </h1>
-                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em] ml-0.5">
+                <p className="text-gray-400 text-[10px] font-medium uppercase tracking-[0.25em] ml-0.5">
                   {filteredContents.length} Neural {filteredContents.length === 1 ? "Node" : "Nodes"}
                 </p>
               </div>
@@ -321,15 +330,15 @@ export function Dashboard() {
               {/* Center + Actions Toolbar */}
               <div className="flex-1 flex items-center gap-4">
                 <div className="flex-1 max-w-xl relative">
-                  <div className="relative flex items-center bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
-                    <div className="pl-5 text-gray-300">
+                  <div className="relative flex items-center bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-all">
+                    <div className="pl-4 text-gray-300">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </div>
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search your memories semantically..."
+                      placeholder="Search your memories..."
                       className="w-full py-3 px-4 text-[14px] text-gray-600 focus:outline-none placeholder:text-gray-300 font-medium bg-transparent"
                     />
                     {isSearching && (
@@ -345,7 +354,7 @@ export function Dashboard() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-2xl p-1.5 shadow-sm">
+                <div className="flex items-center gap-3">
                   <Button
                     variant="primary"
                     text="New Memory"
@@ -353,58 +362,53 @@ export function Dashboard() {
                     onClick={() => setModalOpen(true)}
                   />
 
-                  <div className="flex items-center gap-2">
-                    {signedInWithGoogle && (
-                      <div className="text-sm text-gray-500">Signed in with Google</div>
-                    )}
-
-                    {google.normalized.state === 'connected' ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={async () => {
-                            const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
-                            if (!ok) return;
-                            setGoogleActionError(null);
-                            setGoogleActionLoading(true);
-                            try {
-                              await google.disconnect();
-                              await google.refresh();
-                            } catch (err) {
-                              console.error('Disconnect failed', err);
-                              setGoogleActionError('Failed to disconnect Google.');
-                            } finally {
-                              setGoogleActionLoading(false);
-                            }
-                          }}
-                          className={`px-3 py-2 bg-white border border-gray-100 text-gray-700 rounded-lg shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
-                          disabled={googleActionLoading}
-                        >
-                          {googleActionLoading ? 'Disconnecting...' : 'Disconnect'}
-                        </button>
-                        <span className="text-sm text-gray-500">Drive connected</span>
-                      </div>
-                    ) : (
+                  {google.normalized.state === 'connected' ? (
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={async () => {
+                          const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
+                          if (!ok) return;
                           setGoogleActionError(null);
                           setGoogleActionLoading(true);
                           try {
-                            const url = await google.connect();
-                            if (url) window.location.href = url;
+                            await google.disconnect();
+                            await google.refresh();
                           } catch (err) {
-                            console.error('Failed to start Google connect', err);
-                            setGoogleActionError('Failed to start Google connect.');
+                            console.error('Disconnect failed', err);
+                            setGoogleActionError('Failed to disconnect Google.');
                           } finally {
                             setGoogleActionLoading(false);
                           }
                         }}
-                        className={`px-3 py-2 bg-white border border-gray-100 text-gray-600 rounded-lg shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
+                        className={`px-2.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-lg transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'}`}
                         disabled={googleActionLoading}
                       >
-                        {googleActionLoading ? 'Connecting...' : 'Enable Drive'}
+                        {googleActionLoading ? 'Disconnecting...' : 'Disconnect'}
                       </button>
-                    )}
-                  </div>
+                      <span className="text-sm text-gray-500">Drive connected</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        setGoogleActionError(null);
+                        setGoogleActionLoading(true);
+                        try {
+                          const url = await google.connect();
+                          if (url) window.location.href = url;
+                        } catch (err) {
+                          console.error('Failed to start Google connect', err);
+                          setGoogleActionError('Failed to start Google connect.');
+                        } finally {
+                          setGoogleActionLoading(false);
+                        }
+                      }}
+                      className={`px-3 py-2 bg-white border border-gray-100 text-gray-600 rounded-lg transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm hover:border-purple-200 hover:text-purple-600'}`}
+                      disabled={googleActionLoading}
+                    >
+                      {googleActionLoading ? 'Connecting...' : 'Enable Drive'}
+                    </button>
+                  )}
+
                   {googleActionError && <div className="text-red-600 text-sm ml-3">{googleActionError}</div>}
 
                   <button

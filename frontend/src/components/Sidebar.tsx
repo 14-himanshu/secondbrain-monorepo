@@ -31,11 +31,11 @@ export function Sidebar({
     <div>
       {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
 
-      <aside className="h-screen w-72 fixed left-0 top-0 bg-white flex flex-col z-30 border-r border-gray-50 shadow-sm">
-        {/* Left accent strip for stronger identity */}
-        <div className="absolute left-0 top-0 h-full w-1.5 bg-purple-600/95" aria-hidden />
+      <aside className="h-screen w-72 fixed left-0 top-0 bg-white/95 flex flex-col z-30 border-r border-gray-50 shadow-sm">
+        {/* Subtle layered tint along left edge */}
+        <div className="absolute left-0 top-0 h-full w-2 bg-purple-600/80 shadow-sm" aria-hidden />
 
-        <div className="py-5 px-5">
+        <div className="pt-6 px-5 pb-3">
           <div className="flex items-center gap-3">
             <div className="text-purple-600">
               <Logo />
@@ -45,9 +45,9 @@ export function Sidebar({
           <p className="text-xs text-gray-500 mt-1">Organize ideas, capture insights</p>
         </div>
 
-        <nav className="px-3 mt-3">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1">Library</div>
-          <div className="space-y-1 px-1">
+        <nav className="px-2 mt-4">
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Library</div>
+          <div className="flex flex-col gap-1 px-1">
             <SidebarItem
               text="Knowledge Base"
               icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round"/></svg>}
@@ -69,13 +69,14 @@ export function Sidebar({
           </div>
         </nav>
 
-        <div className="mt-auto p-4 border-t border-gray-50 bg-white/60">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-purple-100 ring-1 ring-purple-50 rounded-md flex items-center justify-center text-purple-700 font-semibold">{username.charAt(0).toUpperCase()}</div>
-              <div className="text-sm font-medium text-gray-800">{username}</div>
+        <div className="mt-auto px-4 py-3 border-t border-gray-50 bg-white/95">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-purple-100 ring-1 ring-purple-50 rounded-md flex items-center justify-center text-purple-700 font-semibold">{username.charAt(0).toUpperCase()}</div>
+            <div className="flex-1">
+              <div className="text-sm font-medium text-gray-800 leading-tight">{username}</div>
+              <div className="text-xs text-gray-400">{/* optional email or role */}</div>
             </div>
-            <button onClick={handleLogout} title="Logout" className="px-3 py-1 rounded-md text-sm text-purple-600 border border-transparent hover:bg-purple-50">Sign out</button>
+            <button onClick={handleLogout} title="Logout" className="text-sm text-purple-600 hover:underline">Sign out</button>
           </div>
           {selectedContentId && (
             (() => {

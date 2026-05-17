@@ -17,3 +17,12 @@ export const signUp = async (username: string, password: string) => {
   return response.data;
 };
 
+export const startGoogleSignin = async () => {
+  const res = await apiClient.get<{ authUrl: string }>("/api/v1/auth/google/start");
+  return res.data.authUrl;
+};
+
+export const exchangeLoginCode = async (code: string) => {
+  const res = await apiClient.post("/api/v1/auth/exchange", { code });
+  return res.data;
+};

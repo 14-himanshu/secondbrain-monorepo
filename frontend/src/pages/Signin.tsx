@@ -175,6 +175,22 @@ export function Signin() {
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
+          {/* Google sign-in button */}
+          <div className="mb-4">
+            <button
+              onClick={async () => { window.location.href = '/api/v1/auth/google/start'; }}
+              disabled={loading}
+              className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-sm'}`}>
+              <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.6 8.2 3l6-6C34.5 3 29.6 1 24 1 14.8 1 6.9 6.8 3.6 14.9l7.9 6.1C13.4 14.5 18 9.5 24 9.5z"/>
+                <path fill="#34A853" d="M46.5 24c0-1.6-.1-3.1-.4-4.6H24v8.7h12.7c-.5 2.6-2 4.8-4.2 6.2l6.5 5C43 36.2 46.5 30.6 46.5 24z"/>
+                <path fill="#4A90E2" d="M10.5 28.1A14.7 14.7 0 0110 24c0-1.3.2-2.6.5-3.8L3 14.1C1.1 17.9 0 21.8 0 26c0 4.2 1.1 8.1 3 11.9l7.5-9.8z"/>
+                <path fill="#FBBC05" d="M24 46c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2 1.4-4.5 2.3-8.3 2.3-6 0-10.6-5-12.9-10.7L3.6 33.1C6.9 41.2 14.8 46 24 46z"/>
+              </svg>
+              <span className="text-sm font-medium">Continue with Google</span>
+            </button>
+          </div>
+
           {/* Sign up link */}
           <p className="text-center text-sm text-gray-600">
             Don't have an account?{" "}

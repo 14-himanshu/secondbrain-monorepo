@@ -1,4 +1,7 @@
 import { Logo } from "../icons/Logo";
+import { LibraryIcon } from "../icons/LibraryIcon";
+import { DocumentIcon } from "../icons/DocumentIcon";
+import { YouTubeIcon } from "../icons/YoutubeIcon";
 import type { Content } from "../hooks/useContent";
 import { SidebarItem } from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +38,7 @@ export function Sidebar({
         {/* Subtle layered tint along left edge */}
         <div className="absolute left-0 top-0 h-full w-2 bg-purple-600/80 shadow-sm" aria-hidden />
 
-        <div className="pt-6 px-5 pb-3">
+        <div className="pt-6 px-5 pb-4">
           <div className="flex items-center gap-3">
             <div className="text-purple-600">
               <Logo />
@@ -43,32 +46,26 @@ export function Sidebar({
             <div className="font-semibold text-base tracking-tight text-gray-800">Second Brain</div>
           </div>
           <p className="text-xs text-gray-500 mt-1">Organize ideas, capture insights</p>
-
-          {/* Active context preview - compact card */}
-          <div className="mt-4 px-3 py-3 rounded-lg border-2 border-dashed border-gray-100 bg-white/50 text-center text-sm text-gray-400">
-            <div className="text-xs uppercase tracking-wide text-gray-300 mb-1">Active Context</div>
-            <div className="text-sm text-gray-500">No active memory loaded</div>
-          </div>
         </div>
 
-        <nav className="px-2 mt-4">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Library</div>
+        <nav className="px-3 mt-4">
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Library</div>
           <div className="flex flex-col gap-1 px-1">
             <SidebarItem
               text="Knowledge Base"
-              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              icon={<LibraryIcon />}
               onClick={() => onFilterChange('all')}
               active={selectedFilter === 'all'}
             />
             <SidebarItem
               text="Articles"
-              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M8 6h8M8 10h8M8 14h8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              icon={<DocumentIcon />}
               onClick={() => onFilterChange('post')}
               active={selectedFilter === 'post'}
             />
             <SidebarItem
               text="Videos"
-              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M10 8l6 4-6 4V8z" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              icon={<YouTubeIcon />}
               onClick={() => onFilterChange('video')}
               active={selectedFilter === 'video'}
             />

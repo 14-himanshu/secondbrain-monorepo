@@ -13,6 +13,7 @@ export function Sidebar({
   selectedContentId: _selectedContentId,
   isOpen,
   onClose,
+  onSelectContent,
 }: {
   selectedFilter: string;
   onFilterChange: (filter: string) => void;
@@ -20,6 +21,7 @@ export function Sidebar({
   selectedContentId?: string | null;
   isOpen?: boolean;
   onClose?: () => void;
+  onSelectContent?: (contentId: string | null) => void;
 }) {
   const navigate = useNavigate();
   const username = localStorage.getItem("username") || "User";
@@ -87,7 +89,7 @@ export function Sidebar({
           <div className="flex flex-col gap-2 px-1">
             {_contents && _contents.length > 0 ? (
               _contents.slice(0, 4).map((c) => (
-                <div key={c._id} className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition-colors">
+                <button key={c._id} onClick={() => onSelectContent?.(c._id)} className="w-full text-left flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition-colors">
                   <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 border border-gray-50 text-gray-700">
                     {c.type === 'video' ? <YouTubeIcon /> : <DocumentIcon />}
                   </div>
@@ -95,7 +97,7 @@ export function Sidebar({
                     <div className="text-sm text-gray-800 font-medium truncate">{c.title}</div>
                     <div className="text-xs text-gray-400 truncate">{c.type} • {_formatSource(c.link)}</div>
                   </div>
-                </div>
+                </button>
               ))
             ) : (
               <div className="text-xs text-gray-400 px-2">No recent items</div>

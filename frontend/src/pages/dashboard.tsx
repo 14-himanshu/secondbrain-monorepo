@@ -286,6 +286,7 @@ export function Dashboard() {
         selectedContentId={selectedContentId}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onSelectContent={(id) => { setSelectedContentId(id); setIsAiPanelOpen(true); }}
       />
       
       {/* Main Content Area */}

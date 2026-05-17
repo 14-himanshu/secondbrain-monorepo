@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Button";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { aiService } from "../services/ai.service";
+import { createContent } from "../services/content.api";
+import { isApiError } from "../lib/apiClient";
+import type { ContentType } from "@secondbrain/contracts";
 
 const ContentType = {
   Video: "video",
@@ -53,14 +54,14 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
       return;
     }
     try {
-      await axios.post(
-        BACKEND_URL + "/api/v1/content",
-        { link, title, type, tags, description },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      await createContent({ link, title, type: type as ContentType, tags, description });
       setTitle(""); setLink(""); setType(ContentType.Video); setTags([]); setTagInput(""); setDescription("");
       onClose();
-    } catch (error: any) {
+    } catch (error) {
+      if (isApiError(error)) {
+        alert(error.message || "Failed to add content");
+        return;
+      }
       alert("Failed to add content");
     }
   }
@@ -88,7 +89,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
       if (sType) setType(sType);
       if (sTags) setTags(sTags);
       
-    } catch (error: any) {
+    } catch {
       setAiError("Couldn't fetch details. Try again.");
     } finally {
       setIsAnalyzing(false);

@@ -9,6 +9,7 @@ import { ContentModel, BrainInsightModel } from "../db.js";
 import { buildDeterministicDescription, deriveCategory, deriveDeterministicTags, deriveTopics, shouldUseAiSynthesis, toBackendType, truncateForSynthesis } from "./ingestion/classification.js";
 import { extractContentFromUrl } from "./ingestion/registry.js";
 import type { ClassificationMode, ExtractedContent } from "./ingestion/types.js";
+import { withDistributedLock } from "../queue/lock.js";
 
 // --- Local Brain Engine (Zero-Cost Singleton) ---
 let extractorPromise: Promise<any> | null = null;
@@ -230,6 +231,12 @@ interface AiMetadataSnapshot {
   author?: string | undefined;
   channel?: string | undefined;
   durationSeconds?: number | undefined;
+  sourceType?: string | undefined;
+  extractionQuality?: string | undefined;
+  extractionWordCount?: number | undefined;
+  ingestionStatus?: "ready" | "manual_content_required";
+  ingestionReason?: string | undefined;
+  summarizationSkipped?: boolean | undefined;
 }
 
 export interface AiClassification {
@@ -239,6 +246,8 @@ export interface AiClassification {
   tags: string[];
   topics: string[];
   normalizedLink?: string;
+  ingestionStatus?: "ready" | "manual_content_required";
+  ingestionReason?: string;
   aiMetadata?: AiMetadataSnapshot;
 }
 
@@ -264,7 +273,12 @@ const parseJsonObject = (content: string) => {
   }
 };
 
-const buildAiMetadata = (normalizedUrl: string, extraction: ExtractedContent, topics: string[]): AiMetadataSnapshot => {
+const buildAiMetadata = (
+  normalizedUrl: string,
+  extraction: ExtractedContent,
+  topics: string[],
+  options?: { ingestionStatus?: "ready" | "manual_content_required"; ingestionReason?: string; summarizationSkipped?: boolean }
+): AiMetadataSnapshot => {
   const domain = new URL(normalizedUrl).hostname.replace(/^www\./, "");
   const cacheEligible = extraction.cacheable && extraction.validation.passed && extraction.confidence >= 0.7;
 
@@ -283,6 +297,12 @@ const buildAiMetadata = (normalizedUrl: string, extraction: ExtractedContent, to
     author: extraction.metadata.author,
     channel: extraction.metadata.channel,
     durationSeconds: extraction.metadata.durationSeconds,
+    sourceType: extraction.sourceType,
+    extractionQuality: extraction.extractionQuality,
+    extractionWordCount: extraction.wordCount,
+    ingestionStatus: options?.ingestionStatus || "ready",
+    ingestionReason: options?.ingestionReason,
+    summarizationSkipped: options?.summarizationSkipped,
   };
 };
 
@@ -320,9 +340,49 @@ const buildFallbackClassification = (normalizedUrl: string, extraction: Extracte
     type: toBackendType(extraction.contentType),
     tags,
     topics,
+    ingestionStatus: "ready",
     normalizedLink: normalizedUrl,
-    aiMetadata: buildAiMetadata(normalizedUrl, extraction, topics),
+    aiMetadata: buildAiMetadata(normalizedUrl, extraction, topics, {
+      ingestionStatus: "ready",
+      summarizationSkipped: true,
+    }),
   };
+};
+
+const buildManualFallbackClassification = (
+  normalizedUrl: string,
+  extraction: ExtractedContent,
+  reason: string
+): AiClassification => {
+  const tags = deriveDeterministicTags(extraction);
+  const topics = deriveTopics(tags, "Manual Review");
+
+  return {
+    title: extraction.metadata.title || "Content requires manual input",
+    description: "Automatic extraction could not reliably retrieve the page content. Paste content or connect an authenticated source.",
+    type: toBackendType(extraction.contentType),
+    tags,
+    topics,
+    ingestionStatus: "manual_content_required",
+    ingestionReason: reason,
+    normalizedLink: normalizedUrl,
+    aiMetadata: buildAiMetadata(normalizedUrl, extraction, topics, {
+      ingestionStatus: "manual_content_required",
+      ingestionReason: reason,
+      summarizationSkipped: true,
+    }),
+  };
+};
+
+const getManualContentReason = (extraction: ExtractedContent, mode: ClassificationMode) => {
+  if (mode !== "deep") return null;
+  if (extraction.sourceType === "protected_source") return "protected_source";
+  if (!extraction.validation.passed) return "validation_failed";
+  if (extraction.extractionQuality === "low") return "low_confidence_extraction";
+  if (extraction.confidence < 0.75) return "low_confidence_extraction";
+  if (extraction.wordCount < 80) return "insufficient_content";
+  if (["metadata", "body-fallback", "unavailable"].includes(extraction.source)) return "insufficient_content";
+  return null;
 };
 
 const shouldReuseCachedSummary = (doc: any, normalizedLink: string) =>
@@ -341,9 +401,26 @@ const shouldReuseCachedSummary = (doc: any, normalizedLink: string) =>
  * Handles metadata extraction and content categorization.
  * Supports 'quick' (latency-optimized) and 'deep' (insight-optimized) modes.
  */
-export const getAiClassification = async (url: string, mode: ClassificationMode = "deep") => {
+import type { ExtractContext } from "./ingestion/types.js";
+
+export const getAiClassification = async (url: string, mode: ClassificationMode = "deep", context?: ExtractContext) => {
   try {
-    const { target, extraction } = await extractContentFromUrl(url, mode);
+    const { target, extraction } = await extractContentFromUrl(url, mode, context);
+    const manualReason = getManualContentReason(extraction, mode);
+    const shouldSkipSummarization = Boolean(manualReason);
+
+    console.log("[INGESTION_METRICS]", {
+      normalizedUrl: target.normalizedUrl,
+      platform: extraction.platform,
+      source: extraction.source,
+      sourceType: extraction.sourceType,
+      confidence: extraction.confidence,
+      wordCount: extraction.wordCount,
+      extractionQuality: extraction.extractionQuality,
+      validationPassed: extraction.validation.passed,
+      summarizationSkipped: shouldSkipSummarization,
+      skipReason: manualReason,
+    });
 
     if (mode === "deep") {
       const existing = await ContentModel.findOne({
@@ -370,12 +447,19 @@ export const getAiClassification = async (url: string, mode: ClassificationMode 
     }
 
     const fallbackClassification = buildFallbackClassification(target.normalizedUrl, extraction);
+    const manualFallback = manualReason
+      ? buildManualFallbackClassification(target.normalizedUrl, extraction, manualReason)
+      : null;
+
+    if (manualFallback) {
+      return manualFallback;
+    }
 
     if (!shouldUseAiSynthesis(extraction, mode) || (!openai && !groq)) {
       return fallbackClassification;
     }
 
-    const synthesisPrompt = `You summarize already-clean extracted web content.
+    const synthesisPrompt = `You summarize only verified extracted web content.
 Return valid JSON only with:
 {
   "title": "",
@@ -387,7 +471,11 @@ Return valid JSON only with:
   "content_type": ""
 }
 Rules:
-- Use only the provided extracted content and metadata.
+- Use ONLY the provided extracted content and metadata.
+- Never infer missing facts.
+- Never use general web/domain knowledge.
+- If extracted content is insufficient, keep title/description conservative and factual.
+- Do not fabricate details, entities, claims, or context.
 - Keep short_description under 30 words.
 - summary_points: 2 to 4 concise bullets.
 - semantic_summary: 2 to 3 concise insights.
@@ -431,6 +519,7 @@ ${truncateForSynthesis(extraction.content)}`,
       type: fallbackClassification.type,
       tags: finalTags,
       topics,
+      ingestionStatus: "ready",
       normalizedLink: target.normalizedUrl,
       aiMetadata: buildAiMetadata(target.normalizedUrl, extraction, topics),
     };
@@ -440,15 +529,22 @@ ${truncateForSynthesis(extraction.content)}`,
     // Graceful Fallback
     return { 
       title: "New Content", 
-      description: "Analysis temporarily unavailable.", 
-      type: "post" as const, 
-      tags: ["untagged"], 
+      description: "Automatic extraction failed. Manual content is required.",
+      type: "post" as const,
+      tags: ["manual-review"],
       topics: [],
+      ingestionStatus: "manual_content_required",
+      ingestionReason: "classification_failure",
       aiMetadata: {
         extractionSource: "unavailable",
         extractionConfidence: 0.05,
         validationPassed: false,
         cacheEligible: false,
+        extractionQuality: "low",
+        extractionWordCount: 0,
+        ingestionStatus: "manual_content_required",
+        ingestionReason: "classification_failure",
+        summarizationSkipped: true,
       },
     };
   }
@@ -517,62 +613,148 @@ export const processContentEmbedding = async (contentId: string) => {
         const content = await ContentModel.findById(contentId);
         if (!content || content.embeddingStatus === "completed") break;
 
-        console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
+        const normalizedLink = String((content as any).normalizedLink || content.link || "");
+        if (!normalizedLink) {
+          throw new Error("Missing link for content embedding");
+        }
 
-        // 1. SCRAPE & SUMMARIZE (Sequential for stability)
-        console.log(`[AI][STEP_1] SCRAPING_START contentId: ${contentId}`);
-        await ContentModel.findByIdAndUpdate(contentId, { aiStatus: "scraping", aiProgress: 15 });
-        
-        const classification = await withTimeout(
-          getAiClassification(content.link!, "deep"),
-          45000,
-          "ExtractAndSummarize"
-        );
+        const duplicateResult = await withDistributedLock(
+          `ai:lock:url:${normalizedLink}`,
+          120000,
+          async () => {
+            const reusable = await ContentModel.findOne({
+              _id: { $ne: content._id },
+              normalizedLink,
+              embeddingStatus: "completed",
+            }).select("+embedding title description tags topics type aiMetadata normalizedLink");
 
-        console.log(`[AI][STEP_2] ANALYSIS_OK contentId: ${contentId}`);
-        const previousConfidence = Number((content as any).aiMetadata?.extractionConfidence || 0);
-        const nextConfidence = Number(classification.aiMetadata?.extractionConfidence || 0);
-        const shouldOverwriteSummary = !content.description || nextConfidence >= previousConfidence;
-        const mergedAiMetadata = {
-          ...((content as any).aiMetadata || {}),
-          ...(classification.aiMetadata || {}),
-        };
+            if (
+              reusable &&
+              Array.isArray((reusable as any).embedding) &&
+              (reusable as any).embedding.length > 0
+            ) {
+              await ContentModel.findByIdAndUpdate(contentId, {
+                title: reusable.title,
+                description: reusable.description,
+                tags: reusable.tags || [],
+                topics: reusable.topics || [],
+                type: reusable.type || content.type,
+                normalizedLink: reusable.normalizedLink || normalizedLink,
+                aiMetadata: reusable.aiMetadata || (content as any).aiMetadata,
+                embedding: (reusable as any).embedding,
+                embeddingStatus: "completed",
+                aiStatus: "completed",
+                aiProgress: 100,
+              });
+              console.log(`[AI][DEDUP_REUSE] contentId: ${contentId}`);
+              return "reused" as const;
+            }
 
-        await ContentModel.findByIdAndUpdate(contentId, { 
-          ...(shouldOverwriteSummary ? classification : {}),
-          normalizedLink: classification.normalizedLink || (content as any).normalizedLink || content.link,
-          aiMetadata: mergedAiMetadata,
-          aiStatus: "analyzing", 
-          aiProgress: 75 
-        });
+            console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
 
-        // 2. EMBED (Based on the new summary)
-        console.log(`[AI][STEP_3] EMBEDDING_START contentId: ${contentId}`);
-        const effectiveTitle = shouldOverwriteSummary ? classification.title : content.title;
-        const effectiveDescription = shouldOverwriteSummary ? classification.description : content.description || classification.description;
-        const effectiveTopics = shouldOverwriteSummary ? classification.topics : content.topics || classification.topics;
-        const contextText = `Title: ${effectiveTitle}. Description: ${effectiveDescription}. Topics: ${effectiveTopics.join(", ")}`;
-        const embedding = await createEmbedding(contextText, false);
+            // 1. SCRAPE & SUMMARIZE (Sequential for stability)
+            console.log(`[AI][STEP_1] SCRAPING_START contentId: ${contentId}`);
+            await ContentModel.findByIdAndUpdate(contentId, { aiStatus: "scraping", aiProgress: 15 });
 
-        // 3. FINAL SAVE
-        console.log(`[AI][STEP_4] FINAL_SAVE contentId: ${contentId}`);
-        const updateResult = await ContentModel.updateOne(
-          { _id: contentId },
-          { 
-            embedding, 
-            embeddingStatus: "completed",
-            aiStatus: "completed",
-            aiProgress: 100
+            // If link is a Google Docs / Drive link, ensure user's tokens are refreshed and available for extractors.
+            try {
+              if (content.userId && /docs\.google\.com|drive\.google\.com/.test(normalizedLink)) {
+                // Import dynamically to avoid circular imports and keep logic optional
+                const { getAccessTokenForUser } = await import("./google.auth.js");
+                await getAccessTokenForUser(String(content.userId));
+                console.log("[GOOGLE_AUTH] tokens ensured for user (not exposed to logs)");
+              }
+            } catch (e) {
+              console.warn("[GOOGLE_AUTH][ENSURE_FAILED]", (e as Error).message);
+            }
+
+            const classification = await withTimeout(
+              getAiClassification(content.link!, "deep"),
+              45000,
+              "ExtractAndSummarize"
+            );
+
+            if (classification.ingestionStatus === "manual_content_required") {
+              await ContentModel.findByIdAndUpdate(contentId, {
+                title: classification.title,
+                description: classification.description,
+                tags: classification.tags,
+                topics: classification.topics,
+                type: classification.type,
+                normalizedLink: classification.normalizedLink || normalizedLink,
+                aiMetadata: {
+                  ...((content as any).aiMetadata || {}),
+                  ...(classification.aiMetadata || {}),
+                },
+                embeddingStatus: "failed",
+                aiStatus: "needs_manual_content",
+                aiProgress: 100,
+                aiError: classification.ingestionReason || "manual_content_required",
+              });
+              console.log(`[AI][MANUAL_REQUIRED] contentId: ${contentId} reason=${classification.ingestionReason}`);
+              return "manual-required" as const;
+            }
+
+            console.log(`[AI][STEP_2] ANALYSIS_OK contentId: ${contentId}`);
+            const previousConfidence = Number((content as any).aiMetadata?.extractionConfidence || 0);
+            const nextConfidence = Number(classification.aiMetadata?.extractionConfidence || 0);
+            const shouldOverwriteSummary = !content.description || nextConfidence >= previousConfidence;
+            const mergedAiMetadata = {
+              ...((content as any).aiMetadata || {}),
+              ...(classification.aiMetadata || {}),
+            };
+
+            await ContentModel.findByIdAndUpdate(contentId, {
+              ...(shouldOverwriteSummary ? classification : {}),
+              normalizedLink: classification.normalizedLink || (content as any).normalizedLink || content.link,
+              aiMetadata: mergedAiMetadata,
+              aiStatus: "analyzing",
+              aiProgress: 75,
+            });
+
+            // 2. EMBED (Based on the new summary)
+            console.log(`[AI][STEP_3] EMBEDDING_START contentId: ${contentId}`);
+            const effectiveTitle = shouldOverwriteSummary ? classification.title : content.title;
+            const effectiveDescription = shouldOverwriteSummary ? classification.description : content.description || classification.description;
+            const effectiveTopics = shouldOverwriteSummary ? classification.topics : content.topics || classification.topics;
+            const contextText = `Title: ${effectiveTitle}. Description: ${effectiveDescription}. Topics: ${effectiveTopics.join(", ")}`;
+            const embedding = await createEmbedding(contextText, false);
+
+            // 3. FINAL SAVE
+            console.log(`[AI][STEP_4] FINAL_SAVE contentId: ${contentId}`);
+            const updateResult = await ContentModel.updateOne(
+              { _id: contentId },
+              {
+                embedding,
+                embeddingStatus: "completed",
+                aiStatus: "completed",
+                aiProgress: 100,
+              }
+            );
+
+            if (updateResult.modifiedCount === 0) {
+              console.warn(`[AI][RACE_CONDITION] contentId: ${contentId}. Aborting.`);
+              return "race-condition" as const;
+            }
+
+            console.log(`[AI][SUCCESS] contentId: ${contentId}, attempts: ${attempt + 1}`);
+            return "completed" as const;
           }
         );
 
-        if (updateResult.modifiedCount === 0) {
-          console.warn(`[AI][RACE_CONDITION] contentId: ${contentId}. Aborting.`);
-          break;
+        if (!duplicateResult.acquired) {
+          console.log(`[AI][LOCKED] contentId: ${contentId} already processing.`);
+          return;
         }
 
-        console.log(`[AI][SUCCESS] contentId: ${contentId}, attempts: ${attempt + 1}`);
-        return;
+        if (duplicateResult.value === "completed" || duplicateResult.value === "reused") {
+          return;
+        }
+
+        console.log(`[AI][START] contentId: ${contentId}, attempt: ${attempt + 1}`);
+        if (duplicateResult.value === "race-condition" || duplicateResult.value === "manual-required") {
+          break;
+        }
 
       } catch (error) {
         console.error(`[AI][RETRY_ERROR] contentId: ${contentId}, attempt: ${attempt + 1}:`, error);

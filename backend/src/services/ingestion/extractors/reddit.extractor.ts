@@ -1,5 +1,5 @@
 import { fetchJsonResponse, normalizeWhitespace } from "../html.js";
-import { adjustConfidence, assessExtractionQuality } from "../validation.js";
+import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
 import { extractArticleContent } from "./article.extractor.js";
 
@@ -23,7 +23,10 @@ export const extractRedditContent = async (
         platform: target.platform,
         normalizedUrl: target.normalizedUrl,
         source: "reddit-json",
+        sourceType: "public_source",
         confidence: adjustConfidence(post.selftext ? 0.9 : 0.78, validation),
+        wordCount: validation.wordCount,
+        extractionQuality: deriveExtractionQuality(validation, "public_source"),
         cacheable: validation.passed,
         content,
         metadata: {

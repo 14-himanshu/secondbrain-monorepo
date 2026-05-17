@@ -80,14 +80,15 @@ export const buildDeterministicDescription = (extraction: ExtractedContent) => {
 
 export const shouldUseAiSynthesis = (extraction: ExtractedContent, mode: ClassificationMode) => {
   if (mode !== "deep") return false;
+  if (extraction.sourceType === "protected_source") return false;
   if (!extraction.validation.passed) return false;
-  if (extraction.confidence < 0.7) return false;
+  if (extraction.extractionQuality === "low") return false;
+  if (extraction.confidence < 0.75) return false;
   if (extraction.source === "metadata" || extraction.source === "body-fallback" || extraction.source === "unavailable") {
     return false;
   }
-  return extraction.validation.wordCount >= 60;
+  return extraction.wordCount >= 80;
 };
 
 export const truncateForSynthesis = (content: string, maxChars = 5000) =>
   content.length <= maxChars ? content : `${content.slice(0, maxChars)}...`;
-

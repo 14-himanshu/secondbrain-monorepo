@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { CheckIcon } from "../icons/CheckIcon";
+import type { ShareType } from "@secondbrain/contracts";
+import { getShareStatus, updateShare } from "../services/share.api";
+import { isApiError } from "../lib/apiClient";
 
 interface ShareModalProps {
   open: boolean;
   onClose: () => void;
   onStatusChange: () => void;
 }
-
-type ShareType = "private" | "link" | "public";
 
 export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
   const [shareType, setShareType] = useState<ShareType>("private");
@@ -27,11 +26,9 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
 
   async function fetchShareStatus() {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/brain/share-status`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setShareType(response.data.shareType);
-      setShareId(response.data.shareId);
+      const status = await getShareStatus();
+      setShareType(status.shareType);
+      setShareId(status.shareId);
     } catch (e) {
       console.error("Failed to fetch share status", e);
     }
@@ -40,15 +37,15 @@ export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
   async function updateShareSettings(type: ShareType, regenerate = false) {
     setLoading(true);
     try {
-      const response = await axios.post(
-        `${BACKEND_URL}/api/brain/share`,
-        { shareType: type, regenerate },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
-      setShareType(response.data.shareType);
-      setShareId(response.data.shareId);
+      const response = await updateShare(type, regenerate);
+      setShareType(response.shareType);
+      setShareId(response.shareId);
       onStatusChange();
-    } catch (e: any) {
+    } catch (e) {
+      if (isApiError(e)) {
+        alert(e.message || "Failed to update sharing settings");
+        return;
+      }
       alert("Failed to update sharing settings");
     } finally {
       setLoading(false);

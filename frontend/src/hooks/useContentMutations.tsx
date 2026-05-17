@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import type { Content } from "./useContent";
+import { deleteContentById, updateContent } from "../services/content.api";
+import { queryKeys } from "../lib/queryKeys";
 
 export function useContentMutations() {
   const queryClient = useQueryClient();
@@ -9,17 +9,14 @@ export function useContentMutations() {
   // 1. DELETE MUTATION
   const deleteMutation = useMutation({
     mutationFn: async (contentId: string) => {
-      await axios.delete(`${BACKEND_URL}/api/v1/content`, {
-        data: { contentId },
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await deleteContentById(contentId);
     },
     // Optimistic Update
     onMutate: async (contentId) => {
-      await queryClient.cancelQueries({ queryKey: ["content"] });
-      const previousContent = queryClient.getQueryData<Content[]>(["content"]);
+      await queryClient.cancelQueries({ queryKey: queryKeys.content });
+      const previousContent = queryClient.getQueryData<Content[]>(queryKeys.content);
       
-      queryClient.setQueryData<Content[]>(["content"], (old) => 
+      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
         old ? old.filter(c => c._id !== contentId) : []
       );
 
@@ -27,28 +24,25 @@ export function useContentMutations() {
     },
     onError: (err, _, context) => {
       if (context?.previousContent) {
-        queryClient.setQueryData(["content"], context.previousContent);
+        queryClient.setQueryData(queryKeys.content, context.previousContent);
       }
       console.error("Delete failed:", err);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["content"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.content });
     }
   });
 
   // 2. EDIT MUTATION
   const editMutation = useMutation({
     mutationFn: async ({ contentId, title }: { contentId: string; title: string }) => {
-      await axios.put(`${BACKEND_URL}/api/v1/content`, 
-        { contentId, title },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-      );
+      await updateContent({ contentId, title });
     },
     onMutate: async ({ contentId, title }) => {
-      await queryClient.cancelQueries({ queryKey: ["content"] });
-      const previousContent = queryClient.getQueryData<Content[]>(["content"]);
+      await queryClient.cancelQueries({ queryKey: queryKeys.content });
+      const previousContent = queryClient.getQueryData<Content[]>(queryKeys.content);
 
-      queryClient.setQueryData<Content[]>(["content"], (old) => 
+      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
         old ? old.map(c => c._id === contentId ? { ...c, title } : c) : []
       );
 
@@ -56,12 +50,12 @@ export function useContentMutations() {
     },
     onError: (err, __, context) => {
       if (context?.previousContent) {
-        queryClient.setQueryData(["content"], context.previousContent);
+        queryClient.setQueryData(queryKeys.content, context.previousContent);
       }
       console.error("Edit failed:", err);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["content"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.content });
     }
   });
 

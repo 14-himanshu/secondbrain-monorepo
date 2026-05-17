@@ -14,6 +14,8 @@ import { normalizeUrl } from "./services/ingestion/url.js";
 import { semanticSearchController } from "./controllers/search.controller.js";
 import { initCronJobs } from "./cron.js";
 import aiRouter from "./routes/ai.js";
+import { enqueueAiIngestionJob, getAiQueueMetrics, initQueueObservers } from "./queue/ai-jobs.js";
+import { CONTENT_TYPES } from "@secondbrain/contracts";
 
 
 declare global {
@@ -63,7 +65,7 @@ const signinSchema = z.object({
 const contentSchema = z.object({
   title: z.string().min(1, "Title is required"),
   link: z.string().url("Invalid URL"),
-  type: z.enum(["video", "post", "document"]),
+  type: z.enum(CONTENT_TYPES),
   tags: z.array(z.string()).optional(),
   description: z.string().optional(),
 });
@@ -152,16 +154,27 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
   });
 
   // STEP 2: Trigger AI Auto-Pilot (Background)
+  let queueJobId: string | null = null;
   if (link && !description) {
-    processContentEmbedding(content._id.toString()).catch(err => 
-      console.error("[AUTO_AI_FAILED]", err.message)
-    );
+    const queueResult = await enqueueAiIngestionJob({
+      contentId: String(content._id),
+      normalizedLink: normalizedTarget.normalizedUrl,
+      trigger: "create",
+    });
+    queueJobId = queueResult.jobId;
+
+    if (!queueResult.enqueued) {
+      processContentEmbedding(content._id.toString()).catch(err =>
+        console.error("[AUTO_AI_FAILED]", err.message)
+      );
+    }
   }
 
   res.json({ 
     success: true,
     message: "Content added. Neural synthesis triggered.", 
-    contentId: content._id 
+    contentId: content._id,
+    jobId: queueJobId,
   });
 });
 
@@ -173,9 +186,26 @@ app.use("/api/v1/ai", (req, res, next) => {
 }, aiRouter);
 
 import { getConnectionsController } from "./controllers/connections.controller.js";
+import {
+  googleConnectController,
+  googleCallbackController,
+  googleStatusController,
+  googleDisconnectController,
+} from "./controllers/google-integration.controller.js";
+
+// Google integration endpoints
+app.get("/api/v1/integrations/google/connect", userMiddleware, googleConnectController);
+app.get("/api/v1/integrations/google/status", userMiddleware, googleStatusController);
+app.post("/api/v1/integrations/google/disconnect", userMiddleware, googleDisconnectController);
+// Public OAuth callback used by Google (registered in Google Cloud Console)
+app.get("/auth/google/callback", googleCallbackController);
 
 app.get("/api/v1/search", userMiddleware, semanticSearchController);
 app.get("/api/v1/content/:id/connections", userMiddleware, getConnectionsController);
+app.get("/api/v1/ai/queue-metrics", userMiddleware, async (_req, res) => {
+  const metrics = await getAiQueueMetrics();
+  res.json(metrics);
+});
 
 
 
@@ -360,6 +390,7 @@ app.use(/^\/api\/v1\/.*/, (req, res) => {
 
 const startServer = async () => {
   await connectToDatabase();
+  await initQueueObservers();
 
   const port = getPort();
   

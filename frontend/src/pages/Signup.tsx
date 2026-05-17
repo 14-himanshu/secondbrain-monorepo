@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
-import { BACKEND_URL } from "../config";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { isApiError } from "../lib/apiClient";
+import { signUp } from "../services/auth.api";
 
 interface ValidationError {
   path: (string | number)[];
@@ -36,17 +36,20 @@ export function Signup() {
     const username = usernameRef.current?.value ?? "";
     const password = passwordRef.current?.value ?? "";
     try {
-      await axios.post(BACKEND_URL + "/api/v1/signup", { username, password });
+      await signUp(username, password);
       setSuccessMsg("Account created! Redirecting you to sign in…");
       setTimeout(() => navigate("/signin"), 1500);
-    } catch (e: any) {
-      if (e.response?.data?.errors) {
-        setErrors(e.response.data.errors);
-      } else if (e.response?.data?.message) {
-        setErrors([{ path: ["general"], message: e.response.data.message }]);
-      } else {
-        setErrors([{ path: ["general"], message: "Something went wrong. Please try again." }]);
+    } catch (e) {
+      if (isApiError(e)) {
+        const details = e.details as { errors?: ValidationError[] } | undefined;
+        if (details?.errors?.length) {
+          setErrors(details.errors);
+          return;
+        }
+        setErrors([{ path: ["general"], message: e.message }]);
+        return;
       }
+      setErrors([{ path: ["general"], message: "Something went wrong. Please try again." }]);
     } finally {
       setLoading(false);
     }
@@ -135,7 +138,7 @@ export function Signup() {
 
           {/* General error banner */}
           {generalErrors.length > 0 && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5">
+            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5" role="alert" aria-live="assertive">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
                 <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
               </svg>

@@ -1,16 +1,11 @@
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { useQuery } from "@tanstack/react-query";
+import { getContent } from "../services/content.api";
+import { queryKeys } from "../lib/queryKeys";
+import type { ContentDto, AiStatus, EmbeddingStatus } from "@secondbrain/contracts";
 
-export interface Content {
-  _id: string;
-  title: string;
-  link: string;
-  type: string;
-  tags?: string[];
-  userId: string;
-  embeddingStatus?: "pending" | "completed" | "failed";
-  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed";
+export interface Content extends Omit<ContentDto, "aiStatus" | "embeddingStatus"> {
+  embeddingStatus?: EmbeddingStatus;
+  aiStatus?: AiStatus;
   aiMetadata?: {
     domain?: string;
     source?: string;
@@ -24,15 +19,8 @@ export interface Content {
 
 export function useContent() {
   const { data, refetch, isLoading, isError } = useQuery({
-    queryKey: ["content"],
-    queryFn: async () => {
-      const response = await axios.get(`${BACKEND_URL}/api/v1/content`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      return response.data.content as Content[];
-    },
+    queryKey: queryKeys.content,
+    queryFn: async () => (await getContent()) as Content[],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 

@@ -7,12 +7,18 @@ import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { useContentMutations } from "../hooks/useContentMutations";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { AIInsightsPanel } from "../components/AIInsightsPanel";
+
 import { useQueryClient } from "@tanstack/react-query";
 import type { Content } from "../hooks/useContent";
+import { semanticSearch } from "../services/content.api";
+import { getShareStatus } from "../services/share.api";
+import { aiService } from "../services/ai.service";
+
+import { queryKeys } from "../lib/queryKeys";
+import { isApiError } from "../lib/apiClient";
+import { useIntegration } from "../hooks/useIntegrations";
 
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
@@ -25,9 +31,12 @@ export function Dashboard() {
   });
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [semanticResults, setSemanticResults] = useState<any[] | null>(null);
+  const [semanticResults, setSemanticResults] = useState<Content[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
+  const google = useIntegration('google');
+  const [googleActionLoading, setGoogleActionLoading] = useState(false);
+  const [googleActionError, setGoogleActionError] = useState<string | null>(null);
   
   /**
    * AI Panel State Management
@@ -102,7 +111,9 @@ export function Dashboard() {
       navigate("/signup");
     }
     fetchShareStatus();
-  }, []);
+  }, [navigate]);
+
+
 
   // Semantic Search Logic with Debounce
   useEffect(() => {
@@ -121,11 +132,8 @@ export function Dashboard() {
   async function performSemanticSearch(query: string) {
     setIsSearching(true);
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/v1/search`, {
-        params: { q: query },
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setSemanticResults(response.data.results);
+      const results = await semanticSearch(query);
+      setSemanticResults(results as Content[]);
     } catch (e) {
       console.error("Semantic search failed", e);
       setSemanticResults([]); 
@@ -136,10 +144,8 @@ export function Dashboard() {
 
   async function fetchShareStatus() {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/brain/share-status`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setShareStatus(response.data);
+      const status = await getShareStatus();
+      setShareStatus(status);
     } catch (e) {
       console.error("Failed to fetch share status", e);
     }
@@ -155,8 +161,8 @@ export function Dashboard() {
   abortControllerRef.current = new AbortController();
 
   // 1. Optimistic UI Update using Query Cache
-  await queryClient.cancelQueries({ queryKey: ["content"] });
-  queryClient.setQueryData<Content[]>(["content"], (old) => 
+  await queryClient.cancelQueries({ queryKey: queryKeys.content });
+  queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
     old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "queued" } : c) : []
   );
   
@@ -166,18 +172,12 @@ export function Dashboard() {
 
 
   try {
-    const response = await axios.post(`${BACKEND_URL}/api/v1/ai/reprocess`, 
-      { contentId },
-      { 
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        signal: abortControllerRef.current.signal
-      }
-    );
+    const response = await aiService.reprocessNote(contentId);
     
     // Quick Mode Hydration: If the API returned quick data, update cache instantly
     if (response.data.data) {
       const quick = response.data.data;
-      queryClient.setQueryData<Content[]>(["content"], (old) => 
+      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
         old ? old.map(c => c._id === contentId ? { 
           ...c, 
           title: quick.title || c.title,
@@ -189,18 +189,18 @@ export function Dashboard() {
     }
     
     console.log("Insight generation started", response.data.message);
-  } catch (error: any) {
-    if (axios.isCancel(error)) return;
-    
+  } catch (error) {
+    if (isApiError(error) && error.code === "ERR_CANCELED") return;
+
     const diagnostic = "Failed to start insight generation";
     console.error(`[INSIGHT_START_ERROR]`, error);
     
     // Revert status on failure
-    queryClient.setQueryData<Content[]>(["content"], (old) => 
+    queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
       old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c) : []
     );
   } finally {
-    queryClient.invalidateQueries({ queryKey: ["content"] });
+    queryClient.invalidateQueries({ queryKey: queryKeys.content });
   }
 }
 
@@ -266,7 +266,7 @@ export function Dashboard() {
       />
       
       {/* Main Content Area */}
-      <main className="flex-1 ml-72 overflow-x-hidden min-h-screen bg-[#FDFDFD]">
+      <main className="flex-1 lg:ml-72 overflow-x-hidden min-h-screen bg-[#FDFDFD]">
         <CreateContentModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -279,7 +279,7 @@ export function Dashboard() {
 
         <div className="p-12 max-w-[1400px] mx-auto font-inter">
           {/* Header Section: High-Fidelity & Airy */}
-          <header className="mb-16 sticky top-0 bg-[#FDFDFD]/40 backdrop-blur-2xl z-20 pt-8 pb-8 -mx-12 px-12 border-b border-gray-100/30">
+          <header className="mb-16 sticky top-0 bg-[#FDFDFD]/40 backdrop-blur-2xl z-20 py-6 px-0 border-b border-gray-100/30">
             <div className="flex items-center justify-between gap-16">
               {/* Left: Elegant Title */}
               <div className="shrink-0">
@@ -329,6 +329,53 @@ export function Dashboard() {
                   startIcon={<PlusIcon />}
                   onClick={() => setModalOpen(true)}
                 />
+                {google.normalized.state === 'connected' ? (
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={async () => {
+                        const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
+                        if (!ok) return;
+                        setGoogleActionError(null);
+                        setGoogleActionLoading(true);
+                        try {
+                          await google.disconnect();
+                          await google.refresh();
+                        } catch (err) {
+                          console.error('Disconnect failed', err);
+                          setGoogleActionError('Failed to disconnect Google.');
+                        } finally {
+                          setGoogleActionLoading(false);
+                        }
+                      }}
+                      className={`px-3.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+                      disabled={googleActionLoading}
+                    >
+                      {googleActionLoading ? 'Disconnecting...' : 'Disconnect Google'}
+                    </button>
+                    <span className="text-sm text-gray-500">Connected</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      setGoogleActionError(null);
+                      setGoogleActionLoading(true);
+                      try {
+                        const url = await google.connect();
+                        if (url) window.location.href = url;
+                      } catch (err) {
+                        console.error('Failed to start Google connect', err);
+                        setGoogleActionError('Failed to start Google connect.');
+                      } finally {
+                        setGoogleActionLoading(false);
+                      }
+                    }}
+                    className={`p-3.5 bg-white border border-gray-100 text-gray-500 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
+                    disabled={googleActionLoading}
+                  >
+                    {googleActionLoading ? 'Connecting...' : 'Connect Google'}
+                  </button>
+                )}
+                {googleActionError && <div className="text-red-600 text-sm ml-2">{googleActionError}</div>}
                 <button
                   onClick={() => setShareModalOpen(true)}
                   className="p-3.5 bg-white border border-gray-100 text-gray-400 rounded-xl shadow-sm hover:shadow-md hover:border-purple-200 hover:text-purple-600 transition-all active:scale-95"
@@ -339,7 +386,7 @@ export function Dashboard() {
             </div>
           </header>
 
-          {/* Content Grid: Editorial Layout */}
+
           <div
             className="grid gap-10 pb-20"
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}

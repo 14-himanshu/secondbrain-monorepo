@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { ContentModel } from "./db.js";
-import { processContentEmbedding } from "./services/ai.service.js";
+import { enqueueAiIngestionJob } from "./queue/ai-jobs.js";
 
 export const initCronJobs = () => {
   // Run every 2 minutes
@@ -25,7 +25,14 @@ export const initCronJobs = () => {
       console.log(`[CRON][WAKEUP] Triggering ${stuckContent.length} items.`);
 
       for (const content of stuckContent) {
-        processContentEmbedding((content._id as any).toString()).catch(() => {});
+        const contentId = String(content._id);
+        const normalizedLink = content.normalizedLink || content.link || "";
+        if (!normalizedLink) continue;
+        await enqueueAiIngestionJob({
+          contentId,
+          normalizedLink,
+          trigger: "recovery",
+        });
       }
 
     } catch (error) {

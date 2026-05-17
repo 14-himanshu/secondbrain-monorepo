@@ -1,4 +1,4 @@
-import type { ExtractionSource, Platform, ExtractionValidation } from "./types.js";
+import type { ExtractionSource, Platform, ExtractionValidation, ExtractionQuality, SourceType } from "./types.js";
 
 const NOISE_PHRASES = [
   "recommended videos",
@@ -16,6 +16,10 @@ const NOISE_PHRASES = [
 const MIN_WORDS_BY_SOURCE: Record<ExtractionSource, number> = {
   "youtube-transcript": 80,
   "youtube-metadata": 20,
+  "notion-api": 60,
+  "google-docs": 60,
+  "google-drive": 20,
+  "google-pdf": 30,
   "reddit-json": 30,
   "twitter-metadata": 15,
   readability: 80,
@@ -96,3 +100,12 @@ export const adjustConfidence = (baseConfidence: number, validation: ExtractionV
   return clamp(Number((baseConfidence - penalty).toFixed(2)), 0.05, 0.99);
 };
 
+export const deriveExtractionQuality = (
+  validation: ExtractionValidation,
+  sourceType: SourceType
+): ExtractionQuality => {
+  if (sourceType === "protected_source") return "low";
+  if (!validation.passed || validation.score < 0.55 || validation.wordCount < 40) return "low";
+  if (validation.score >= 0.82 && validation.wordCount >= 120) return "high";
+  return "medium";
+};

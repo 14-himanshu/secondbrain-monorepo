@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { ContentModel } from "../db.js";
 import { createEmbedding } from "../services/ai.service.js";
-import { cosineSimilarity } from "../utils.js";
 import mongoose from "mongoose";
 
 export const semanticSearchController = async (req: Request, res: Response) => {
@@ -48,24 +47,19 @@ export const semanticSearchController = async (req: Request, res: Response) => {
 
       console.log(`[AI][VECTOR_SEARCH_NATIVE] found=${results.length}`);
     } catch (vectorError) {
-      // 3. FALLBACK: JS-Based Similarity (if index is not yet created in Atlas)
-      console.warn("[AI][VECTOR_SEARCH_FALLBACK] Index 'vector_index' not found. Falling back to JS math.");
-      const contents = await ContentModel.find({
+      // 3. STRICT FALLBACK: Atlas text index only (bounded)
+      console.warn("[AI][VECTOR_SEARCH_FALLBACK] Index 'vector_index' unavailable. Using text search.");
+      const textResults = await ContentModel.find({
         userId,
-        embeddingStatus: "completed"
-      }).select("+embedding title link type description tags");
+        $text: { $search: query },
+      })
+        .select("title link type description tags")
+        .limit(20);
 
-      results = contents
-        .map((content) => {
-          const similarity = cosineSimilarity(queryEmbedding, (content as any).embedding || []);
-          return {
-            ...content.toObject(),
-            similarity
-          };
-        })
-        .filter(item => item.similarity > 0.4)
-        .sort((a, b) => b.similarity - a.similarity)
-        .slice(0, 20);
+      results = textResults.map((content) => ({
+        ...content.toObject(),
+        similarity: 0,
+      }));
     }
 
     res.json({ results });

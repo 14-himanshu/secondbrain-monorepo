@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { Card } from "../components/Card";
 import { Logo } from "../icons/Logo";
+import { getPublicBrain } from "../services/share.api";
+import { isApiError } from "../lib/apiClient";
+import type { ContentDto } from "@secondbrain/contracts";
 
 export function PublicView() {
   const { shareId } = useParams();
-  const [content, setContent] = useState<any[]>([]);
+  const [content, setContent] = useState<ContentDto[]>([]);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,11 +16,16 @@ export function PublicView() {
   useEffect(() => {
     async function fetchSharedBrain() {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/brain/share/${shareId}`);
-        setContent(response.data.content);
-        setUsername(response.data.username);
-      } catch (e: any) {
-        setError(e.response?.data?.message || "This brain is private or doesn't exist.");
+        if (!shareId) throw new Error("Missing share ID");
+        const data = await getPublicBrain(shareId);
+        setContent(data.content);
+        setUsername(data.username);
+      } catch (e) {
+        if (isApiError(e)) {
+          setError(e.message || "This brain is private or doesn't exist.");
+          return;
+        }
+        setError("This brain is private or doesn't exist.");
       } finally {
         setLoading(false);
       }

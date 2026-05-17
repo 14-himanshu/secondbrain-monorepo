@@ -1,5 +1,5 @@
 import { createDom, extractStructuredMetadata, fetchJsonResponse, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
-import { adjustConfidence, assessExtractionQuality } from "../validation.js";
+import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
 
 const findJsonObjectAfter = (input: string, marker: string) => {
@@ -109,7 +109,10 @@ export const extractYouTubeContent = async (
         platform: target.platform,
         normalizedUrl: target.normalizedUrl,
         source: metadataContent ? "youtube-metadata" : "unavailable",
+        sourceType: "public_source",
         confidence: metadataContent ? adjustConfidence(0.82, validation) : 0.05,
+        wordCount: validation.wordCount,
+        extractionQuality: deriveExtractionQuality(validation, "public_source"),
         cacheable: Boolean(metadataContent),
         content: metadataContent,
         metadata,
@@ -133,7 +136,10 @@ export const extractYouTubeContent = async (
             platform: target.platform,
             normalizedUrl: target.normalizedUrl,
             source: "youtube-transcript",
+            sourceType: "public_source",
             confidence: adjustConfidence(0.95, validation),
+            wordCount: validation.wordCount,
+            extractionQuality: deriveExtractionQuality(validation, "public_source"),
             cacheable: true,
             content: transcript,
             metadata,
@@ -151,7 +157,10 @@ export const extractYouTubeContent = async (
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: metadataContent ? "youtube-metadata" : "unavailable",
+      sourceType: "public_source",
       confidence: metadataContent ? adjustConfidence(0.82, validation) : 0.05,
+      wordCount: validation.wordCount,
+      extractionQuality: deriveExtractionQuality(validation, "public_source"),
       cacheable: Boolean(metadataContent),
       content: metadataContent,
       metadata,
@@ -164,7 +173,10 @@ export const extractYouTubeContent = async (
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: "unavailable",
+      sourceType: "public_source",
       confidence: 0.05,
+      wordCount: validation.wordCount,
+      extractionQuality: deriveExtractionQuality(validation, "public_source"),
       cacheable: false,
       content: "",
       metadata: { tags: [], contentType: "video" },

@@ -4,6 +4,7 @@ import { getAiClassification, processContentEmbedding, generateAiChatAnswerStrea
 import { cosineSimilarity } from "../utils.js";
 import { ContentModel, BrainInsightModel } from "../db.js";
 import { z } from "zod";
+import { enqueueAiIngestionJob } from "../queue/ai-jobs.js";
 
 // ... existing code ...
 
@@ -230,7 +231,7 @@ export const aiTagController = async (req: Request, res: Response) => {
     const { url } = parsed.data;
     
     // Attempt classification with the service
-    const classification = await getAiClassification(url, "quick");
+    const classification = await getAiClassification(url, "quick", { userId: req.userId });
 
     // If classification is returned with fallback values, we still consider it a success
     // but the frontend can decide how to display it.
@@ -285,12 +286,21 @@ export const aiReprocessController = async (req: Request, res: Response) => {
     // Trigger Synthesis
     await ContentModel.updateOne({ _id: contentId }, { aiStatus: "processing" });
 
-    // Background Task
-    processContentEmbedding(contentId).catch(err => console.error("[BG_SYNTHESIS_FAILED]", err));
+    const normalizedLink = content.normalizedLink || content.link || "";
+    const queueResult = await enqueueAiIngestionJob({
+      contentId,
+      normalizedLink,
+      trigger: "reprocess",
+    });
+
+    if (!queueResult.enqueued) {
+      processContentEmbedding(contentId).catch(err => console.error("[BG_SYNTHESIS_FAILED]", err));
+    }
 
     res.json({
       success: true,
-      message: "Synthesis triggered."
+      message: "Synthesis triggered.",
+      jobId: queueResult.jobId,
     });
 
   } catch (error: any) {

@@ -21,3 +21,18 @@ export const getFrontendUrls = () =>
 export const getGroqApiKey = () => process.env.GROQ_API_KEY?.trim();
 export const getHuggingFaceToken = () => (process.env.HF_TOKEN || process.env.HUGGINGFACE_TOKEN)?.trim();
 export const getOpenAiApiKey = () => process.env.OPENAI_API_KEY?.trim();
+export const getRedisUrl = () => process.env.REDIS_URL?.trim();
+export const getAiWorkerConcurrency = () => Number(process.env.AI_WORKER_CONCURRENCY ?? 3);
+export const getNotionToken = () => process.env.NOTION_TOKEN?.trim();
+export const getNotionApiVersion = () => process.env.NOTION_API_VERSION?.trim() || "2022-06-28";
+export const getGoogleClientId = () => process.env.GOOGLE_CLIENT_ID?.trim();
+export const getGoogleClientSecret = () => process.env.GOOGLE_CLIENT_SECRET?.trim();
+export const getGoogleRedirectUri = () => process.env.GOOGLE_REDIRECT_URI?.trim();
+export const getGoogleScopes = () =>
+  (process.env.GOOGLE_SCOPES?.trim() ||
+    "https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/userinfo.email")
+    .split(/\s+/)
+    .filter(Boolean);
+
+export const getTokenEncryptionKey = () => process.env.TOKEN_ENCRYPTION_KEY?.trim();
+

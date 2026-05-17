@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { Content } from "../hooks/useContent";
 
 interface InsightItem {
   id: string;
@@ -10,7 +11,7 @@ interface InsightItem {
 }
 
 interface AIInsightFeedProps {
-  contents: any[];
+  contents: Content[];
   onSelectInsight: (contentId: string) => void;
   selectedContentId?: string | null;
   isOpen: boolean;

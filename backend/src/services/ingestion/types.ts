@@ -1,14 +1,22 @@
-export type Platform = "youtube" | "medium" | "reddit" | "twitter" | "generic";
+export type Platform = "youtube" | "medium" | "reddit" | "twitter" | "notion" | "google" | "generic";
 
 export type ExtractionSource =
   | "youtube-transcript"
   | "youtube-metadata"
+  | "notion-api"
+  | "google-docs"
+  | "google-drive"
+  | "google-pdf"
   | "reddit-json"
   | "twitter-metadata"
   | "readability"
   | "metadata"
   | "body-fallback"
   | "unavailable";
+
+export type SourceType = "public_source" | "protected_source";
+
+export type ExtractionQuality = "high" | "medium" | "low";
 
 export type BackendContentType = "video" | "post" | "document";
 
@@ -22,6 +30,9 @@ export interface UrlTarget {
   url: URL;
   videoId?: string | undefined;
 }
+
+export type ExtractContext = { userId?: string | undefined };
+
 
 export interface StructuredMetadata {
   title?: string | undefined;
@@ -48,7 +59,10 @@ export interface ExtractedContent {
   platform: Platform;
   normalizedUrl: string;
   source: ExtractionSource;
+  sourceType: SourceType;
   confidence: number;
+  wordCount: number;
+  extractionQuality: ExtractionQuality;
   cacheable: boolean;
   content: string;
   metadata: StructuredMetadata;

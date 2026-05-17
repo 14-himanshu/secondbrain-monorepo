@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import axios from "axios";
 import type { Content } from "../hooks/useContent";
-import { BACKEND_URL } from "../config";
+import { getConnections, updateContent } from "../services/content.api";
+import { aiService } from "../services/ai.service";
 
 interface AIInsightsPanelProps {
   isOpen: boolean;
@@ -15,12 +15,19 @@ export function AIInsightsPanel({
   selectedContent
 }: AIInsightsPanelProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "deep-dive" | "connections" | "chat">("overview");
+  const tabs: Array<{ id: "overview" | "deep-dive" | "chat"; label: string }> = [
+    { id: "overview", label: "Summary" },
+    { id: "deep-dive", label: "Nodes" },
+    { id: "chat", label: "Ask AI" },
+  ];
   const [chatQuery, setChatQuery] = useState("");
-  const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string, sources?: any[]}[]>([]);
+  const [messages, setMessages] = useState<
+    { role: "user" | "assistant"; content: string; sources?: Array<{ _id: string; title: string; link: string; type: string }> }[]
+  >([]);
   const [isThinking, setIsThinking] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [manualContent, setManualContent] = useState("");
-  const [connections, setConnections] = useState<any[]>([]);
+  const [connections, setConnections] = useState<Array<{ _id: string; title: string; link: string; similarity: number }>>([]);
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -39,10 +46,8 @@ export function AIInsightsPanel({
 
   const fetchConnections = async (contentId: string) => {
     try {
-        const response = await axios.get(`${BACKEND_URL}/api/v1/content/${contentId}/connections`, {
-            headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` }
-        });
-        setConnections(response.data.connections || []);
+        const response = await getConnections(contentId);
+        setConnections(response || []);
     } catch (e) {
         console.error("Error fetching connections:", e);
     }
@@ -52,11 +57,9 @@ export function AIInsightsPanel({
     if (!selectedContent) return;
     setIsSaving(true);
     try {
-      await axios.put(`${BACKEND_URL}/api/v1/content`, {
+      await updateContent({
         contentId: selectedContent._id,
         description: manualContent
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       });
       setIsEditing(false);
       // Trigger a light refresh would be ideal here, but for now we rely on the next select
@@ -77,13 +80,10 @@ export function AIInsightsPanel({
     if (!retryQuery) setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
     setIsThinking(true);
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/v1/ai/chat`, {
+      const response = await aiService.chat({
         query: userQuery,
         history,
         contentId: selectedContent?._id // Focused chat if content is selected
-      }, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        timeout: 15000
       });
       if (response.data.success) {
         setMessages(prev => [...prev, { 
@@ -92,7 +92,7 @@ export function AIInsightsPanel({
           sources: response.data.sources 
         }]);
       } else throw new Error(response.data.error || "Brain synthesis failed.");
-    } catch (error: any) {
+    } catch {
       // Error handled via UI fallback
     } finally {
       setIsThinking(false);
@@ -145,14 +145,10 @@ export function AIInsightsPanel({
         </div>
 
         <div className="flex items-center gap-2 p-1 bg-gray-50/50 rounded-xl border border-gray-100/50">
-          {[
-            { id: 'overview', label: 'Summary' },
-            { id: 'deep-dive', label: 'Nodes' },
-            { id: 'chat', label: 'Ask AI' }
-          ].map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
                 activeTab === tab.id 
                   ? "bg-white text-purple-600 shadow-sm border border-gray-100/50" 

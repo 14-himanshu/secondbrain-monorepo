@@ -1,0 +1,225 @@
+import type { Request, Response } from "express";
+import jwt from "jsonwebtoken";
+import {
+  getFrontendUrls,
+  getGoogleClientId,
+  getGoogleClientSecret,
+  getGoogleRedirectUri,
+  getGoogleScopes,
+  getJwtPassword,
+} from "../config.js";
+import { UserModel } from "../db.js";
+
+type OAuthStatePayload = {
+  type: "google_oauth_state";
+  userId: string;
+  nonce: string;
+};
+
+const getFrontendRedirectBase = () => getFrontendUrls()?.[0] || "http://localhost:5173";
+
+const getGoogleConfig = () => {
+  const clientId = getGoogleClientId();
+  const clientSecret = getGoogleClientSecret();
+  const redirectUri = getGoogleRedirectUri();
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    return null;
+  }
+
+  return { clientId, clientSecret, redirectUri, scopes: getGoogleScopes() };
+};
+
+const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: string) => {
+  const url = new URL("/integrations/callback", getFrontendRedirectBase());
+  url.searchParams.set("integration", "google");
+  url.searchParams.set("status", status);
+  if (reason) {
+    url.searchParams.set("reason", reason);
+  }
+  return url.toString();
+};
+
+const buildGoogleAuthUrl = (state: string) => {
+  const config = getGoogleConfig();
+  if (!config) return null;
+
+  const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
+  authUrl.searchParams.set("client_id", config.clientId);
+  authUrl.searchParams.set("redirect_uri", config.redirectUri);
+  authUrl.searchParams.set("response_type", "code");
+  authUrl.searchParams.set("scope", config.scopes.join(" "));
+  authUrl.searchParams.set("access_type", "offline");
+  authUrl.searchParams.set("include_granted_scopes", "true");
+  authUrl.searchParams.set("prompt", "consent");
+  authUrl.searchParams.set("state", state);
+  return authUrl.toString();
+};
+
+const exchangeGoogleCode = async (code: string) => {
+  const config = getGoogleConfig();
+  if (!config) throw new Error("GOOGLE_CONFIG_MISSING");
+
+  const body = new URLSearchParams({
+    code,
+    client_id: config.clientId,
+    client_secret: config.clientSecret,
+    redirect_uri: config.redirectUri,
+    grant_type: "authorization_code",
+  });
+
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+
+  if (!response.ok) {
+    throw new Error(`GOOGLE_TOKEN_EXCHANGE_FAILED_${response.status}`);
+  }
+
+  return (await response.json()) as {
+    access_token: string;
+    expires_in: number;
+    refresh_token?: string;
+    scope?: string;
+    token_type: string;
+  };
+};
+
+const fetchGoogleEmail = async (accessToken: string) => {
+  const response = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) return undefined;
+  const payload = (await response.json()) as { email?: string };
+  return payload.email;
+};
+
+export const googleConnectController = async (req: Request, res: Response) => {
+  const config = getGoogleConfig();
+  if (!config) {
+    return res.status(500).json({ message: "Google integration is not configured." });
+  }
+
+  const userId = req.userId;
+  if (!userId) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const statePayload: OAuthStatePayload = {
+    type: "google_oauth_state",
+    userId,
+    nonce: Math.random().toString(36).slice(2),
+  };
+
+  const state = jwt.sign(statePayload, getJwtPassword(), { expiresIn: "10m" });
+  const authUrl = buildGoogleAuthUrl(state);
+
+  if (!authUrl) {
+    return res.status(500).json({ message: "Failed to build Google auth URL." });
+  }
+
+  return res.json({ authUrl });
+};
+
+export const googleCallbackController = async (req: Request, res: Response) => {
+  const { code, state, error } = req.query;
+
+  if (error) {
+    return res.redirect(buildFrontendCallbackUrl("failed", String(error)));
+  }
+
+  if (!code || !state || typeof code !== "string" || typeof state !== "string") {
+    return res.redirect(buildFrontendCallbackUrl("failed", "missing_oauth_params"));
+  }
+
+  let payload: OAuthStatePayload;
+  try {
+    payload = jwt.verify(state, getJwtPassword()) as OAuthStatePayload;
+  } catch {
+    return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state"));
+  }
+
+  if (!payload?.userId || payload.type !== "google_oauth_state") {
+    return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state_payload"));
+  }
+
+  try {
+    const tokenResponse = await exchangeGoogleCode(code);
+    const email = await fetchGoogleEmail(tokenResponse.access_token);
+
+    const { encrypt } = await import("../lib/crypto.js");
+
+    const update: Record<string, unknown> = {
+      "google.connected": true,
+      "google.email": email,
+      "google.scope": tokenResponse.scope?.split(" ").filter(Boolean) || [],
+      "google.expiryDate": new Date(Date.now() + tokenResponse.expires_in * 1000),
+      "google.updatedAt": new Date(),
+    };
+
+    try {
+      // encrypt tokens before persisting
+      update["google.accessTokenEnc"] = encrypt(tokenResponse.access_token);
+      if (tokenResponse.refresh_token) {
+        update["google.refreshTokenEnc"] = encrypt(tokenResponse.refresh_token);
+      }
+    } catch (e) {
+      console.warn("[TOKEN_ENCRYPTION_FAILED]", e);
+      // fallback to storing plaintext if encryption fails (not recommended)
+      update["google.accessToken"] = tokenResponse.access_token;
+      if (tokenResponse.refresh_token) update["google.refreshToken"] = tokenResponse.refresh_token;
+    }
+
+    await UserModel.updateOne({ _id: payload.userId }, { $set: update });
+    return res.redirect(buildFrontendCallbackUrl("connected"));
+  } catch (oauthError) {
+    console.error("[GOOGLE_OAUTH_CALLBACK_FAILED]", oauthError);
+    return res.redirect(buildFrontendCallbackUrl("failed", "token_exchange_failed"));
+  }
+};
+
+export const googleStatusController = async (req: Request, res: Response) => {
+  const user = await UserModel.findById(req.userId)
+    .select("+google.refreshTokenEnc +google.accessTokenEnc google.connected google.email google.scope google.expiryDate");
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  const google = (user as any).google || {};
+  return res.json({
+    connected: Boolean(google.connected),
+    email: google.email || null,
+    expiryDate: google.expiryDate || null,
+    scopes: Array.isArray(google.scope) ? google.scope : [],
+    hasRefreshToken: Boolean(google.refreshTokenEnc || google.refreshToken),
+  });
+};
+
+export const googleDisconnectController = async (req: Request, res: Response) => {
+  await UserModel.updateOne(
+    { _id: req.userId },
+    {
+      $set: {
+        "google.connected": false,
+        "google.updatedAt": new Date(),
+      },
+      $unset: {
+        "google.email": 1,
+        "google.accessTokenEnc": 1,
+        "google.refreshTokenEnc": 1,
+        "google.accessToken": 1,
+        "google.refreshToken": 1,
+        "google.scope": 1,
+        "google.expiryDate": 1,
+      },
+
+    }
+  );
+
+  return res.json({ success: true });
+};
+

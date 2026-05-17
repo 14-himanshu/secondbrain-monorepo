@@ -3,14 +3,14 @@ import { Shareicon } from "../icons/ShareIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 interface CardProps {
   title: string;
   link: string;
   type: "video" | "post" | "document" | string;
   status?: "pending" | "completed" | "failed" | null;
-  aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed" | "scraping" | "analyzing";
+   aiStatus?: "queued" | "processing" | "summarized" | "completed" | "failed" | "scraping" | "analyzing" | "needs_manual_content";
   aiProgress?: number;
   aiMetadata?: {
     domain?: string;
@@ -31,20 +31,6 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
-  const [creep, setCreep] = useState(0);
-
-  useEffect(() => {
-    let interval: any;
-    if (aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) {
-      setCreep(0);
-      interval = setInterval(() => {
-        setCreep(prev => Math.min(prev + 0.5, 10)); // Creep forward up to 10% extra
-      }, 800);
-    } else {
-      setCreep(0);
-    }
-    return () => clearInterval(interval);
-  }, [aiStatus]);
 
   const progressWidth = useMemo(() => {
     if (!aiStatus) return 0;
@@ -53,8 +39,8 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
                  (aiStatus === "queued") ? 20 : 
                  aiStatus === "scraping" ? 40 : 
                  aiStatus === "analyzing" ? 75 : 95;
-    return Math.min(base + creep, 98);
-  }, [aiStatus, aiProgress, creep]);
+    return Math.min(base, 98);
+  }, [aiStatus, aiProgress]);
 
   const isVideo    = normalizedType === "video"    || normalizedType === "youtube";
   const isPost     = normalizedType === "post"     || normalizedType === "twitter";
@@ -63,7 +49,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   const parsedUrl = useMemo(() => {
     try {
       return new URL(link);
-    } catch (e) {
+    } catch {
       return null;
     }
   }, [link]);
@@ -197,11 +183,12 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
             ) : (aiStatus === "completed" || aiStatus === "summarized") ? (
               <div className="text-[9px] font-bold text-purple-300 uppercase tracking-[0.15em] flex items-center gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                {/* @ts-ignore */}
                 {similarity ? `${Math.round(similarity * 100)}% Neural Match` : "Verified Insight"}
               </div>
             ) : aiStatus === "failed" ? (
               <div className="text-[9px] font-bold text-red-300 uppercase tracking-[0.15em]">Synthesis Failed</div>
+            ) : aiStatus === "needs_manual_content" ? (
+              <div className="text-[9px] font-bold text-amber-500 uppercase tracking-[0.15em]">Manual Content Needed</div>
             ) : (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}

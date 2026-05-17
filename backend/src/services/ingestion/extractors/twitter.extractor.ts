@@ -1,5 +1,5 @@
 import { createDom, extractStructuredMetadata, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
-import { adjustConfidence, assessExtractionQuality } from "../validation.js";
+import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
 
 const extractHashtags = (value: string) =>
@@ -22,7 +22,10 @@ export const extractTwitterContent = async (
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: content ? "twitter-metadata" : "unavailable",
+      sourceType: "public_source",
       confidence: content ? adjustConfidence(0.72, validation) : 0.05,
+      wordCount: validation.wordCount,
+      extractionQuality: deriveExtractionQuality(validation, "public_source"),
       cacheable: validation.passed && content.length > 40,
       content,
       metadata: mergedMetadata,
@@ -35,7 +38,10 @@ export const extractTwitterContent = async (
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: "unavailable",
+      sourceType: "public_source",
       confidence: 0.05,
+      wordCount: validation.wordCount,
+      extractionQuality: deriveExtractionQuality(validation, "public_source"),
       cacheable: false,
       content: "",
       metadata: { tags: [], contentType: "post" },

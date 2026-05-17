@@ -19,6 +19,7 @@ test("detectPlatform identifies configured platforms", () => {
   assert.equal(detectPlatform("https://medium.com/some-post"), "medium");
   assert.equal(detectPlatform("https://reddit.com/r/typescript/comments/123/test"), "reddit");
   assert.equal(detectPlatform("https://x.com/openai/status/123"), "twitter");
+  assert.equal(detectPlatform("https://www.notion.so/workspace/page-abcdefabcdefabcdefabcdefabcdefab"), "notion");
   assert.equal(detectPlatform("https://example.com/blog"), "generic");
 });
 
@@ -38,7 +39,10 @@ test("AI synthesis only runs on validated high-confidence extraction", () => {
     platform: "youtube",
     normalizedUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     source: "youtube-transcript",
+    sourceType: "public_source",
     confidence: 0.95,
+    wordCount: 160,
+    extractionQuality: "high",
     cacheable: true,
     content: "This is a long transcript with enough words to clear the minimum threshold. ".repeat(20),
     metadata: {
@@ -66,7 +70,10 @@ test("deterministic description preserves a short summary and bullets", () => {
     platform: "generic",
     normalizedUrl: "https://example.com/post",
     source: "readability",
+    sourceType: "public_source",
     confidence: 0.85,
+    wordCount: 30,
+    extractionQuality: "medium",
     cacheable: true,
     content:
       "First sentence explains the article. Second sentence adds context. Third sentence finishes the main idea cleanly.",

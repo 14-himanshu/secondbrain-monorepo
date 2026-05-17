@@ -1,5 +1,6 @@
 import mongoose, { model, Schema } from "mongoose";
 import { getMongoDbUri } from "./config.js";
+import { AI_STATUSES, CONTENT_TYPES, EMBEDDING_STATUSES } from "@secondbrain/contracts";
 
 export const connectToDatabase = async () => {
   await mongoose.connect(getMongoDbUri());
@@ -7,6 +8,18 @@ export const connectToDatabase = async () => {
 const UserSchema = new Schema({
   username: { type: String, unique: true },
   password: String,
+  google: {
+    connected: { type: Boolean, default: false },
+    email: String,
+    accessTokenEnc: { type: String, select: false },
+    refreshTokenEnc: { type: String, select: false },
+    // legacy token fields retained for backward compatibility (do not populate in new flows)
+    accessToken: { type: String, select: false },
+    refreshToken: { type: String, select: false },
+    scope: [String],
+    expiryDate: Date,
+    updatedAt: Date,
+  },
 });
 
 export const UserModel = model("User",UserSchema);
@@ -18,17 +31,17 @@ const ContentSchema = new Schema({
     normalizedLink: String,
     tags: [String],
     topics: [String], // AI-extracted themes
-    type: String,
+    type: { type: String, enum: CONTENT_TYPES },
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
     embedding: { type: [Number], select: false },
     embeddingStatus: { 
         type: String, 
-        enum: ['pending', 'completed', 'failed'], 
+        enum: EMBEDDING_STATUSES, 
         default: 'pending' 
     },
     aiStatus: {
         type: String,
-        enum: ['queued', 'processing', 'scraping', 'analyzing', 'summarized', 'completed', 'failed'],
+        enum: AI_STATUSES,
         default: 'queued'
     },
     aiProgress: { type: Number, default: 0 },
@@ -43,6 +56,12 @@ const ContentSchema = new Schema({
         extractionConfidence: Number,
         validationPassed: Boolean,
         cacheEligible: Boolean,
+        sourceType: String,
+        extractionQuality: String,
+        extractionWordCount: Number,
+        ingestionStatus: String,
+        ingestionReason: String,
+        summarizationSkipped: Boolean,
         transcriptAvailable: Boolean,
         author: String,
         channel: String,

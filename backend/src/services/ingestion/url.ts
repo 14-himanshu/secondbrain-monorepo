@@ -70,6 +70,7 @@ export const detectPlatform = (value: string | URL): Platform => {
   if (host.includes("medium.com")) return "medium";
   if (host === "redd.it" || host.includes("reddit.com")) return "reddit";
   if (host === "x.com" || host.includes("twitter.com")) return "twitter";
+  if (host.includes("notion.so") || host.includes("notion.site")) return "notion";
   return "generic";
 };
 
@@ -126,4 +127,3 @@ export const normalizeUrl = (rawUrl: string): UrlTarget => {
     url,
   };
 };
-

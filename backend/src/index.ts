@@ -188,9 +188,11 @@ app.use("/api/v1/ai", (req, res, next) => {
 import { getConnectionsController } from "./controllers/connections.controller.js";
 import {
   googleConnectController,
+  googleSigninStart,
   googleCallbackController,
   googleStatusController,
   googleDisconnectController,
+  exchangeLoginCode,
 } from "./controllers/google-integration.controller.js";
 
 // Google integration endpoints
@@ -199,6 +201,10 @@ app.get("/api/v1/integrations/google/status", userMiddleware, googleStatusContro
 app.post("/api/v1/integrations/google/disconnect", userMiddleware, googleDisconnectController);
 // Public OAuth callback used by Google (registered in Google Cloud Console)
 app.get("/auth/google/callback", googleCallbackController);
+// Public endpoint to start Google sign-in (minimal scopes)
+app.get("/api/v1/auth/google/start", googleSigninStart);
+// Exchange one-time login code for app token
+app.post("/api/v1/auth/exchange", express.json(), exchangeLoginCode);
 
 app.get("/api/v1/search", userMiddleware, semanticSearchController);
 app.get("/api/v1/content/:id/connections", userMiddleware, getConnectionsController);

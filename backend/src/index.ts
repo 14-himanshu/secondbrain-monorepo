@@ -213,6 +213,17 @@ app.get("/api/v1/ai/queue-metrics", userMiddleware, async (_req, res) => {
   res.json(metrics);
 });
 
+// Minimal user profile
+app.get('/api/v1/me', userMiddleware, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.userId).select('username google');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    return res.json({ username: user.username, google: user.google || {} });
+  } catch (e) {
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 
 

@@ -19,6 +19,7 @@ const UserSchema = new Schema({
     scope: [String],
     expiryDate: Date,
     updatedAt: Date,
+    loginOnly: { type: Boolean, default: false },
   },
 });
 

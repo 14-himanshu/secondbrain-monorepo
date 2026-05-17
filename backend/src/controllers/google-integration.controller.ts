@@ -18,7 +18,8 @@ type OAuthStatePayload = {
 
 const getFrontendRedirectBase = () => getFrontendUrls()?.[0] || "http://localhost:5173";
 
-const getGoogleConfig = () => {
+type GoogleConfig = { clientId: string; clientSecret: string; redirectUri: string } | null;
+const getGoogleConfig = (): GoogleConfig => {
   const clientId = getGoogleClientId();
   const clientSecret = getGoogleClientSecret();
   const redirectUri = getGoogleRedirectUri();
@@ -32,7 +33,7 @@ const getGoogleConfig = () => {
     return null;
   }
 
-  return { clientId, clientSecret, redirectUri };
+  return { clientId: clientId!, clientSecret: clientSecret!, redirectUri: redirectUri! };
 };
 
 const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: string) => {
@@ -191,7 +192,7 @@ export const googleCallbackController = async (req: Request, res: Response) => {
       // Find or create user
       let user = await UserModel.findOne({ username: email });
       if (!user) {
-        user = await UserModel.create({ username: email, password: Math.random().toString(36) });
+        user = await UserModel.create({ username: email, password: Math.random().toString(36), google: { loginOnly: true } });
       }
 
       // Create short-lived one-time login code (2m)

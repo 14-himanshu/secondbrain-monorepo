@@ -300,13 +300,13 @@ export function Dashboard() {
           onStatusChange={fetchShareStatus}
         />
 
-        <div className="p-12 max-w-[1400px] mx-auto font-inter">
-          {/* Header Section: High-Fidelity & Airy */}
-          <header className="mb-16 sticky top-0 bg-[#FDFDFD]/40 backdrop-blur-2xl z-20 py-6 px-0 border-b border-gray-100/30">
-            <div className="flex items-center justify-between gap-16">
+        <div className="p-8 max-w-[1400px] mx-auto font-inter">
+          {/* Header Section: Restored hierarchy */}
+          <header className="mb-12 sticky top-0 bg-[#FDFDFD]/80 z-20 py-4 px-0 border-b border-gray-100/40">
+            <div className="flex items-center justify-between gap-8">
               {/* Left: Elegant Title */}
               <div className="shrink-0">
-                <h1 className="text-[30px] font-bold text-gray-900 tracking-tight mb-1 font-outfit">
+                <h1 className="text-[28px] font-semibold text-gray-900 tracking-tight mb-1 font-outfit">
                   {selectedFilter === "all"      && "Memory Stream"}
                   {selectedFilter === "post"     && "Articles"}
                   {selectedFilter === "video"    && "Videos"}
@@ -418,8 +418,8 @@ export function Dashboard() {
 
 
           <div
-            className="grid gap-10 pb-20"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}
+            className="grid gap-6 pb-20"
+            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
           >
             {filteredContents.map(({ type, link, title, _id, aiStatus, description }) => (
               <Card

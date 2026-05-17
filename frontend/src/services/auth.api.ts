@@ -1,4 +1,5 @@
 import { apiClient } from "../lib/apiClient";
+import { BACKEND_URL } from "../config";
 import type { ValidationIssue } from "@secondbrain/contracts";
 
 export const signIn = async (username: string, password: string) => {
@@ -17,9 +18,10 @@ export const signUp = async (username: string, password: string) => {
   return response.data;
 };
 
+// IMPORTANT: OAuth start must be done via top-level navigation (not XHR).
+// Return the backend start URL so callers can perform a full-page redirect.
 export const startGoogleSignin = async () => {
-  const res = await apiClient.get<{ authUrl: string }>("/api/v1/auth/google/start");
-  return res.data.authUrl;
+  return `${BACKEND_URL}/api/v1/auth/google/start`;
 };
 
 export const exchangeLoginCode = async (code: string) => {

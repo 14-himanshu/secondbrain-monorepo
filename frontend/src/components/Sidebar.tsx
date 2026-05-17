@@ -72,26 +72,34 @@ export function Sidebar({
           </div>
         </nav>
 
-        {/* Neural Signals - small contextual cards */}
-        <div className="px-3 mt-4 space-y-3">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">Neural Signals</div>
-          <div className="flex flex-col gap-2 px-1">
-            <div className="rounded-lg p-3 bg-white shadow-[0_4px_10px_-8px_rgba(16,24,40,0.04)] border border-gray-50">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-[13px] font-semibold text-gray-800">Connection</div>
-                  <div className="text-xs text-gray-500">Related topic detected: <span className="text-gray-700 font-medium">Semantic Search</span></div>
-                </div>
-                <div className="flex items-center">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 ring-1 ring-emerald-50" aria-hidden />
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-lg p-3 bg-white shadow-[0_4px_10px_-8px_rgba(16,24,40,0.04)] border border-gray-50">
-              <div className="text-[13px] font-semibold text-gray-800">AI Signal</div>
-              <div className="text-xs text-gray-500">High overlap with <span className="text-gray-700 font-medium">AI architecture</span> notes</div>
-            </div>
+        {/* Collections: product-oriented list (replaces demo widgets) */}
+        <div className="px-3 mt-4">
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Collections</div>
+          <div className="flex flex-col gap-1 px-1">
+            <SidebarItem
+              text="Research"
+              icon={<LibraryIcon />}
+              onClick={() => onFilterChange('research')}
+              active={selectedFilter === 'research'}
+            />
+            <SidebarItem
+              text="AI Notes"
+              icon={<DocumentIcon />}
+              onClick={() => onFilterChange('ai-notes')}
+              active={selectedFilter === 'ai-notes'}
+            />
+            <SidebarItem
+              text="DPPs"
+              icon={<DocumentIcon />}
+              onClick={() => onFilterChange('dpps')}
+              active={selectedFilter === 'dpps'}
+            />
+            <SidebarItem
+              text="University"
+              icon={<LibraryIcon />}
+              onClick={() => onFilterChange('university')}
+              active={selectedFilter === 'university'}
+            />
           </div>
         </div>
 

@@ -85,20 +85,28 @@ export function Sidebar({
 
         {/* Recent Memories: show up to 4 recent items from contents (non-interactive list) */}
         <div className="px-3 mt-4">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Recent</div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">Recent</div>
+            <div className="text-xs px-2">
+              <a href="/recents" className="text-purple-600 hover:underline">View all</a>
+            </div>
+          </div>
           <div className="flex flex-col gap-2 px-1">
             {_contents && _contents.length > 0 ? (
-              _contents.slice(0, 4).map((c) => (
-                <button key={c._id} onClick={() => onSelectContent?.(c._id)} className="w-full text-left flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition-colors">
-                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 border border-gray-50 text-gray-700">
+              _contents.slice(0, 4).map((c) => {
+                const isActive = _selectedContentId === c._id;
+                return (
+                <button key={c._id} onClick={() => onSelectContent?.(c._id)} aria-current={isActive ? 'true' : undefined} className={`w-full text-left flex items-center gap-3 p-2 rounded-md transition-colors ${isActive ? 'bg-purple-50/60 text-purple-700' : 'hover:bg-gray-50'}`}>
+                  {isActive && <span className="absolute left-2 h-7 w-1.5 bg-purple-500 rounded-r-md" aria-hidden />}
+                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 border border-gray-50 text-gray-700 z-10">
                     {c.type === 'video' ? <YouTubeIcon /> : <DocumentIcon />}
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-sm text-gray-800 font-medium truncate">{c.title}</div>
+                  <div className="min-w-0 z-10">
+                    <div className={`text-sm font-medium truncate ${isActive ? 'text-purple-700' : 'text-gray-800'}`}>{c.title}</div>
                     <div className="text-xs text-gray-400 truncate">{c.type} • {_formatSource(c.link)}</div>
                   </div>
                 </button>
-              ))
+              )})
             ) : (
               <div className="text-xs text-gray-400 px-2">No recent items</div>
             )}

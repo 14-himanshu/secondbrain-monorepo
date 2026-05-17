@@ -30,6 +30,15 @@ export function Sidebar({
     navigate("/signin");
   };
 
+  const _formatSource = (link?: string) => {
+    if (!link) return '';
+    try {
+      return new URL(link).hostname.replace(/^www\./, '');
+    } catch {
+      return link.slice(0, 24);
+    }
+  };
+
   return (
     <div>
       {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
@@ -72,34 +81,25 @@ export function Sidebar({
           </div>
         </nav>
 
-        {/* Collections: product-oriented list (replaces demo widgets) */}
+        {/* Recent Memories: show up to 4 recent items from contents (non-interactive list) */}
         <div className="px-3 mt-4">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Collections</div>
-          <div className="flex flex-col gap-1 px-1">
-            <SidebarItem
-              text="Research"
-              icon={<LibraryIcon />}
-              onClick={() => onFilterChange('research')}
-              active={selectedFilter === 'research'}
-            />
-            <SidebarItem
-              text="AI Notes"
-              icon={<DocumentIcon />}
-              onClick={() => onFilterChange('ai-notes')}
-              active={selectedFilter === 'ai-notes'}
-            />
-            <SidebarItem
-              text="DPPs"
-              icon={<DocumentIcon />}
-              onClick={() => onFilterChange('dpps')}
-              active={selectedFilter === 'dpps'}
-            />
-            <SidebarItem
-              text="University"
-              icon={<LibraryIcon />}
-              onClick={() => onFilterChange('university')}
-              active={selectedFilter === 'university'}
-            />
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Recent</div>
+          <div className="flex flex-col gap-2 px-1">
+            {_contents && _contents.length > 0 ? (
+              _contents.slice(0, 4).map((c) => (
+                <div key={c._id} className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 transition-colors">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 border border-gray-50 text-gray-700">
+                    {c.type === 'video' ? <YouTubeIcon /> : <DocumentIcon />}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm text-gray-800 font-medium truncate">{c.title}</div>
+                    <div className="text-xs text-gray-400 truncate">{c.type} • {_formatSource(c.link)}</div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-xs text-gray-400 px-2">No recent items</div>
+            )}
           </div>
         </div>
 

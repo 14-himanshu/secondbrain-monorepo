@@ -1,7 +1,6 @@
 import { Logo } from "../icons/Logo";
 import { SidebarItem } from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
-import type { Content } from "../hooks/useContent";
 
 export function Sidebar({
     selectedFilter,
@@ -11,7 +10,7 @@ export function Sidebar({
 }: {
     selectedFilter: string;
     onFilterChange: (filter: string) => void;
-    contents?: Content[];
+    contents?: any[];
     selectedContentId?: string | null;
 }) {
     const navigate = useNavigate();

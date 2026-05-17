@@ -27,7 +27,7 @@ const getGoogleConfig = () => {
     return null;
   }
 
-  return { clientId, clientSecret, redirectUri, scopes: getGoogleScopes() };
+  return { clientId, clientSecret, redirectUri };
 };
 
 const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: string) => {
@@ -40,7 +40,15 @@ const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: strin
   return url.toString();
 };
 
-const buildGoogleAuthUrl = (state: string) => {
+const buildFrontendAuthCallbackUrl = (status: "success" | "failed", loginCode?: string, reason?: string) => {
+  const url = new URL("/auth/callback", getFrontendRedirectBase());
+  url.searchParams.set("status", status);
+  if (loginCode) url.searchParams.set("login_code", loginCode);
+  if (reason) url.searchParams.set("reason", reason);
+  return url.toString();
+};
+
+const buildGoogleAuthUrl = (state: string, scopes: string[]) => {
   const config = getGoogleConfig();
   if (!config) return null;
 
@@ -48,7 +56,7 @@ const buildGoogleAuthUrl = (state: string) => {
   authUrl.searchParams.set("client_id", config.clientId);
   authUrl.searchParams.set("redirect_uri", config.redirectUri);
   authUrl.searchParams.set("response_type", "code");
-  authUrl.searchParams.set("scope", config.scopes.join(" "));
+  authUrl.searchParams.set("scope", scopes.join(" "));
   authUrl.searchParams.set("access_type", "offline");
   authUrl.searchParams.set("include_granted_scopes", "true");
   authUrl.searchParams.set("prompt", "consent");
@@ -115,13 +123,36 @@ export const googleConnectController = async (req: Request, res: Response) => {
   };
 
   const state = jwt.sign(statePayload, getJwtPassword(), { expiresIn: "10m" });
-  const authUrl = buildGoogleAuthUrl(state);
+  const scopes = getGoogleScopes();
+  const authUrl = buildGoogleAuthUrl(state, scopes);
 
   if (!authUrl) {
     return res.status(500).json({ message: "Failed to build Google auth URL." });
   }
 
   return res.json({ authUrl });
+};
+
+// Public start for Google sign-in (minimal scopes)
+export const googleSigninStart = async (_req: Request, res: Response) => {
+  const config = getGoogleConfig();
+  if (!config) {
+    return res.status(500).json({ message: "Google integration is not configured." });
+  }
+
+  const statePayload = {
+    type: "google_oauth_login",
+    nonce: Math.random().toString(36).slice(2),
+  } as any as OAuthStatePayload;
+
+  const state = jwt.sign(statePayload, getJwtPassword(), { expiresIn: "10m" });
+  // minimal scopes for signin
+  const scopes = ["openid", "email", "profile"];
+  const authUrl = buildGoogleAuthUrl(state, scopes);
+  if (!authUrl) return res.status(500).json({ message: "Failed to build Google auth URL." });
+
+  // Redirect directly to Google's auth page (simpler for frontend)
+  return res.redirect(authUrl);
 };
 
 export const googleCallbackController = async (req: Request, res: Response) => {
@@ -135,13 +166,40 @@ export const googleCallbackController = async (req: Request, res: Response) => {
     return res.redirect(buildFrontendCallbackUrl("failed", "missing_oauth_params"));
   }
 
-  let payload: OAuthStatePayload;
+  let payload: OAuthStatePayload | any;
   try {
     payload = jwt.verify(state, getJwtPassword()) as OAuthStatePayload;
   } catch {
     return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state"));
   }
 
+  // Login flow (no userId in state)
+  if (payload?.type === "google_oauth_login") {
+    try {
+      const tokenResponse = await exchangeGoogleCode(code);
+      const email = await fetchGoogleEmail(tokenResponse.access_token);
+
+      if (!email) {
+        return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "no_email_returned"));
+      }
+
+      // Find or create user
+      let user = await UserModel.findOne({ username: email });
+      if (!user) {
+        user = await UserModel.create({ username: email, password: Math.random().toString(36) });
+      }
+
+      // Create short-lived one-time login code (2m)
+      const loginCode = jwt.sign({ type: "google_login_code", userId: user._id }, getJwtPassword(), { expiresIn: "2m" });
+
+      return res.redirect(buildFrontendAuthCallbackUrl("success", loginCode));
+    } catch (e) {
+      console.error("[GOOGLE_OAUTH_LOGIN_FAILED]", e);
+      return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "token_exchange_failed"));
+    }
+  }
+
+  // Existing connect flow: requires userId in state
   if (!payload?.userId || payload.type !== "google_oauth_state") {
     return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state_payload"));
   }
@@ -221,5 +279,26 @@ export const googleDisconnectController = async (req: Request, res: Response) =>
   );
 
   return res.json({ success: true });
+};
+
+// Exchange one-time login code for app JWT
+export const exchangeLoginCode = async (req: Request, res: Response) => {
+  const { code } = req.body;
+  if (!code || typeof code !== "string") return res.status(400).json({ message: "Missing code" });
+
+  try {
+    const payload = jwt.verify(code, getJwtPassword()) as any;
+    if (!payload || payload.type !== "google_login_code" || !payload.userId) {
+      return res.status(400).json({ message: "Invalid code" });
+    }
+
+    const user = await UserModel.findById(payload.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const appToken = jwt.sign({ id: user._id }, getJwtPassword());
+    return res.json({ token: appToken });
+  } catch (e) {
+    return res.status(400).json({ message: "Invalid or expired code" });
+  }
 };
 

@@ -317,101 +317,102 @@ export function Dashboard() {
                 </p>
               </div>
 
-              {/* Center: Smart Semantic Search */}
-              <div className="flex-1 max-w-xl relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition duration-1000 group-focus-within:duration-200"></div>
-                <div className="relative flex items-center bg-white rounded-2xl border border-gray-100 shadow-sm shadow-purple-50/50 overflow-hidden transition-all group-focus-within:border-purple-200 group-focus-within:shadow-purple-100/50">
-                  <div className="pl-6 text-gray-300">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search your memories semantically..."
-                    className="w-full py-5 px-5 text-[15px] text-gray-600 focus:outline-none placeholder:text-gray-300 font-medium bg-transparent"
-                  />
-                  {isSearching && (
-                    <div className="pr-6">
-                      <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin"></div>
+              {/* Center + Actions Toolbar */}
+              <div className="flex-1 flex items-center gap-4">
+                <div className="flex-1 max-w-xl relative">
+                  <div className="relative flex items-center bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all">
+                    <div className="pl-5 text-gray-300">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </div>
-                  )}
-                  {searchQuery && !isSearching && (
-                    <button onClick={() => setSearchQuery("")} className="absolute right-5 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-xl text-gray-300 transition-all">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                  )}
-              </div>
-            </div>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search your memories semantically..."
+                      className="w-full py-3 px-4 text-[14px] text-gray-600 focus:outline-none placeholder:text-gray-300 font-medium bg-transparent"
+                    />
+                    {isSearching && (
+                      <div className="pr-4">
+                        <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                    {searchQuery && !isSearching && (
+                      <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-xl text-gray-300 transition-all">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-              {/* Right: Integrated Actions */}
-              <div className="flex gap-3 shrink-0">
-                <Button
-                  variant="primary"
-                  text="New Memory"
-                  startIcon={<PlusIcon />}
-                  onClick={() => setModalOpen(true)}
-                />
-                {/* Auth provider vs Integration status */}
-                <div className="flex items-center gap-3">
-                  {signedInWithGoogle && (
-                    <div className="text-sm text-gray-500">Signed in with Google</div>
-                  )}
+                <div className="flex items-center gap-3 bg-white border border-gray-100 rounded-2xl p-1.5 shadow-sm">
+                  <Button
+                    variant="primary"
+                    text="New Memory"
+                    startIcon={<PlusIcon />}
+                    onClick={() => setModalOpen(true)}
+                  />
 
-                  {google.normalized.state === 'connected' ? (
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    {signedInWithGoogle && (
+                      <div className="text-sm text-gray-500">Signed in with Google</div>
+                    )}
+
+                    {google.normalized.state === 'connected' ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={async () => {
+                            const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
+                            if (!ok) return;
+                            setGoogleActionError(null);
+                            setGoogleActionLoading(true);
+                            try {
+                              await google.disconnect();
+                              await google.refresh();
+                            } catch (err) {
+                              console.error('Disconnect failed', err);
+                              setGoogleActionError('Failed to disconnect Google.');
+                            } finally {
+                              setGoogleActionLoading(false);
+                            }
+                          }}
+                          className={`px-3 py-2 bg-white border border-gray-100 text-gray-700 rounded-lg shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+                          disabled={googleActionLoading}
+                        >
+                          {googleActionLoading ? 'Disconnecting...' : 'Disconnect'}
+                        </button>
+                        <span className="text-sm text-gray-500">Drive connected</span>
+                      </div>
+                    ) : (
                       <button
                         onClick={async () => {
-                          const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
-                          if (!ok) return;
                           setGoogleActionError(null);
                           setGoogleActionLoading(true);
                           try {
-                            await google.disconnect();
-                            await google.refresh();
+                            const url = await google.connect();
+                            if (url) window.location.href = url;
                           } catch (err) {
-                            console.error('Disconnect failed', err);
-                            setGoogleActionError('Failed to disconnect Google.');
+                            console.error('Failed to start Google connect', err);
+                            setGoogleActionError('Failed to start Google connect.');
                           } finally {
                             setGoogleActionLoading(false);
                           }
                         }}
-                        className={`px-3.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md'}`}
+                        className={`px-3 py-2 bg-white border border-gray-100 text-gray-600 rounded-lg shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
                         disabled={googleActionLoading}
                       >
-                        {googleActionLoading ? 'Disconnecting...' : 'Disconnect Google'}
+                        {googleActionLoading ? 'Connecting...' : 'Enable Drive'}
                       </button>
-                      <span className="text-sm text-gray-500">Drive connected</span>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={async () => {
-                        setGoogleActionError(null);
-                        setGoogleActionLoading(true);
-                        try {
-                          const url = await google.connect();
-                          if (url) window.location.href = url;
-                        } catch (err) {
-                          console.error('Failed to start Google connect', err);
-                          setGoogleActionError('Failed to start Google connect.');
-                        } finally {
-                          setGoogleActionLoading(false);
-                        }
-                      }}
-                      className={`p-3.5 bg-white border border-gray-100 text-gray-500 rounded-xl shadow-sm transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-md hover:border-purple-200 hover:text-purple-600'}`}
-                      disabled={googleActionLoading}
-                    >
-                      {googleActionLoading ? 'Connecting...' : 'Enable Google Drive'}
-                    </button>
-                  )}
+                    )}
+                  </div>
+                  {googleActionError && <div className="text-red-600 text-sm ml-3">{googleActionError}</div>}
+
+                  <button
+                    onClick={() => setShareModalOpen(true)}
+                    className="p-2 bg-white border border-gray-100 text-gray-400 rounded-lg hover:shadow-md hover:border-purple-200 hover:text-purple-600 transition-all"
+                  >
+                    {shareConfig.icon}
+                  </button>
                 </div>
-                {googleActionError && <div className="text-red-600 text-sm ml-2">{googleActionError}</div>}
-                <button
-                  onClick={() => setShareModalOpen(true)}
-                  className="p-3.5 bg-white border border-gray-100 text-gray-400 rounded-xl shadow-sm hover:shadow-md hover:border-purple-200 hover:text-purple-600 transition-all active:scale-95"
-                >
-                  {shareConfig.icon}
-                </button>
               </div>
             </div>
           </header>

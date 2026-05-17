@@ -93,30 +93,30 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   return (
     <div 
       onClick={onSelect}
-      className={`group bg-white border border-gray-100 rounded-[24px] p-6 transition-all duration-500 flex flex-col h-full relative cursor-pointer ${
+      className={`group bg-white border border-gray-100 rounded-xl p-4 transition-all duration-200 flex flex-col h-full relative cursor-pointer ${
         isSelected 
-          ? 'border-purple-200 ring-2 ring-purple-50 shadow-[0_20px_40px_-12px_rgba(124,58,237,0.08)]' 
-          : 'hover:border-purple-200/50 hover:shadow-[0_15px_35px_-12px_rgba(0,0,0,0.04)] hover:-translate-y-1'
+          ? 'border-purple-200 ring-2 ring-purple-50 shadow-[0_18px_40px_-18px_rgba(124,58,237,0.08)]' 
+          : 'hover:border-purple-100 hover:shadow-[0_10px_30px_-12px_rgba(99,102,241,0.06)]'
       }`}
     >
       
       {/* Header: Intelligence Row */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:scale-105 transition-transform duration-500">
+          <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center border border-gray-100 group-hover:scale-105 transition-transform duration-200">
             {getIcon()}
           </div>
           <div className="flex flex-col min-w-0">
             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">{badgeLabel}</span>
-            <span className="text-[12px] font-bold text-gray-700 truncate max-w-[140px] antialiased leading-none">{source}</span>
+            <span className="text-[13px] font-semibold text-gray-700 truncate max-w-[160px] antialiased leading-none">{source}</span>
           </div>
         </div>
         
         {/* Pulse Indicator */}
         {description && (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-purple-50/50 rounded-full border border-purple-100/30">
-             <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic"></div>
-             <span className="text-[9px] font-bold text-purple-500 uppercase tracking-tight">Synthesized</span>
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-100/30">
+             <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic" />
+             <span className="text-[10px] font-bold text-purple-500 uppercase tracking-tight">Synthesized</span>
           </div>
         )}
       </div>
@@ -143,12 +143,12 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
           </div>
         ) : (
           <div className="space-y-2.5">
-            <h3 className="text-[15.5px] font-bold text-gray-800 leading-[1.4] group-hover:text-purple-700 transition-colors tracking-tight line-clamp-2 antialiased" title={title}>
+            <h3 className="text-[14px] font-semibold text-gray-800 leading-[1.35] group-hover:text-purple-700 transition-colors tracking-tight line-clamp-2 antialiased" title={title}>
               {title}
             </h3>
             {/* Quick Preview */}
             {description && (
-              <p className="text-[12.5px] text-gray-400 font-medium line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-1 group-hover:translate-y-0">
+              <p className="text-[13px] text-gray-600 font-medium line-clamp-3 leading-relaxed mt-2">
                 {description.split('\n\n')[0]}
               </p>
             )}
@@ -158,19 +158,16 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
 
       {/* Neural Progress Bar: Sleek & Sophisticated */}
       {(aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
-        <div className="absolute bottom-[68px] left-6 right-6 h-[2px] bg-purple-50/30 rounded-full overflow-hidden">
+        <div className="mt-4 w-full h-1 bg-purple-50 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-500 shadow-[0_0_12px_rgba(168,85,247,0.4)] transition-all duration-1000 ease-linear animate-shimmer-semantic"
-            style={{ 
-              width: `${progressWidth}%`,
-              backgroundSize: '200% 100%'
-            }}
+            className="h-full bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-500 transition-all duration-500 ease-linear"
+            style={{ width: `${progressWidth}%` }}
           />
         </div>
       )}
 
       {/* Footer: Metadata & Actions */}
-      <div className="pt-5 mt-6 flex items-center justify-between border-t border-gray-50/50">
+      <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-100">
         <div className="flex items-center gap-4">
            <div className="flex items-center">
             {aiStatus && ["queued", "processing", "summarized", "scraping", "analyzing"].includes(aiStatus) ? (
@@ -207,7 +204,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button
               onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-              className="p-2 text-gray-200 hover:text-red-400 hover:bg-red-50 rounded-lg transition-all"
+              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
               title="Remove"
             >
               <DeleteIcon />

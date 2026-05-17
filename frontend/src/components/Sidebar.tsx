@@ -31,9 +31,9 @@ export function Sidebar({
     <div>
       {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
 
-      <aside className="h-screen w-72 fixed left-0 top-0 bg-white flex flex-col z-30 border-r shadow-sm">
+      <aside className="h-screen w-72 fixed left-0 top-0 bg-white flex flex-col z-30 border-r shadow-md">
         {/* Left accent strip for stronger identity */}
-        <div className="absolute left-0 top-0 h-full w-1 bg-purple-600" aria-hidden />
+        <div className="absolute left-0 top-0 h-full w-1.5 bg-purple-600" aria-hidden />
 
         <div className="p-5 pl-6">
           <div className="flex items-center gap-3">
@@ -45,34 +45,37 @@ export function Sidebar({
           <p className="text-xs text-gray-500 mt-1">Organize ideas, capture insights</p>
         </div>
 
-        <nav className="px-4 mt-4 space-y-2"> 
-          <SidebarItem
-            text="Knowledge Base"
-            icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-            onClick={() => onFilterChange('all')}
-            active={selectedFilter === 'all'}
-          />
-          <SidebarItem
-            text="Articles"
-            icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M8 6h8M8 10h8M8 14h8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-            onClick={() => onFilterChange('post')}
-            active={selectedFilter === 'post'}
-          />
-          <SidebarItem
-            text="Videos"
-            icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M10 8l6 4-6 4V8z" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-            onClick={() => onFilterChange('video')}
-            active={selectedFilter === 'video'}
-          />
+        <nav className="px-3 mt-4 space-y-3">
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-1">Library</div>
+          <div className="space-y-1 px-2">
+            <SidebarItem
+              text="Knowledge Base"
+              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              onClick={() => onFilterChange('all')}
+              active={selectedFilter === 'all'}
+            />
+            <SidebarItem
+              text="Articles"
+              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M8 6h8M8 10h8M8 14h8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              onClick={() => onFilterChange('post')}
+              active={selectedFilter === 'post'}
+            />
+            <SidebarItem
+              text="Videos"
+              icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="2" d="M10 8l6 4-6 4V8z" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+              onClick={() => onFilterChange('video')}
+              active={selectedFilter === 'video'}
+            />
+          </div>
         </nav>
 
-        <div className="mt-auto p-4 border-t">
+        <div className="mt-auto p-4 border-t bg-white/60">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded flex items-center justify-center">{username.charAt(0).toUpperCase()}</div>
-              <div className="text-sm font-bold">{username}</div>
+              <div className="w-9 h-9 bg-purple-100 ring-1 ring-purple-50 rounded-md flex items-center justify-center text-purple-700 font-semibold">{username.charAt(0).toUpperCase()}</div>
+              <div className="text-sm font-medium text-gray-800">{username}</div>
             </div>
-            <button onClick={handleLogout} title="Logout" className="p-2 text-sm text-gray-500">Logout</button>
+            <button onClick={handleLogout} title="Logout" className="px-3 py-1 rounded-md text-sm text-purple-600 border border-transparent hover:bg-purple-50">Sign out</button>
           </div>
           {selectedContentId && (
             (() => {

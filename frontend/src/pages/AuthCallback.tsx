@@ -24,13 +24,14 @@ export default function AuthCallback() {
         if (res && res.token) {
           localStorage.setItem("token", res.token);
           // Clear any oauth resume state
-          try { sessionStorage.removeItem('oauth_callback'); } catch {}
-          navigate("/");
+          try { sessionStorage.removeItem('oauth_callback'); } catch (err) { console.warn('failed clearing oauth resume', err); }
+          // Replace current history entry to remove login_code from URL
+          try { navigate("/", { replace: true }); } catch { window.location.replace('/'); }
           return;
         }
         setError("No token returned from server.");
-      } catch (e: any) {
-        setError(e?.message || "Exchange failed.");
+      } catch (e) {
+        setError((e as Error)?.message || "Exchange failed.");
       } finally {
         setLoading(false);
       }

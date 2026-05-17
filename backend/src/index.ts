@@ -224,6 +224,25 @@ app.get('/api/v1/me', userMiddleware, async (req, res) => {
   }
 });
 
+// Debug endpoint (non-secret): report whether Google OAuth config is present and redirect URI
+app.get('/api/v1/debug/oauth-config', (_req, res) => {
+  try {
+    const clientIdPresent = Boolean(getGoogleClientId());
+    const clientSecretPresent = Boolean(getGoogleClientSecret());
+    const redirectUri = getGoogleRedirectUri() || null;
+    const frontend = getFrontendUrls() ?? [];
+    return res.json({
+      googleConfigured: clientIdPresent && clientSecretPresent && Boolean(redirectUri),
+      clientIdPresent,
+      clientSecretPresent,
+      redirectUri,
+      frontend,
+    });
+  } catch (e) {
+    return res.status(500).json({ message: 'Failed to read config' });
+  }
+});
+
 
 
 

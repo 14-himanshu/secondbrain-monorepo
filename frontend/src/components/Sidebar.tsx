@@ -43,6 +43,12 @@ export function Sidebar({
             <div className="font-semibold text-base tracking-tight text-gray-800">Second Brain</div>
           </div>
           <p className="text-xs text-gray-500 mt-1">Organize ideas, capture insights</p>
+
+          {/* Active context preview - compact card */}
+          <div className="mt-4 px-3 py-3 rounded-lg border-2 border-dashed border-gray-100 bg-white/50 text-center text-sm text-gray-400">
+            <div className="text-xs uppercase tracking-wide text-gray-300 mb-1">Active Context</div>
+            <div className="text-sm text-gray-500">No active memory loaded</div>
+          </div>
         </div>
 
         <nav className="px-2 mt-4">
@@ -68,6 +74,29 @@ export function Sidebar({
             />
           </div>
         </nav>
+
+        {/* Neural Signals - small contextual cards */}
+        <div className="px-3 mt-4 space-y-3">
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">Neural Signals</div>
+          <div className="flex flex-col gap-2 px-1">
+            <div className="rounded-lg p-3 bg-white shadow-[0_4px_10px_-8px_rgba(16,24,40,0.04)] border border-gray-50">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="text-[13px] font-semibold text-gray-800">Connection</div>
+                  <div className="text-xs text-gray-500">Related topic detected: <span className="text-gray-700 font-medium">Semantic Search</span></div>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 ring-1 ring-emerald-50" aria-hidden />
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-lg p-3 bg-white shadow-[0_4px_10px_-8px_rgba(16,24,40,0.04)] border border-gray-50">
+              <div className="text-[13px] font-semibold text-gray-800">AI Signal</div>
+              <div className="text-xs text-gray-500">High overlap with <span className="text-gray-700 font-medium">AI architecture</span> notes</div>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-auto px-4 py-3 border-t border-gray-50 bg-white/95">
           <div className="flex items-center gap-3">

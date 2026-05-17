@@ -411,6 +411,16 @@ const startServer = async () => {
 
   const port = getPort();
   
+  // Log runtime OAuth configuration hints (do not log secrets)
+  try {
+    const googleClientId = getGoogleClientId();
+    const googleRedirect = getGoogleRedirectUri();
+    console.log('[CONFIG] GOOGLE_CLIENT_ID present:', Boolean(googleClientId));
+    console.log('[CONFIG] GOOGLE_REDIRECT_URI:', googleRedirect || '(not set)');
+  } catch (e) {
+    console.warn('[CONFIG] Google config incomplete or not set');
+  }
+
   // Initialize background tasks
   initCronJobs();
 

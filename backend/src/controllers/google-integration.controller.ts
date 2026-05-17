@@ -23,7 +23,12 @@ const getGoogleConfig = () => {
   const clientSecret = getGoogleClientSecret();
   const redirectUri = getGoogleRedirectUri();
 
-  if (!clientId || !clientSecret || !redirectUri) {
+  const hasClientId = Boolean(clientId);
+  const hasClientSecret = Boolean(clientSecret);
+  const hasRedirectUri = Boolean(redirectUri);
+
+  if (!hasClientId || !hasClientSecret || !hasRedirectUri) {
+    console.warn(`[GOOGLE_CONFIG_MISSING] clientId:${hasClientId} clientSecret:${hasClientSecret} redirectUri:${hasRedirectUri}`);
     return null;
   }
 

@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import { connectToDatabase, ContentModel, LinkModel, UserModel } from "./db.js";
-import { getFrontendUrls, getJwtPassword, getPort, getGoogleClientId, getGoogleRedirectUri } from "./config.js";
+import { getFrontendUrls, getJwtPassword, getPort, getGoogleClientId, getGoogleClientSecret, getGoogleRedirectUri } from "./config.js";
 import { userMiddleware } from "./middleware.js";
 import { random } from "./utils.js";
 import cors from "cors";

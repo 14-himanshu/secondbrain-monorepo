@@ -7,6 +7,8 @@ export const userMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  console.log('[AUTH_MW] evaluating auth for', { path: req.path, method: req.method, hasAuth: Boolean(req.headers.authorization) });
+
   const authHeader = req.headers.authorization;
 
   // No header

@@ -140,9 +140,16 @@ export const googleConnectController = async (req: Request, res: Response) => {
 };
 
 // Public start for Google sign-in (minimal scopes)
-export const googleSigninStart = async (_req: Request, res: Response) => {
+export const googleSigninStart = async (req: Request, res: Response) => {
+  console.log('[OAUTH_START] incoming request to /api/v1/auth/google/start', {
+    path: req.path,
+    method: req.method,
+    hasAuth: Boolean(req.headers.authorization),
+  });
+
   const config = getGoogleConfig();
   if (!config) {
+    console.warn('[OAUTH_START] google config missing');
     return res.status(500).json({ message: "Google integration is not configured." });
   }
 
@@ -155,13 +162,17 @@ export const googleSigninStart = async (_req: Request, res: Response) => {
   // minimal scopes for signin
   const scopes = ["openid", "email", "profile"];
   const authUrl = buildGoogleAuthUrl(state, scopes);
-  if (!authUrl) return res.status(500).json({ message: "Failed to build Google auth URL." });
+  if (!authUrl) {
+    console.error('[OAUTH_START] failed to build auth url');
+    return res.status(500).json({ message: "Failed to build Google auth URL." });
+  }
 
   // Redirect directly to Google's auth page (simpler for frontend)
   return res.redirect(authUrl);
 };
 
 export const googleCallbackController = async (req: Request, res: Response) => {
+  console.log('[OAUTH_CALLBACK] incoming callback', { path: req.path, query: req.query });
   const { code, state, error } = req.query;
 
   if (error) {

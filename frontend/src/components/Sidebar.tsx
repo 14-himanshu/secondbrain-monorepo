@@ -9,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 export function Sidebar({
   selectedFilter,
   onFilterChange,
-  contents = [],
-  selectedContentId,
+  contents: _contents = [],
+  selectedContentId: _selectedContentId,
   isOpen,
   onClose,
 }: {
@@ -95,23 +95,27 @@ export function Sidebar({
           </div>
         </div>
 
-        <div className="mt-auto px-4 py-3 border-t border-gray-50 bg-white/95">
+        <div className="mt-auto px-4 py-4 border-t border-gray-50 bg-white/95">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-purple-100 ring-1 ring-purple-50 rounded-md flex items-center justify-center text-purple-700 font-semibold">{username.charAt(0).toUpperCase()}</div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-gray-800 leading-tight">{username}</div>
-              <div className="text-xs text-gray-400">{/* optional email or role */}</div>
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-700 font-semibold text-sm ring-1 ring-purple-50">{username.charAt(0).toUpperCase()}</div>
             </div>
-            <button onClick={handleLogout} title="Logout" className="text-sm text-purple-600 hover:underline">Sign out</button>
+
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-gray-800 leading-tight truncate">{username}</div>
+              <div className="text-xs text-gray-400">Member</div>
+            </div>
+
+            <div className="flex-shrink-0">
+              <button
+                onClick={handleLogout}
+                title="Sign out"
+                className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium text-purple-600 border border-transparent hover:bg-purple-50 transition-colors"
+              >
+                Sign out
+              </button>
+            </div>
           </div>
-          {selectedContentId && (
-            (() => {
-              const active = contents.find(c => c._id === selectedContentId);
-              return active ? (
-                <div className="mt-3 text-xs text-gray-500 truncate">Active: {active.title}</div>
-              ) : null;
-            })()
-          )}
         </div>
       </aside>
     </div>

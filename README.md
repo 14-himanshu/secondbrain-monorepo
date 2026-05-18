@@ -112,3 +112,28 @@ npm run dev
 - Google OAuth is started through a full browser redirect, not fetch/XHR.
 - Keep backend and frontend ports aligned with the environment variables.
 - Never commit real secrets to the repository.
+
+## Deployment Environment Variables
+
+**Vercel frontend**
+
+- `VITE_BACKEND_URL=https://<your-render-service>.onrender.com`
+
+**Render backend**
+
+- `PORT=5000`
+- `FRONTEND_URL=https://<your-vercel-app>.vercel.app`
+- `MONGODB_URI=...`
+- `JWT_PASSWORD=...`
+- `GOOGLE_CLIENT_ID=...`
+- `GOOGLE_CLIENT_SECRET=...`
+- `GOOGLE_REDIRECT_URI=https://<your-render-service>.onrender.com/auth/google/callback`
+- `GOOGLE_SCOPES=https://www.googleapis.com/auth/documents.readonly https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/userinfo.email`
+- `TOKEN_ENCRYPTION_KEY=...`
+- `GROQ_API_KEY=...`
+- `OPENAI_API_KEY=...`
+- `HF_TOKEN=...`
+- `REDIS_URL=...`
+- `AI_WORKER_CONCURRENCY=3`
+- `NOTION_TOKEN=...`
+- `NOTION_API_VERSION=2022-06-28`

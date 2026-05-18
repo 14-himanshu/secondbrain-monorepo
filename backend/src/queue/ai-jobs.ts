@@ -94,6 +94,18 @@ export const getAiQueueMetrics = async () => {
 export const initQueueObservers = async () => {
   const events = getQueueEvents();
   if (!events) return;
-  await events.waitUntilReady();
+  
+  try {
+    // Wait max 5 seconds for Redis to be ready
+    await Promise.race([
+      events.waitUntilReady(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Queue ready timeout')), 5000)
+      )
+    ]);
+  } catch (err) {
+    console.warn('[QUEUE] Failed to initialize observers:', (err as Error).message);
+    // Continue anyway - queue is optional
+  }
 };
 

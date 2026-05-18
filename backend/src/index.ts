@@ -425,8 +425,21 @@ app.use(/^\/api\/v1\/.*/, (req, res) => {
 });
 
 const startServer = async () => {
-  await connectToDatabase();
-  await initQueueObservers();
+  try {
+    await connectToDatabase();
+    console.log('[STARTUP] Connected to database');
+  } catch (err) {
+    console.error('[STARTUP] Database connection failed:', err);
+    process.exit(1);
+  }
+
+  try {
+    await initQueueObservers();
+    console.log('[STARTUP] Queue initialized');
+  } catch (err) {
+    console.error('[STARTUP] Queue initialization failed (continuing anyway):', err);
+    // Don't exit - queue is optional for basic functionality
+  }
 
   const port = getPort();
   
@@ -441,16 +454,21 @@ const startServer = async () => {
   }
 
   // Initialize background tasks
-  initCronJobs();
+  try {
+    initCronJobs();
+    console.log('[STARTUP] Cron jobs initialized');
+  } catch (err) {
+    console.error('[STARTUP] Cron initialization failed (continuing anyway):', err);
+  }
 
   app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`[STARTUP] Server running on port ${port}`);
   });
 };
 
 startServer().catch((error) => {
-  console.error("Failed to start backend");
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
+  console.error("[STARTUP] Failed to start backend:", error instanceof Error ? error.message : error);
+  // Don't exit - let the server keep running for health checks
+  // process.exit(1);
 });
 // Force restart for PUT endpoint

@@ -55,7 +55,7 @@ Use the example files in `backend/.env.example` and `frontend/.env.example` as a
 - `AI_WORKER_CONCURRENCY`
 - `GROQ_API_KEY`
 - `OPENAI_API_KEY`
-- `HF_TOKEN` or `HUGGINGFACE_TOKEN`
+- `HF_TOKEN`
 - `NOTION_TOKEN`
 - `NOTION_API_VERSION`
 

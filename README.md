@@ -1,174 +1,114 @@
 # Second Brain
 
-Second Brain is a full-stack content-saving app for collecting useful links in one place. Users can sign up, save posts, videos, and documents, organize them in a clean dashboard, edit or delete entries, and share their public brain with a generated link.
+Second Brain is a full-stack knowledge workspace for saving links, notes, videos, and documents in one place. It combines a React dashboard, an Express API, MongoDB storage, and Google OAuth-based integrations for a cleaner personal knowledge system.
 
-## Live Links
+## Highlights
 
-- Frontend: [https://secondbrain-chi.vercel.app](https://secondbrain-chi.vercel.app)
-- Backend: [https://secondbrain-monorepo.onrender.com](https://secondbrain-monorepo.onrender.com)
-- GitHub: [https://github.com/14-himanshu/secondbrain-monorepo](https://github.com/14-himanshu/secondbrain-monorepo)
-
-## What The Project Does
-
-The app helps users build a personal knowledge hub by saving important internet content in one dashboard.
-
-Users can:
-
-- create an account and sign in securely
-- save links as `post`, `video`, or `document`
-- search and filter saved content
-- edit titles and delete saved items
-- view styled content preview cards
-- generate a shareable public brain link
-
-## Features
-
-- JWT-based authentication
-- password validation with Zod
-- bcrypt password hashing
-- create, read, update, and delete content
-- share-brain link generation
-- search and type-based filtering
-- responsive React dashboard UI
-- deployed frontend and backend
+- Secure authentication with JWT and Google sign-in
+- Content capture for posts, videos, and documents
+- Search, filtering, editing, and deletion
+- Shareable public brain pages
+- Responsive dashboard UI
+- AI and integration-ready backend architecture
 
 ## Tech Stack
 
-### Frontend
+**Frontend:** React, TypeScript, Vite, React Router, Axios, Tailwind CSS  
+**Backend:** Node.js, Express, TypeScript, MongoDB, Mongoose, JWT, bcrypt, Zod  
+**Shared:** `@secondbrain/contracts`
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- Axios
-- React Router
-
-### Backend
-
-- Node.js
-- Express
-- TypeScript
-- Zod
-- JWT
-- bcrypt
-- Mongoose
-
-### Database and Hosting
-
-- MongoDB Atlas
-- Vercel for frontend deployment
-- Render for backend deployment
-
-## Architecture
+## Project Structure
 
 ```text
-Frontend (React/Vite)
-        |
-        v
-Backend API (Express/Node.js)
-        |
-        v
-MongoDB Atlas
+secondbrain-monorepo/
+├── backend/         # Express API, auth, integrations, workers
+├── frontend/        # React dashboard and public pages
+└── packages/
+    └── contracts/   # Shared TypeScript contracts
 ```
 
-## Main Pages
+## Getting Started
 
-- Signup page
-- Signin page
-- Dashboard
-- Public shared brain view
-
-## API Overview
-
-### Auth
-
-- `POST /api/v1/signup` - create a user account
-- `POST /api/v1/signin` - sign in and receive a token
-
-### Content
-
-- `POST /api/v1/content` - add content
-- `GET /api/v1/content` - fetch user content
-- `PUT /api/v1/content` - update content title
-- `DELETE /api/v1/content` - delete content
-
-### Share Brain
-
-- `POST /api/v1/brain/share` - create or remove a shareable brain link
-- `GET /api/v1/brain/:shareLink` - fetch public shared brain content
-
-## Local Development
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/14-himanshu/secondbrain-monorepo.git
-cd secondbrain-monorepo
-```
-
-### 2. Install dependencies
+### 1. Install dependencies
 
 ```bash
 cd backend && npm install
 cd ../frontend && npm install
 ```
 
-### 3. Configure environment variables
+### 2. Configure environment variables
 
-Backend example: [backend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/backend/.env.example:1)
+Use the example files in `backend/.env.example` and `frontend/.env.example` as a starting point.
 
-Frontend example: [frontend/.env.example](/Users/himanshupandey/Desktop/secondbrain-monorepo/frontend/.env.example:1)
+**Backend**
 
-Backend env vars:
+- `PORT`
+- `MONGODB_URI`
+- `JWT_PASSWORD`
+- `FRONTEND_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REDIRECT_URI`
+- `GOOGLE_SCOPES`
+- `TOKEN_ENCRYPTION_KEY`
+- `REDIS_URL`
+- `AI_WORKER_CONCURRENCY`
+- `GROQ_API_KEY`
+- `OPENAI_API_KEY`
+- `HF_TOKEN` or `HUGGINGFACE_TOKEN`
+- `NOTION_TOKEN`
+- `NOTION_API_VERSION`
 
-- `MONGODB_URI` - MongoDB Atlas connection string
-- `JWT_PASSWORD` - secret used to sign auth tokens
-- `PORT` - optional, defaults to `3000`
-- `FRONTEND_URL` - allowed frontend origin for CORS
+**Frontend**
 
-Frontend env vars:
+- `VITE_BACKEND_URL`
 
-- `VITE_BACKEND_URL` - backend base URL
-
-### 4. Run the apps
-
-Backend:
+### 3. Run locally
 
 ```bash
 cd backend
 npm run dev
 ```
 
-Frontend:
-
 ```bash
 cd frontend
 npm run dev
 ```
 
-## Deployment Notes
+## Available Scripts
 
-### Render
+**Backend**
+- `npm run build`
+- `npm run dev`
+- `npm test`
 
-- root directory: `backend`
-- build command: `npm install`
-- start command: `npm start`
+**Frontend**
+- `npm run build`
+- `npm run dev`
+- `npm test`
+- `npm run lint`
 
-Required backend env vars:
+## API Overview
 
-- `MONGODB_URI`
-- `JWT_PASSWORD`
-- `FRONTEND_URL`
+**Auth**
+- `POST /api/v1/signup`
+- `POST /api/v1/signin`
+- `GET /api/v1/auth/google/start`
+- `GET /auth/google/callback`
+- `POST /api/v1/auth/exchange`
 
-### Vercel
+**Content**
+- `POST /api/v1/content`
+- `GET /api/v1/content`
+- `PUT /api/v1/content`
+- `DELETE /api/v1/content`
 
-- root directory: `frontend`
-- framework preset: `Vite`
+**Sharing**
+- `POST /api/v1/brain/share`
+- `GET /api/v1/brain/:shareLink`
 
-Required frontend env vars:
+## Notes
 
-- `VITE_BACKEND_URL`
-
-## Project Summary
-
-Second Brain is a practical full-stack MERN-style project focused on authentication, content management, search, sharing, and deployment. It demonstrates how to build and ship a clean production-style app using React, Express, MongoDB Atlas, Render, and Vercel.
+- Google OAuth is started through a full browser redirect, not fetch/XHR.
+- Keep backend and frontend ports aligned with the environment variables.
+- Never commit real secrets to the repository.

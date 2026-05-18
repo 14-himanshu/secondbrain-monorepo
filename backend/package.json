@@ -4,8 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "npm run clean && node --max-old-space-size=1024 ./node_modules/typescript/bin/tsc",
+    "clean": "rm -rf dist && rm -rf ../packages/contracts/dist",
+    "build": "npm run clean && npm --prefix ../packages/contracts run build && node --max-old-space-size=1024 ./node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
     "start:worker": "node dist/worker.js",
     "dev": "tsc && (tsc -w & node --watch dist/index.js)",

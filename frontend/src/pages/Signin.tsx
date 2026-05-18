@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { ValidationIssue } from "@secondbrain/contracts";
 import { isApiError } from "../lib/apiClient";
+import { BACKEND_URL } from "../config";
 import { signIn } from "../services/auth.api";
 
 export function Signin() {
@@ -178,7 +179,7 @@ export function Signin() {
           {/* Google sign-in button */}
           <div className="mb-4">
             <button
-              onClick={async () => { window.location.href = '/api/v1/auth/google/start'; }}
+              onClick={async () => { window.location.href = `${BACKEND_URL}/api/v1/auth/google/start`; }}
               disabled={loading}
               className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-sm'}`}>
               <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">

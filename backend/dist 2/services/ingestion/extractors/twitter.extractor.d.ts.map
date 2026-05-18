@@ -1,0 +1,1 @@
+{"version":3,"file":"twitter.extractor.d.ts","sourceRoot":"","sources":["../../../../src/services/ingestion/extractors/twitter.extractor.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,kBAAkB,EAAE,gBAAgB,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAKnF,eAAO,MAAM,qBAAqB,GAChC,QAAQ,SAAS,EACjB,QAAO,kBAA2B,KACjC,OAAO,CAAC,gBAAgB,CAyC1B,CAAC"}

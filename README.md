@@ -132,6 +132,7 @@ npm run dev
 - `TOKEN_ENCRYPTION_KEY=...`
 - `GROQ_API_KEY=...`
 - `OPENAI_API_KEY=...`
+- `HF_TOKEN=...` (optional; used by AI provider test scripts)
 - `REDIS_URL=...`
 - `AI_WORKER_CONCURRENCY=3`
 - `NOTION_TOKEN=...`

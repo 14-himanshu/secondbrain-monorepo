@@ -19,7 +19,6 @@ export const getFrontendUrls = () =>
     .map((url) => url.trim())
     .filter(Boolean);
 export const getGroqApiKey = () => process.env.GROQ_API_KEY?.trim();
-export const getHuggingFaceToken = () => process.env.HF_TOKEN?.trim();
 export const getOpenAiApiKey = () => process.env.OPENAI_API_KEY?.trim();
 export const getRedisUrl = () => process.env.REDIS_URL?.trim();
 export const getAiWorkerConcurrency = () => Number(process.env.AI_WORKER_CONCURRENCY ?? 3);

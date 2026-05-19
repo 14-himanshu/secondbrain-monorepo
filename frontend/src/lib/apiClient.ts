@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { BACKEND_URL } from "../config";
+import { API_TIMEOUT_MS, BACKEND_URL } from "../config";
 
 export type ApiError = {
   status?: number;
@@ -10,7 +10,7 @@ export type ApiError = {
 
 export const apiClient = axios.create({
   baseURL: BACKEND_URL,
-  timeout: 20000,
+  timeout: API_TIMEOUT_MS,
 });
 
 apiClient.interceptors.request.use((config) => {

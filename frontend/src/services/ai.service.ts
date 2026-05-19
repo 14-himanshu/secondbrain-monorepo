@@ -26,7 +26,7 @@ export const aiService = {
    * Auto-tags a URL.
    */
   getTags: async (url: string) => {
-    return apiClient.post(AI_ENDPOINTS.TAG, { url });
+    return apiClient.post(AI_ENDPOINTS.TAG, { url }, { timeout: 60000 });
   },
 
   chat: async (payload: {

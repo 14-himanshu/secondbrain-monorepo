@@ -1,1 +1,0 @@
-{"version":3,"file":"article.extractor.d.ts","sourceRoot":"","sources":["../../../../src/services/ingestion/extractors/article.extractor.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,kBAAkB,EAAE,gBAAgB,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAgBnF,eAAO,MAAM,qBAAqB,GAChC,QAAQ,SAAS,EACjB,OAAM,kBAA2B,KAChC,OAAO,CAAC,gBAAgB,CAmL1B,CAAC"}

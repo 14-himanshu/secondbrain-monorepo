@@ -1,1 +1,0 @@
-{"version":3,"file":"youtube.extractor.d.ts","sourceRoot":"","sources":["../../../../src/services/ingestion/extractors/youtube.extractor.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,kBAAkB,EAAE,gBAAgB,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAyEnF,eAAO,MAAM,qBAAqB,GAChC,QAAQ,SAAS,EACjB,OAAM,kBAA2B,KAChC,OAAO,CAAC,gBAAgB,CA4G1B,CAAC"}

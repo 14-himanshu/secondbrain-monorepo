@@ -12,6 +12,7 @@ import { AIInsightsPanel } from "../components/AIInsightsPanel";
 
 import { useQueryClient } from "@tanstack/react-query";
 import type { Content } from "../hooks/useContent";
+import type { ShareType } from "@secondbrain/contracts";
 import { semanticSearch } from "../services/content.api";
 import { getShareStatus } from "../services/share.api";
 import { aiService } from "../services/ai.service";
@@ -22,10 +23,17 @@ import { useIntegration } from "../hooks/useIntegrations";
 
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
+type DashboardLocationState = { openId?: string };
+
 export function Dashboard() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const locationState = location.state as DashboardLocationState | null;
+  const openIdFromState = locationState?.openId ?? null;
+
   const [modalOpen, setModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [shareStatus, setShareStatus] = useState<{ shareType: string; shareId: string | null }>({
+  const [shareStatus, setShareStatus] = useState<{ shareType: ShareType; shareId: string | null }>({
     shareType: "private",
     shareId: null,
   });
@@ -33,8 +41,8 @@ export function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [semanticResults, setSemanticResults] = useState<Content[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
-  const google = useIntegration('google');
+  const [selectedContentId, setSelectedContentId] = useState<string | null>(() => openIdFromState);
+  const google = useIntegration("google");
   const [googleActionLoading, setGoogleActionLoading] = useState(false);
   const [googleActionError, setGoogleActionError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,14 +54,13 @@ export function Dashboard() {
    */
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(() => {
     const saved = localStorage.getItem(AI_PANEL_STORAGE_KEY);
+    if (openIdFromState) return true;
     return saved !== null ? JSON.parse(saved) : true;
   });
 
   const { contents, refresh } = useContent();
   const { deleteContent, editContent } = useContentMutations();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const location = useLocation();
   const prevModalOpen = useRef(false);
 
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -119,20 +126,17 @@ export function Dashboard() {
       try {
         await import('../services/user.api').then(m => m.getMe());
         /* preserve backend check for google login provider; not showing inline hint currently */
-      } catch (e) {
+      } catch {
         // ignore - user might not be logged in yet
       }
     })();
+  }, [navigate, location]);
 
-    // If navigated here with state.openId (from Recents), open panel
-    const openId = (location.state as any)?.openId;
-    if (openId) {
-      setSelectedContentId(openId);
-      setIsAiPanelOpen(true);
-      // remove transient navigation state
+  useEffect(() => {
+    if (openIdFromState) {
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [navigate, location]);
+  }, [openIdFromState, navigate, location.pathname]);
 
 
 
@@ -305,9 +309,11 @@ export function Dashboard() {
           onClose={() => setModalOpen(false)}
         />
         <ShareModal 
+          key={`${shareStatus.shareType}:${shareStatus.shareId ?? "none"}`}
           open={shareModalOpen} 
           onClose={() => setShareModalOpen(false)} 
           onStatusChange={fetchShareStatus}
+          shareStatus={shareStatus}
         />
 
         <div className="p-8 max-w-[1400px] mx-auto font-inter">

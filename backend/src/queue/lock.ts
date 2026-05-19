@@ -20,16 +20,21 @@ export const withDistributedLock = async <T>(
     return { acquired: true, value: await callback() };
   }
 
-  const token = crypto.randomUUID();
-  const lock = await redis.set(key, token, "PX", ttlMs, "NX");
-  if (lock !== "OK") {
-    return { acquired: false };
-  }
-
   try {
+    const token = crypto.randomUUID();
+    const lock = await redis.set(key, token, "PX", ttlMs, "NX");
+    if (lock !== "OK") {
+      return { acquired: false };
+    }
+
+    try {
+      return { acquired: true, value: await callback() };
+    } finally {
+      await redis.eval(releaseScript, 1, key, token);
+    }
+  } catch (error) {
+    const err = error as Error;
+    console.warn("[REDIS_LOCK_FAILED]", err.message);
     return { acquired: true, value: await callback() };
-  } finally {
-    await redis.eval(releaseScript, 1, key, token);
   }
 };
-

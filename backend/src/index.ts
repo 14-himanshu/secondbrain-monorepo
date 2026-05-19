@@ -122,60 +122,78 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
-  const { title, link, type, tags, description } = parsed.data;
-  const normalizedTarget = normalizeUrl(link);
-
-  // STEP 1: Instant Metadata Extraction (Zero AI Latency)
-  let domain = "";
   try {
-    domain = new URL(link).hostname.replace("www.", "");
-  } catch (e) {
-    domain = "web";
-  }
+    const { title, link, type, tags, description } = parsed.data;
+    let normalizedTarget: ReturnType<typeof normalizeUrl>;
 
-  // STEP 1: Create content record
-  const content = await ContentModel.create({
-    title: title || "New Note",
-    link,
-    normalizedLink: normalizedTarget.normalizedUrl,
-    type: type || (link.includes("youtube.com") || link.includes("youtu.be") ? "video" : "post"),
-    tags: tags || [],
-    description: description || "",
-    userId: req.userId,
-    embeddingStatus: "pending",
-    aiStatus: "queued", 
-    aiMetadata: {
-      domain,
-      source: domain,
-      contentType: type || "web",
-      normalizedLink: normalizedTarget.normalizedUrl,
-      platform: normalizedTarget.platform,
+    try {
+      normalizedTarget = normalizeUrl(link);
+    } catch (e) {
+      return res.status(400).json({ message: "Invalid URL" });
     }
-  });
 
-  // STEP 2: Trigger AI Auto-Pilot (Background)
-  let queueJobId: string | null = null;
-  if (link && !description) {
-    const queueResult = await enqueueAiIngestionJob({
-      contentId: String(content._id),
+    // STEP 1: Instant Metadata Extraction (Zero AI Latency)
+    let domain = "";
+    try {
+      domain = new URL(link).hostname.replace("www.", "");
+    } catch (e) {
+      domain = "web";
+    }
+
+    // STEP 1: Create content record
+    const content = await ContentModel.create({
+      title: title || "New Note",
+      link,
       normalizedLink: normalizedTarget.normalizedUrl,
-      trigger: "create",
+      type: type || (link.includes("youtube.com") || link.includes("youtu.be") ? "video" : "post"),
+      tags: tags || [],
+      description: description || "",
+      userId: req.userId,
+      embeddingStatus: "pending",
+      aiStatus: "queued",
+      aiMetadata: {
+        domain,
+        source: domain,
+        contentType: type || "web",
+        normalizedLink: normalizedTarget.normalizedUrl,
+        platform: normalizedTarget.platform,
+      },
     });
-    queueJobId = queueResult.jobId;
 
-    if (!queueResult.enqueued) {
-      processContentEmbedding(content._id.toString()).catch(err =>
-        console.error("[AUTO_AI_FAILED]", err.message)
-      );
+    // STEP 2: Trigger AI Auto-Pilot (Background)
+    let queueJobId: string | null = null;
+    if (link && !description) {
+      try {
+        const queueResult = await enqueueAiIngestionJob({
+          contentId: String(content._id),
+          normalizedLink: normalizedTarget.normalizedUrl,
+          trigger: "create",
+        });
+        queueJobId = queueResult.jobId;
+
+        if (!queueResult.enqueued) {
+          processContentEmbedding(content._id.toString()).catch((err) =>
+            console.error("[AUTO_AI_FAILED]", err.message)
+          );
+        }
+      } catch (err) {
+        console.warn("[AUTO_AI_ENQUEUE_FAILED]", (err as Error).message);
+        processContentEmbedding(content._id.toString()).catch((e) =>
+          console.error("[AUTO_AI_FAILED]", e.message)
+        );
+      }
     }
-  }
 
-  res.json({ 
-    success: true,
-    message: "Content added. Neural synthesis triggered.", 
-    contentId: content._id,
-    jobId: queueJobId,
-  });
+    res.json({
+      success: true,
+      message: "Content added. Neural synthesis triggered.",
+      contentId: content._id,
+      jobId: queueJobId,
+    });
+  } catch (error) {
+    console.error("[CONTENT_CREATE_FAILED]", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 

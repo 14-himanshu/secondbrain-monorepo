@@ -1,38 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 
 import { CheckIcon } from "../icons/CheckIcon";
 import type { ShareType } from "@secondbrain/contracts";
-import { getShareStatus, updateShare } from "../services/share.api";
+import { updateShare } from "../services/share.api";
 import { isApiError } from "../lib/apiClient";
 
 interface ShareModalProps {
   open: boolean;
   onClose: () => void;
   onStatusChange: () => void;
+  shareStatus: { shareType: ShareType; shareId: string | null };
 }
 
-export function ShareModal({ open, onClose, onStatusChange }: ShareModalProps) {
-  const [shareType, setShareType] = useState<ShareType>("private");
-  const [shareId, setShareId] = useState<string | null>(null);
+export function ShareModal({ open, onClose, onStatusChange, shareStatus }: ShareModalProps) {
+  const [shareType, setShareType] = useState<ShareType>(shareStatus.shareType);
+  const [shareId, setShareId] = useState<string | null>(shareStatus.shareId);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (open) {
-      fetchShareStatus();
-    }
-  }, [open]);
-
-  async function fetchShareStatus() {
-    try {
-      const status = await getShareStatus();
-      setShareType(status.shareType);
-      setShareId(status.shareId);
-    } catch (e) {
-      console.error("Failed to fetch share status", e);
-    }
-  }
 
   async function updateShareSettings(type: ShareType, regenerate = false) {
     setLoading(true);

@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { Content } from "../hooks/useContent";
 import { getConnections, updateContent } from "../services/content.api";
 import { aiService } from "../services/ai.service";
@@ -7,6 +8,164 @@ interface AIInsightsPanelProps {
   isOpen: boolean;
   onClose: () => void;
   selectedContent?: Content;
+}
+
+type Connection = { _id: string; title: string; link: string; similarity: number };
+
+type OverviewSections = {
+  short: string;
+  mainIdeas: string[];
+  takeaways: string[];
+  metadata: { readingTime: string; difficulty: string };
+};
+
+function OverviewTab({
+  selectedContent,
+  connections,
+  sections
+}: {
+  selectedContent: Content;
+  connections: Connection[];
+  sections: OverviewSections;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [manualContent, setManualContent] = useState(selectedContent.description || "");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveManualContent = async () => {
+    setIsSaving(true);
+    try {
+      await updateContent({
+        contentId: selectedContent._id,
+        description: manualContent
+      });
+      setIsEditing(false);
+      // Trigger a light refresh would be ideal here, but for now we rely on the next select
+    } catch (error) {
+      console.error("Failed to save manual content", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-10">
+      {/* Meta Row: Tiny & Minimal */}
+      <div className="flex items-center justify-between px-2">
+        <div className="flex flex-col">
+          <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Source</span>
+          <span className="text-[12px] font-bold text-gray-600">{selectedContent.aiMetadata?.domain || "Link"}</span>
+        </div>
+        <div className="flex flex-col items-end">
+          <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Fidelity</span>
+          <span className="text-[12px] font-bold text-purple-400 uppercase">{sections.metadata.difficulty}</span>
+        </div>
+      </div>
+
+      {/* Main Content Area: Conditional Rendering */}
+      {(!selectedContent.description || isEditing) ? (
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="p-6 bg-purple-50/30 rounded-2xl border border-purple-100/30">
+            <h4 className="text-[13px] font-bold text-gray-800 mb-2">Neural Link Protected</h4>
+            <p className="text-[11px] text-gray-400 font-medium leading-relaxed mb-4">
+              This link (Notion/protected site) could not be read automatically. Paste the content below to synthesize deep insights.
+            </p>
+            <textarea
+              value={manualContent}
+              onChange={(e) => setManualContent(e.target.value)}
+              placeholder="Paste page content here..."
+              className="w-full h-40 bg-white/50 border border-purple-100/50 rounded-xl p-4 text-[13px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-200/50 transition-all resize-none custom-scrollbar"
+            />
+            <button
+              onClick={handleSaveManualContent}
+              disabled={isSaving || !manualContent.trim()}
+              className="mt-4 w-full py-3 bg-purple-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
+            >
+              {isSaving ? "Syncing..." : "Synthesize Content"}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-1">
+          {/* Executive Summary Section */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Executive Summary</span>
+              </div>
+              <button 
+                onClick={() => setIsEditing(true)}
+                className="text-[10px] font-bold text-gray-300 hover:text-purple-500 transition-all uppercase tracking-widest"
+              >
+                Edit
+              </button>
+            </div>
+            
+            <div className="bg-gray-50/30 rounded-2xl p-6 border border-gray-100/50">
+              <p className="text-[14px] text-gray-700 leading-relaxed font-medium antialiased">
+                {selectedContent?.description || "Neural engine is processing this node... Click the 'Lightning' icon on the card if this note hasn't been processed yet."}
+              </p>
+            </div>
+          </section>
+
+          {/* Neural Connections Section */}
+          {connections.length > 0 && (
+            <div className="pt-8 border-t border-gray-50/50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
+                  <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Neural Connections</span>
+                </div>
+                <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded-full">Web of Knowledge</span>
+              </div>
+              
+              <div className="space-y-3">
+                {connections.map((conn) => (
+                  <div 
+                    key={conn._id} 
+                    className="group p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 hover:bg-white hover:border-purple-200 transition-all cursor-pointer shadow-sm hover:shadow-purple-100/50"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                        {new URL(conn.link).hostname.replace("www.", "")}
+                      </div>
+                      <div className="text-[9px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-md">
+                        {Math.round(conn.similarity * 100)}% Match
+                      </div>
+                    </div>
+                    <div className="text-[12px] font-bold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
+                      {conn.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Key Takeaways */}
+          {sections.takeaways.length > 0 && (
+            <section className="space-y-4 pt-8 border-t border-gray-50/50">
+              <div className="flex items-center gap-2 px-1">
+                <div className="w-1 h-3 bg-purple-400 rounded-full"></div>
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Core Intelligence</span>
+              </div>
+              <div className="space-y-3">
+                {sections.takeaways.map((t, i) => (
+                  <div key={i} className="flex gap-4 p-4 hover:bg-gray-50/50 rounded-2xl transition-colors group">
+                    <div className="w-5 h-5 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold text-purple-400 shrink-0">
+                      {i+1}
+                    </div>
+                    <p className="text-[13px] font-medium text-gray-600 leading-snug antialiased">{t}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function AIInsightsPanel({
@@ -25,51 +184,20 @@ export function AIInsightsPanel({
     { role: "user" | "assistant"; content: string; sources?: Array<{ _id: string; title: string; link: string; type: string }> }[]
   >([]);
   const [isThinking, setIsThinking] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [manualContent, setManualContent] = useState("");
-  const [connections, setConnections] = useState<Array<{ _id: string; title: string; link: string; similarity: number }>>([]);
-  const [isSaving, setIsSaving] = useState(false);
+  const { data: connections = [] } = useQuery({
+    queryKey: ["connections", selectedContent?._id],
+    queryFn: async () => {
+      if (!selectedContent) return [];
+      return getConnections(selectedContent._id);
+    },
+    enabled: Boolean(selectedContent),
+  });
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isThinking]);
-
-  useEffect(() => {
-    if (selectedContent) {
-      setManualContent(selectedContent.description || "");
-      setIsEditing(false);
-      fetchConnections(selectedContent._id);
-    }
-  }, [selectedContent]);
-
-  const fetchConnections = async (contentId: string) => {
-    try {
-        const response = await getConnections(contentId);
-        setConnections(response || []);
-    } catch (e) {
-        console.error("Error fetching connections:", e);
-    }
-  };
-
-  const handleSaveManualContent = async () => {
-    if (!selectedContent) return;
-    setIsSaving(true);
-    try {
-      await updateContent({
-        contentId: selectedContent._id,
-        description: manualContent
-      });
-      setIsEditing(false);
-      // Trigger a light refresh would be ideal here, but for now we rely on the next select
-    } catch (error) {
-      console.error("Failed to save manual content", error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
 
   const handleSendMessage = async (e?: React.FormEvent, retryQuery?: string) => {
     if (e) e.preventDefault();
@@ -99,7 +227,7 @@ export function AIInsightsPanel({
     }
   };
 
-  const sections = useMemo(() => {
+  const sections = useMemo<OverviewSections>(() => {
     if (!selectedContent?.description) return {
       short: "",
       mainIdeas: [],
@@ -125,6 +253,8 @@ export function AIInsightsPanel({
       }
     };
   }, [selectedContent]);
+
+  const contentKey = selectedContent?._id ?? "empty";
 
   return (
     <div
@@ -175,123 +305,8 @@ export function AIInsightsPanel({
           </div>
         ) : (
           <div className="px-8 pb-10 space-y-10 animate-in fade-in duration-500">
-            {activeTab === 'overview' && (
-              <div className="space-y-10">
-                {/* Meta Row: Tiny & Minimal */}
-                <div className="flex items-center justify-between px-2">
-                  <div className="flex flex-col">
-                    <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Source</span>
-                    <span className="text-[12px] font-bold text-gray-600">{selectedContent.aiMetadata?.domain || "Link"}</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Fidelity</span>
-                    <span className="text-[12px] font-bold text-purple-400 uppercase">{sections.metadata.difficulty}</span>
-                  </div>
-                </div>
-
-                {/* Main Content Area: Conditional Rendering */}
-                {(!selectedContent.description || isEditing) ? (
-                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                    <div className="p-6 bg-purple-50/30 rounded-2xl border border-purple-100/30">
-                       <h4 className="text-[13px] font-bold text-gray-800 mb-2">Neural Link Protected</h4>
-                       <p className="text-[11px] text-gray-400 font-medium leading-relaxed mb-4">
-                         This link (Notion/protected site) could not be read automatically. Paste the content below to synthesize deep insights.
-                       </p>
-                       <textarea
-                         value={manualContent}
-                         onChange={(e) => setManualContent(e.target.value)}
-                         placeholder="Paste page content here..."
-                         className="w-full h-40 bg-white/50 border border-purple-100/50 rounded-xl p-4 text-[13px] text-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-200/50 transition-all resize-none custom-scrollbar"
-                       />
-                       <button
-                         onClick={handleSaveManualContent}
-                         disabled={isSaving || !manualContent.trim()}
-                         className="mt-4 w-full py-3 bg-purple-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-purple-700 transition-all flex items-center justify-center gap-2"
-                       >
-                         {isSaving ? "Syncing..." : "Synthesize Content"}
-                       </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-1">
-                    {/* Executive Summary Section */}
-                    <section className="space-y-4">
-                      <div className="flex items-center justify-between px-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Executive Summary</span>
-                        </div>
-                        <button 
-                          onClick={() => setIsEditing(true)}
-                          className="text-[10px] font-bold text-gray-300 hover:text-purple-500 transition-all uppercase tracking-widest"
-                        >
-                          Edit
-                        </button>
-                      </div>
-                      
-                      <div className="bg-gray-50/30 rounded-2xl p-6 border border-gray-100/50">
-                        <p className="text-[14px] text-gray-700 leading-relaxed font-medium antialiased">
-                          {selectedContent?.description || "Neural engine is processing this node... Click the 'Lightning' icon on the card if this note hasn't been processed yet."}
-                        </p>
-                      </div>
-                    </section>
-
-                    {/* Neural Connections Section */}
-                    {connections.length > 0 && (
-                      <div className="pt-8 border-t border-gray-50/50">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
-                            <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Neural Connections</span>
-                          </div>
-                          <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded-full">Web of Knowledge</span>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          {connections.map((conn) => (
-                            <div 
-                              key={conn._id} 
-                              className="group p-4 bg-gray-50/50 rounded-2xl border border-gray-100/50 hover:bg-white hover:border-purple-200 transition-all cursor-pointer shadow-sm hover:shadow-purple-100/50"
-                            >
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
-                                  {new URL(conn.link).hostname.replace("www.", "")}
-                                </div>
-                                <div className="text-[9px] font-black text-purple-500 bg-purple-50 px-2 py-0.5 rounded-md">
-                                  {Math.round(conn.similarity * 100)}% Match
-                                </div>
-                              </div>
-                              <div className="text-[12px] font-bold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
-                                {conn.title}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Key Takeaways */}
-                    {sections.takeaways.length > 0 && (
-                      <section className="space-y-4 pt-8 border-t border-gray-50/50">
-                        <div className="flex items-center gap-2 px-1">
-                           <div className="w-1 h-3 bg-purple-400 rounded-full"></div>
-                           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Core Intelligence</span>
-                        </div>
-                        <div className="space-y-3">
-                          {sections.takeaways.map((t, i) => (
-                            <div key={i} className="flex gap-4 p-4 hover:bg-gray-50/50 rounded-2xl transition-colors group">
-                               <div className="w-5 h-5 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold text-purple-400 shrink-0">
-                                  {i+1}
-                               </div>
-                               <p className="text-[13px] font-medium text-gray-600 leading-snug antialiased">{t}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </section>
-                    )}
-                  </div>
-                )}
-              </div>
+            {activeTab === 'overview' && selectedContent && (
+              <OverviewTab key={contentKey} selectedContent={selectedContent} sections={sections} connections={connections} />
             )}
 
             {activeTab === 'deep-dive' && (

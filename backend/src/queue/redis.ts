@@ -8,10 +8,20 @@ const createConnection = () => {
   const redisUrl = getRedisUrl();
   if (!redisUrl) return null;
 
-  return new IORedis(redisUrl, {
-    maxRetriesPerRequest: null,
+  const connection = new IORedis(redisUrl, {
+    maxRetriesPerRequest: 1,
     enableReadyCheck: false,
+    enableOfflineQueue: false,
+    lazyConnect: true,
+    connectTimeout: 2000,
+    retryStrategy: () => null,
   });
+
+  connection.on("error", (err) => {
+    console.warn("[REDIS] Connection error:", err.message);
+  });
+
+  return connection;
 };
 
 export const isQueueEnabled = () => Boolean(getRedisUrl());

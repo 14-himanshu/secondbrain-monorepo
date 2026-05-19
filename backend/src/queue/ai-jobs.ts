@@ -48,13 +48,19 @@ export const enqueueAiIngestionJob = async (payload: AiIngestionJob) => {
   }
 
   const jobId = buildJobId(payload.contentId, payload.normalizedLink);
-  await aiQueue.add("process-content", payload, {
-    jobId,
-    removeOnComplete: 500,
-    removeOnFail: 1000,
-    attempts: 3,
-    backoff: { type: "exponential", delay: 1000 },
-  });
+  try {
+    await aiQueue.add("process-content", payload, {
+      jobId,
+      removeOnComplete: 500,
+      removeOnFail: 1000,
+      attempts: 3,
+      backoff: { type: "exponential", delay: 1000 },
+    });
+  } catch (error) {
+    const err = error as Error;
+    console.warn("[AI_QUEUE_ENQUEUE_FAILED]", err.message);
+    return { enqueued: false as const, jobId: null };
+  }
 
   return { enqueued: true as const, jobId };
 };
@@ -108,4 +114,3 @@ export const initQueueObservers = async () => {
     // Continue anyway - queue is optional
   }
 };
-

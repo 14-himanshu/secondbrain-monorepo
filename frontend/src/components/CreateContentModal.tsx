@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Button";
 import { aiService } from "../services/ai.service";
@@ -39,14 +39,21 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
     }
   };
 
-  useEffect(() => {
-    if (!open) {
-      setAiError(null);
-      setIsAnalyzing(false);
-      setTagInput("");
-      setDescription("");
-    }
-  }, [open]);
+  const resetForm = () => {
+    setTitle("");
+    setLink("");
+    setType(ContentType.Video);
+    setTags([]);
+    setTagInput("");
+    setDescription("");
+    setIsAnalyzing(false);
+    setAiError(null);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   async function addContent() {
     if (!title || !link) {
@@ -55,8 +62,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
     }
     try {
       await createContent({ link, title, type: type as ContentType, tags, description });
-      setTitle(""); setLink(""); setType(ContentType.Video); setTags([]); setTagInput(""); setDescription("");
-      onClose();
+      handleClose();
     } catch (error) {
       if (isApiError(error)) {
         alert(error.message || "Failed to add content");
@@ -109,11 +115,11 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
   return (
     <div>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={onClose}></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={handleClose}></div>
           
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg relative p-8 transition-all">
-            <button onClick={onClose} className="absolute top-6 right-6 p-1 text-gray-400 hover:text-gray-600 transition-colors">
+            <button onClick={handleClose} className="absolute top-6 right-6 p-1 text-gray-400 hover:text-gray-600 transition-colors">
               <CrossIcon />
             </button>
 

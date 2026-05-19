@@ -1,1 +1,0 @@
-{"version":3,"file":"reddit.extractor.d.ts","sourceRoot":"","sources":["../../../../src/services/ingestion/extractors/reddit.extractor.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,kBAAkB,EAAE,gBAAgB,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAGnF,eAAO,MAAM,oBAAoB,GAC/B,QAAQ,SAAS,EACjB,OAAM,kBAA2B,KAChC,OAAO,CAAC,gBAAgB,CAuC1B,CAAC"}

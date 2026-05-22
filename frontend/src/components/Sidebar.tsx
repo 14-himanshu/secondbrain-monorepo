@@ -1,10 +1,67 @@
+import { useState, useEffect } from "react";
 import { Logo } from "../icons/Logo";
 import { LibraryIcon } from "../icons/LibraryIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
 import type { Content } from "../hooks/useContent";
-import { SidebarItem } from "./SidebarItem";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+const COLLAPSED_KEY = "sb-sidebar-collapsed";
+
+function NavItem({
+  icon,
+  label,
+  active,
+  isCollapsed,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  isCollapsed: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left outline-none focus-visible:ring-2 focus-visible:ring-purple-400 ${
+        isCollapsed ? "justify-center" : ""
+      } ${
+        active
+          ? "bg-purple-50 text-purple-700"
+          : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
+      }`}
+    >
+      {/* Active pill indicator */}
+      {active && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-purple-500" />
+      )}
+
+      {/* Icon */}
+      <span
+        className={`flex-shrink-0 transition-colors duration-200 ${
+          active ? "text-purple-600" : "text-gray-400 group-hover:text-gray-600"
+        }`}
+      >
+        {icon}
+      </span>
+
+      {/* Label */}
+      {!isCollapsed && (
+        <span className="text-[13px] font-medium leading-none tracking-tight transition-opacity duration-200">
+          {label}
+        </span>
+      )}
+
+      {/* Collapsed tooltip */}
+      {isCollapsed && (
+        <span className="pointer-events-none absolute left-full ml-3 z-50 whitespace-nowrap rounded-lg bg-gray-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200">
+          {label}
+        </span>
+      )}
+    </button>
+  );
+}
 
 export function Sidebar({
   selectedFilter,
@@ -14,6 +71,7 @@ export function Sidebar({
   isOpen,
   onClose,
   onSelectContent,
+  onCollapsedChange,
 }: {
   selectedFilter: string;
   onFilterChange: (filter: string) => void;
@@ -22,9 +80,19 @@ export function Sidebar({
   isOpen?: boolean;
   onClose?: () => void;
   onSelectContent?: (contentId: string | null) => void;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }) {
   const navigate = useNavigate();
   const username = localStorage.getItem("username") || "User";
+  const [isCollapsed, setIsCollapsed] = useState(
+    () => localStorage.getItem(COLLAPSED_KEY) === "true"
+  );
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem(COLLAPSED_KEY, String(isCollapsed));
+    onCollapsedChange?.(isCollapsed);
+  }, [isCollapsed, onCollapsedChange]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -32,108 +100,238 @@ export function Sidebar({
     navigate("/signin");
   };
 
-  const _formatSource = (link?: string) => {
-    if (!link) return '';
+  const formatSource = (link?: string) => {
+    if (!link) return "";
     try {
-      return new URL(link).hostname.replace(/^www\./, '');
+      return new URL(link).hostname.replace(/^www\./, "");
     } catch {
-      return link.slice(0, 24);
+      return link.slice(0, 20);
     }
   };
 
-  return (
-    <div>
-      {isOpen && <div className="fixed inset-0 bg-black/40 z-20 lg:hidden" onClick={onClose} />}
+  const navItems = [
+    { key: "all", label: "Knowledge Base", icon: <LibraryIcon /> },
+    { key: "post", label: "Articles", icon: <DocumentIcon /> },
+    { key: "video", label: "Videos", icon: <YouTubeIcon /> },
+  ];
 
-      <aside className="h-screen w-72 fixed left-0 top-0 bg-white/95 flex flex-col z-30 border-r border-gray-50 shadow-sm">
-        <div className="pt-6 px-5 pb-4">
-          <div className="flex items-center gap-3">
-            <div className="text-purple-600">
-              <Logo />
-            </div>
-            <div className="font-semibold text-base tracking-tight text-gray-800">Second Brain</div>
+  const sidebarWidth = isCollapsed ? "w-20" : "w-72";
+
+  return (
+    <>
+      {/* Mobile backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20 lg:hidden backdrop-blur-sm"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={`h-screen fixed left-0 top-0 z-30 flex flex-col bg-white border-r border-gray-100/80 shadow-[1px_0_0_0_rgba(0,0,0,0.03)] ${sidebarWidth} transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] overflow-hidden`}
+      >
+        {/* ── Collapse Toggle ── */}
+        <button
+          onClick={() => setIsCollapsed((v) => !v)}
+          className={`fixed top-7 z-50 w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-purple-600 hover:border-purple-200 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] hover:scale-105 ${isCollapsed ? 'left-[64px]' : 'left-[272px]'}`}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.75"
+            stroke="currentColor"
+            className="w-[18px] h-[18px]"
+          >
+            <rect width="18" height="18" x="3" y="3" rx="4" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v18" />
+          </svg>
+        </button>
+
+        {/* ── Brand Header ── */}
+        <div className={`flex items-center gap-3 px-4 pt-6 pb-5 flex-shrink-0 ${isCollapsed ? "justify-center px-2" : ""}`}>
+          <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-100/60">
+            <Logo />
           </div>
-          <p className="text-xs text-gray-500 mt-1">Organize ideas, capture insights</p>
+          {!isCollapsed && (
+            <div className="min-w-0 transition-opacity duration-200">
+              <div className="text-[14px] font-bold text-gray-900 tracking-tight leading-none">
+                Second Brain
+              </div>
+              <div className="text-[11px] text-gray-400 mt-0.5 leading-none">
+                Knowledge workspace
+              </div>
+            </div>
+          )}
         </div>
 
-        <nav className="px-3 mt-4">
-          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mb-2">Library</div>
-          <div className="flex flex-col gap-1 px-1">
-            <SidebarItem
-              text="Knowledge Base"
-              icon={<LibraryIcon />}
-              onClick={() => onFilterChange('all')}
-              active={selectedFilter === 'all'}
-            />
-            <SidebarItem
-              text="Articles"
-              icon={<DocumentIcon />}
-              onClick={() => onFilterChange('post')}
-              active={selectedFilter === 'post'}
-            />
-            <SidebarItem
-              text="Videos"
-              icon={<YouTubeIcon />}
-              onClick={() => onFilterChange('video')}
-              active={selectedFilter === 'video'}
-            />
-          </div>
-        </nav>
-
-        {/* Recent Memories: show up to 4 recent items from contents (non-interactive list) */}
-        <div className="px-3 mt-4">
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2">Recent</div>
-            <div className="text-xs px-2">
-              <a href="/recents" className="text-purple-600 hover:underline">View all</a>
+        {/* ── Main Navigation ── */}
+        <div className="flex-shrink-0 px-2">
+          {!isCollapsed && (
+            <div className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+              Library
             </div>
+          )}
+          <div className="flex flex-col gap-0.5">
+            {navItems.map((item) => (
+              <NavItem
+                key={item.key}
+                icon={item.icon}
+                label={item.label}
+                active={selectedFilter === item.key}
+                isCollapsed={isCollapsed}
+                onClick={() => onFilterChange(item.key)}
+              />
+            ))}
           </div>
-          <div className="flex flex-col gap-2 px-1">
+        </div>
+
+        {/* ── Divider ── */}
+        <div className="mx-4 my-4 border-t border-gray-100" />
+
+        {/* ── Recent Section ── */}
+        <div className="flex-1 min-h-0 px-2 flex flex-col">
+          {!isCollapsed && (
+            <div className="px-3 mb-1.5 flex items-center justify-between">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                Recent
+              </span>
+              <Link
+                to="/recents"
+                className="text-[11px] font-medium text-purple-500 hover:text-purple-700 transition-colors"
+              >
+                View all
+              </Link>
+            </div>
+          )}
+
+          {isCollapsed && (
+            <NavItem
+              icon={
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.75" stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+              }
+              label="View All Recents"
+              active={false}
+              isCollapsed={isCollapsed}
+              onClick={() => navigate("/recents")}
+            />
+          )}
+
+          <div className="flex flex-col gap-0.5 overflow-y-auto max-h-52 scrollbar-none">
             {_contents && _contents.length > 0 ? (
-              _contents.slice(0, 4).map((c) => {
+              _contents.slice(0, 5).map((c) => {
                 const isActive = _selectedContentId === c._id;
+                if (isCollapsed) {
+                  return (
+                    <button
+                      key={c._id}
+                      onClick={() => onSelectContent?.(c._id)}
+                      className={`group relative flex justify-center items-center p-2.5 rounded-xl transition-all duration-200 ${isActive ? "bg-purple-50 text-purple-600" : "text-gray-400 hover:bg-gray-50 hover:text-gray-600"}`}
+                      title={c.title}
+                    >
+                      <span className="text-[11px] font-bold">
+                        {c.title.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="pointer-events-none absolute left-full ml-3 z-50 whitespace-nowrap rounded-lg bg-gray-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 max-w-[180px] truncate">
+                        {c.title}
+                      </span>
+                    </button>
+                  );
+                }
                 return (
-                <button key={c._id} onClick={() => onSelectContent?.(c._id)} aria-current={isActive ? 'true' : undefined} className={`w-full text-left flex items-center gap-3 p-2 rounded-md transition-colors ${isActive ? 'bg-purple-50/60 text-purple-700' : 'hover:bg-gray-50'}`}>
-                  {isActive && <span className="absolute left-2 h-7 w-1.5 bg-purple-500 rounded-r-md" aria-hidden />}
-                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-50 border border-gray-50 text-gray-700 z-10">
-                    {c.type === 'video' ? <YouTubeIcon /> : <DocumentIcon />}
-                  </div>
-                  <div className="min-w-0 z-10">
-                    <div className={`text-sm font-medium truncate ${isActive ? 'text-purple-700' : 'text-gray-800'}`}>{c.title}</div>
-                    <div className="text-xs text-gray-400 truncate">{c.type} • {_formatSource(c.link)}</div>
-                  </div>
-                </button>
-              )})
+                  <button
+                    key={c._id}
+                    onClick={() => onSelectContent?.(c._id)}
+                    className={`group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 text-left ${isActive ? "bg-purple-50/70" : "hover:bg-gray-50"}`}
+                  >
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r-full bg-purple-400" />
+                    )}
+                    <div className={`flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold border ${isActive ? "bg-purple-100 border-purple-200 text-purple-700" : "bg-gray-50 border-gray-100 text-gray-500"}`}>
+                      {c.title.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className={`text-[12px] font-medium truncate leading-tight ${isActive ? "text-purple-700" : "text-gray-700 group-hover:text-gray-900"}`}>
+                        {c.title}
+                      </div>
+                      <div className="text-[10px] text-gray-400 truncate mt-0.5">
+                        {c.type} · {formatSource(c.link)}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })
             ) : (
-              <div className="text-xs text-gray-400 px-2">No recent items</div>
+              !isCollapsed && (
+                <div className="px-3 py-2 text-[12px] text-gray-400">
+                  No recent items
+                </div>
+              )
             )}
           </div>
         </div>
 
-        <div className="mt-auto px-4 py-4 border-t border-gray-50 bg-white/95">
-          <div className="flex items-center gap-3">
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-700 font-semibold text-sm ring-1 ring-purple-50">{username.charAt(0).toUpperCase()}</div>
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-semibold text-gray-800 leading-tight truncate">{username}</div>
-              <div className="text-xs text-gray-400">Member</div>
-            </div>
-
-            <div className="flex-shrink-0">
-              <button
-                onClick={handleLogout}
-                title="Sign out"
-                className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium text-purple-600 border border-transparent hover:bg-purple-50 transition-colors"
-              >
-                Sign out
-              </button>
-            </div>
+        {/* ── Profile Footer ── */}
+        <div className="flex-shrink-0 mt-auto">
+          <div className="mx-3 mb-3">
+            {isCollapsed ? (
+              // Collapsed: just centered avatar with hover dropdown
+              <div className="relative flex justify-center">
+                <button
+                  onClick={() => setProfileMenuOpen((v) => !v)}
+                  className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100/60 flex items-center justify-center text-purple-700 font-bold text-[13px] hover:bg-purple-100 transition-all duration-200"
+                  title={username}
+                >
+                  {username.charAt(0).toUpperCase()}
+                </button>
+                {profileMenuOpen && (
+                  <div className="absolute bottom-full left-0 mb-2 w-44 bg-white border border-gray-100 rounded-xl shadow-lg py-1.5 z-50">
+                    <div className="px-3 py-2 border-b border-gray-50">
+                      <div className="text-[12px] font-semibold text-gray-800 truncate">{username}</div>
+                      <div className="text-[10px] text-gray-400">Member</div>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-3 py-2 text-[12px] text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3.5 h-3.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                      </svg>
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Expanded: full profile card
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50/80 border border-gray-100/80 group">
+                <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-purple-50 border border-purple-100/60 flex items-center justify-center text-purple-700 font-bold text-[13px]">
+                  {username.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-semibold text-gray-800 leading-none truncate">
+                    {username}
+                  </div>
+                  <div className="text-[11px] text-gray-400 mt-0.5">Member</div>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  title="Sign out"
+                  className="flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200 opacity-0 group-hover:opacity-100"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </aside>
-    </div>
+    </>
   );
 }
 

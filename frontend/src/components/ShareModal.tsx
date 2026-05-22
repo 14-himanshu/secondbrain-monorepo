@@ -18,20 +18,34 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
   const [shareId, setShareId] = useState<string | null>(shareStatus.shareId);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function updateShareSettings(type: ShareType, regenerate = false) {
+    if (type === shareType && !regenerate) return;
+
+    // Optimistic UI update to remove perceived lag
+    const previousType = shareType;
+    const previousId = shareId;
+    
+    setShareType(type);
     setLoading(true);
+    setError(null);
+    
     try {
       const response = await updateShare(type, regenerate);
       setShareType(response.shareType);
       setShareId(response.shareId);
       onStatusChange();
     } catch (e) {
+      // Revert on error
+      setShareType(previousType);
+      setShareId(previousId);
+      
       if (isApiError(e)) {
-        alert(e.message || "Failed to update sharing settings");
+        setError(e.message || "Failed to update sharing settings");
         return;
       }
-      alert("Failed to update sharing settings");
+      setError("Failed to update sharing settings");
     } finally {
       setLoading(false);
     }
@@ -75,10 +89,20 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
           </button>
         </div>
 
+        {/* Error banner */}
+        {error && (
+          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5 animate-in fade-in duration-200" role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
+              <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+            </svg>
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
         {/* Sharing Modes */}
         <div className="space-y-3">
-          <label className="text-sm font-semibold text-gray-700">Access Mode</label>
-          <div className="grid grid-cols-1 gap-2">
+          <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1">Access Mode</label>
+          <div className="grid grid-cols-1 gap-2.5">
             {[
               { id: 'private', label: 'Private', desc: 'Only you can see this brain', icon: <LockIcon /> },
               { id: 'link', label: 'Anyone with Link', desc: 'Anyone with the link can view', icon: <LinkIcon /> },
@@ -88,24 +112,22 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
                 key={mode.id}
                 onClick={() => updateShareSettings(mode.id as ShareType)}
                 disabled={loading}
-                className={`flex items-start gap-3 rounded-xl border p-3 text-left transition-all ${
+                className={`flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all duration-200 ${
                   shareType === mode.id 
-                    ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' 
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-purple-200 bg-purple-50/40 shadow-[0_2px_8px_rgba(109,99,255,0.05)] ring-1 ring-purple-100/50' 
+                    : 'border-gray-100/80 bg-white hover:border-gray-200 hover:bg-gray-50/50 hover:shadow-sm'
                 }`}
               >
-                <div className={`mt-0.5 ${shareType === mode.id ? 'text-purple-600' : 'text-gray-400'}`}>
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${shareType === mode.id ? 'bg-purple-100/60 text-purple-600' : 'bg-gray-50 text-gray-400'}`}>
                   {mode.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-sm font-bold ${shareType === mode.id ? 'text-purple-900' : 'text-gray-900'}`}>{mode.label}</div>
-                  <div className="text-xs text-gray-500">{mode.desc}</div>
+                  <div className={`text-[14px] font-bold tracking-tight ${shareType === mode.id ? 'text-purple-900' : 'text-gray-900'}`}>{mode.label}</div>
+                  <div className={`text-[12px] font-medium mt-0.5 ${shareType === mode.id ? 'text-purple-600/70' : 'text-gray-500'}`}>{mode.desc}</div>
                 </div>
-                {shareType === mode.id && (
-                  <div className="text-purple-600">
-                    <CheckIcon />
-                  </div>
-                )}
+                <div className={`transition-all duration-200 ${shareType === mode.id ? 'opacity-100 scale-100 text-purple-600' : 'opacity-0 scale-75 text-transparent'}`}>
+                  <CheckIcon />
+                </div>
               </button>
             ))}
           </div>
@@ -113,49 +135,61 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
 
         {/* Link Management (Visible if not Private) */}
         {shareType !== 'private' && shareId && (
-          <div className="space-y-3 rounded-xl bg-gray-50 p-4 border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="space-y-3 rounded-xl bg-gray-50/40 p-4 border border-gray-100/80 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Shareable Link</label>
+              <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Shareable Link</label>
               <button 
                 onClick={() => updateShareSettings(shareType, true)}
-                className="text-[10px] font-bold text-purple-600 hover:text-purple-700 uppercase tracking-tight flex items-center gap-1"
+                className="text-[11px] font-bold text-purple-600 hover:text-purple-700 hover:bg-purple-100/80 uppercase tracking-wide flex items-center gap-1.5 bg-purple-50 px-2.5 py-1.5 rounded-lg transition-colors"
                 disabled={loading}
               >
-                <RefreshIcon /> Regenerate
+                <RefreshIcon /> REGENERATE
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex-1 overflow-hidden rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-600 truncate">
+              <div className="flex-1 overflow-hidden rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[13px] font-medium text-gray-600 shadow-sm truncate">
                 {shareUrl}
               </div>
               <button
                 onClick={copyToClipboard}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-all ${
-                  copied ? 'bg-emerald-500 text-white' : 'bg-purple-600 text-white hover:bg-purple-700'
+                className={`flex items-center justify-center gap-1.5 rounded-xl w-[100px] shrink-0 py-2.5 text-[14px] font-bold transition-all duration-200 shadow-sm active:scale-95 bg-purple-600 hover:bg-purple-700 text-white ${
+                  copied ? 'ring-2 ring-offset-1 ring-purple-300' : ''
                 }`}
               >
-                {copied ? <CheckIcon /> : <CopyIcon />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied
+                  ? <><div className="scale-90 shrink-0"><CheckIcon /></div><span>Copied</span></>
+                  : <><div className="scale-90 shrink-0"><CopyIcon /></div><span>Copy</span></>
+                }
               </button>
             </div>
           </div>
         )}
 
         {/* Permissions & Scope */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Permissions</label>
-            <select className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600/20" disabled>
-              <option>View only</option>
-              <option disabled>Edit (Coming soon)</option>
-            </select>
+        <div className="grid grid-cols-2 gap-4 mt-2 pt-6 border-t border-gray-100/60">
+          <div className="space-y-2.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1">Permissions</label>
+            <div className="relative">
+              <select className="w-full rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[14px] font-bold text-gray-600 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+                <option>View only</option>
+                <option disabled>Edit (Coming soon)</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+              </div>
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-400">Scope</label>
-            <select className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600/20">
-              <option>Entire Brain</option>
-              <option disabled>Selected Items</option>
-            </select>
+          <div className="space-y-2.5">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1">Scope</label>
+            <div className="relative">
+              <select className="w-full rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[14px] font-bold text-gray-700 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+                <option>Entire Brain</option>
+                <option disabled>Selected Items</option>
+              </select>
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -164,7 +198,7 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
           <div className="pt-2">
             <button
               onClick={() => updateShareSettings('private')}
-              className="w-full rounded-xl border border-red-100 bg-red-50 py-2.5 text-sm font-bold text-red-600 hover:bg-red-100 transition-colors"
+              className="w-full rounded-xl border border-red-100/60 bg-[#FFF0F0] py-3 text-[14px] font-bold text-[#FF3B30] hover:bg-[#FFE5E5] hover:border-red-200 transition-colors shadow-sm active:scale-[0.98]"
               disabled={loading}
             >
               Stop Sharing

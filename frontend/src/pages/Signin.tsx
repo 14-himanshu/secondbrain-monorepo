@@ -65,7 +65,7 @@ export function Signin() {
   }
 
   return (
-    <div className="h-screen w-screen bg-gray-100 flex">
+    <div className="min-h-screen w-screen bg-gray-100 flex">
       {/* ── Left decorative panel ── */}
       <div className="hidden lg:flex lg:w-1/2 bg-purple-600 flex-col justify-between p-12 relative overflow-hidden">
         {/* Background orbs */}

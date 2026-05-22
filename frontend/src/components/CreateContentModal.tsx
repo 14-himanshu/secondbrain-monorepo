@@ -29,6 +29,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const isValidUrl = (url: string) => {
     try {
@@ -48,6 +49,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
     setDescription("");
     setIsAnalyzing(false);
     setAiError(null);
+    setValidationError(null);
   };
 
   const handleClose = () => {
@@ -57,18 +59,19 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
 
   async function addContent() {
     if (!title || !link) {
-      alert("Please fill in all fields");
+      setValidationError("Please fill in all fields.");
       return;
     }
+    setValidationError(null);
     try {
       await createContent({ link, title, type: type as ContentType, tags, description });
       handleClose();
     } catch (error) {
       if (isApiError(error)) {
-        alert(error.message || "Failed to add content");
+        setValidationError(error.message || "Failed to add content.");
         return;
       }
-      alert("Failed to add content");
+      setValidationError("Failed to add content.");
     }
   }
 
@@ -181,9 +184,9 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                     <button
                       key={key}
                       onClick={() => setType(value)}
-                      className={`py-2.5 rounded-xl text-xs font-bold transition-all border-2 ${
+                      className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 border-2 ${
                         type === value 
-                          ? "bg-purple-50 border-purple-200 text-purple-700 shadow-sm shadow-purple-100" 
+                          ? "bg-purple-50 border-purple-200 text-purple-700 shadow-sm shadow-purple-100/60" 
                           : "bg-white border-gray-100 text-gray-400 hover:bg-gray-50 hover:border-gray-200"
                       }`}
                     >
@@ -208,14 +211,41 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                     </span>
                   ))}
                 </div>
-                <input
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleAddTag}
-                  placeholder="Add tags..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-50 outline-none transition-all text-sm text-gray-700 placeholder:text-gray-300"
-                />
+                <div className="flex items-center rounded-xl border border-gray-200 focus-within:border-purple-300 focus-within:ring-2 focus-within:ring-purple-50 transition-all bg-transparent">
+                  <input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleAddTag}
+                    placeholder="Add tags (press Enter or click +)..."
+                    className="flex-1 px-4 py-2.5 outline-none text-sm text-gray-700 bg-transparent placeholder:text-gray-300"
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (tagInput.trim() && !tags.includes(tagInput.trim())) {
+                        setTags([...tags, tagInput.trim()]);
+                        setTagInput("");
+                      }
+                    }}
+                    disabled={!tagInput.trim()}
+                    className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-purple-600 disabled:text-gray-300 transition-colors border-l border-gray-100"
+                    title="Add tag"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v16m8-8H4" />
+                    </svg>
+                  </button>
+                </div>
               </div>
+
+              {validationError && (
+                <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5 animate-in fade-in duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-red-600 text-sm">{validationError}</p>
+                </div>
+              )}
 
               <div className="pt-2">
                 <Button onClick={addContent} variant="primary" text="Save Note" fullwidth={true} />

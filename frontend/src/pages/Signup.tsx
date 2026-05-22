@@ -11,22 +11,14 @@ interface ValidationError {
   message: string;
 }
 
-const PASSWORD_REQUIREMENTS = [
-  { label: "8+ characters", test: (v: string) => v.length >= 8 },
-  { label: "Max 30 characters", test: (v: string) => v.length <= 30 },
-  { label: "One uppercase", test: (v: string) => /[A-Z]/.test(v) },
-  { label: "One lowercase", test: (v: string) => /[a-z]/.test(v) },
-  { label: "One number", test: (v: string) => /[0-9]/.test(v) },
-  { label: "One special char", test: (v: string) => /[^A-Za-z0-9]/.test(v) },
-];
+
 
 export function Signup() {
   const usernameRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<ValidationError[]>([]);
-  const [passwordValue, setPasswordValue] = useState("");
-  const [showRequirements, setShowRequirements] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -60,17 +52,7 @@ export function Signup() {
   const passwordErrors = errors.filter((e) => e.path?.includes("password"));
   const generalErrors = errors.filter((e) => e.path?.includes("general"));
 
-  const allRequirementsMet = PASSWORD_REQUIREMENTS.every((r) => r.test(passwordValue));
-  const strengthCount = PASSWORD_REQUIREMENTS.filter((r) => r.test(passwordValue)).length;
-  const strengthPct = Math.round((strengthCount / PASSWORD_REQUIREMENTS.length) * 100);
-  const strengthColor =
-    strengthCount <= 2 ? "bg-red-400" :
-      strengthCount <= 4 ? "bg-yellow-400" :
-        "bg-green-500";
-  const strengthLabel =
-    strengthCount <= 2 ? "Weak" :
-      strengthCount <= 4 ? "Good" :
-        "Strong";
+
 
   return (
     <div className="min-h-screen w-screen bg-gray-100 flex">
@@ -175,21 +157,13 @@ export function Signup() {
           </div>
 
           {/* Password field */}
-          <div className="mb-2">
+          <div className="mb-4">
             <Input
               ref={passwordRef}
-              placeholder="Create a strong password"
+              placeholder="Enter your password"
               label="Password"
               type="password"
-              onFocus={() => setShowRequirements(true)}
-              onBlur={() => { if (passwordValue.length === 0) setShowRequirements(false); }}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordValue(e.target.value)}
             />
-            {showRequirements && (
-              <p className="mt-1.5 text-xs text-gray-500">
-                Use 8-30 characters with uppercase, lowercase, a number, and a special character.
-              </p>
-            )}
             {passwordErrors.length > 0 && (
               <div className="mt-1.5 flex flex-col gap-0.5">
                 {passwordErrors.map((err, i) => (
@@ -204,68 +178,16 @@ export function Signup() {
             )}
           </div>
 
-          {/* Strength bar */}
-          {passwordValue.length > 0 && (
-            <div className="mb-3">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">
-                  Password strength
-                </span>
-                <span className="text-[11px] font-semibold text-gray-500">
-                  {strengthLabel}
-                </span>
-              </div>
-              <div className="h-1 w-full overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${strengthColor}`}
-                  style={{ width: `${strengthPct}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Requirement checklist */}
-          {showRequirements && (
-            <div className="mb-5 rounded-xl border border-gray-200 bg-white px-3 py-2.5">
-              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                {PASSWORD_REQUIREMENTS.map((req, i) => {
-                  const met = req.test(passwordValue);
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors duration-200 ${
-                        met
-                          ? "text-emerald-700"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      <span className={`flex h-4.5 w-4.5 items-center justify-center rounded-full ${
-                        met ? "bg-emerald-100 text-emerald-600" : "bg-gray-100 text-slate-400"
-                      }`}>
-                        {met ? (
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
-                            <path fillRule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.25 7.312a1 1 0 0 1-1.42-.002l-3.25-3.288a1 1 0 0 1 1.422-1.41l2.54 2.57 6.54-6.596a1 1 0 0 1 1.412 0Z" clipRule="evenodd" />
-                          </svg>
-                        ) : (
-                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                        )}
-                      </span>
-                      <span>{req.label}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* CTA */}
-          <Button
-            onClick={signup}
-            loading={loading}
-            text={allRequirementsMet || passwordValue.length === 0 ? "Create Account" : "Create Account"}
-            variant="primary"
-            fullwidth={true}
-          />
+          <div className="mt-6">
+            <Button
+              onClick={signup}
+              loading={loading}
+              text="Create Account"
+              variant="primary"
+              fullwidth={true}
+            />
+          </div>
 
           {/* Divider */}
           <div className="mt-6 mb-5 flex items-center gap-3">

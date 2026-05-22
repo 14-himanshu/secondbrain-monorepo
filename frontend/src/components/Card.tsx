@@ -112,13 +112,29 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
           </div>
         </div>
         
-        {/* Pulse Indicator */}
-        {description && (
-          <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-50/40">
-             <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic" />
-             <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-tight">Synthesized</span>
-          </div>
-        )}
+        {/* Pulse & Link Actions */}
+        <div className="flex items-center gap-2">
+          {description && (
+            <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-50/40">
+               <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic" />
+               <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-tight">Synthesized</span>
+            </div>
+          )}
+          {link && (
+            <a 
+              href={link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-md transition-all"
+              title="Open original resource"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-3.5 h-3.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              </svg>
+            </a>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -197,18 +213,31 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
                 </svg>
               </button>
             )}
-          </div>
+           </div>
         </div>
 
         {!isEditing && (
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-              title="Remove"
-            >
-              <DeleteIcon />
-            </button>
+            {onEdit && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+                className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-all"
+                title="Edit Title"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.83 20.013a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                </svg>
+              </button>
+            )}
+            {onDelete && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                title="Remove"
+              >
+                <DeleteIcon />
+              </button>
+            )}
           </div>
         )}
       </div>

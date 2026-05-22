@@ -23,7 +23,7 @@ import { useIntegration } from "../hooks/useIntegrations";
 
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
-type DashboardLocationState = { openId?: string };
+type DashboardLocationState = { openId?: string; filter?: string };
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -46,6 +46,10 @@ export function Dashboard() {
   const [googleActionLoading, setGoogleActionLoading] = useState(false);
   const [googleActionError, setGoogleActionError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem("sb-sidebar-collapsed") === "true"
+  );
+  const [driveDropdownOpen, setDriveDropdownOpen] = useState(false);
   
   /**
    * AI Panel State Management
@@ -133,10 +137,13 @@ export function Dashboard() {
   }, [navigate, location]);
 
   useEffect(() => {
-    if (openIdFromState) {
+    if (openIdFromState || locationState?.filter) {
+      if (locationState?.filter) {
+        setSelectedFilter(locationState.filter);
+      }
       navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [openIdFromState, navigate, location.pathname]);
+  }, [openIdFromState, locationState, navigate, location.pathname]);
 
 
 
@@ -300,10 +307,11 @@ export function Dashboard() {
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         onSelectContent={(id) => { setSelectedContentId(id); setIsAiPanelOpen(true); }}
+        onCollapsedChange={setSidebarCollapsed}
       />
-      
+
       {/* Main Content Area */}
-      <main className="flex-1 lg:ml-72 overflow-x-hidden min-h-screen bg-[#FDFDFD]">
+      <main className={`flex-1 overflow-x-hidden min-h-screen bg-[#FDFDFD] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         <CreateContentModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -316,114 +324,152 @@ export function Dashboard() {
           shareStatus={shareStatus}
         />
 
-        <div className="p-8 max-w-[1400px] mx-auto font-inter">
-          {/* Header Section: Restored hierarchy */}
-          <header className="mb-12 sticky top-0 bg-white/60 z-20 py-4 px-0 backdrop-blur-sm border-b border-gray-50/30">
+        <div className="px-6 pt-6 pb-8 max-w-[1400px] mx-auto font-inter">
+          {/* ── Header ── */}
+          <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md pt-4 pb-3 mb-8 border-b border-gray-100/60">
             <div className="flex items-center justify-between gap-6">
-              {/* Left: Elegant Title */}
-              <div className="shrink-0">
-                <h1 className="text-[26px] font-semibold text-gray-800 tracking-tight mb-1 font-outfit">
+              
+              {/* Left: Title */}
+              <div className="shrink-0 min-w-[160px]">
+                <h1 className="text-[26px] font-bold text-gray-900 tracking-tight leading-none font-outfit">
                   {selectedFilter === "all"      && "Memory Stream"}
                   {selectedFilter === "post"     && "Articles"}
                   {selectedFilter === "video"    && "Videos"}
                   {selectedFilter === "document" && "Deep Files"}
                 </h1>
-                <p className="text-gray-400 text-[10px] font-medium uppercase tracking-[0.25em] ml-0.5">
-                  {filteredContents.length} Neural {filteredContents.length === 1 ? "Node" : "Nodes"}
+                <p className="text-[12px] text-gray-400 font-bold uppercase tracking-[0.15em] mt-2">
+                  {filteredContents.length} {filteredContents.length === 1 ? "node" : "nodes"}
                 </p>
               </div>
 
-              {/* Center + Actions Toolbar */}
-              <div className="flex-1 flex items-center gap-4">
-                <div className="flex-1 max-w-xl relative">
-                  <div className="relative flex items-center bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden transition-all">
-                    <div className="pl-4 text-gray-300">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                    </div>
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search your memories..."
-                      className="w-full py-3 px-4 text-[14px] text-gray-600 focus:outline-none placeholder:text-gray-300 font-medium bg-transparent"
-                    />
-                    {isSearching && (
-                      <div className="pr-4">
-                        <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin"></div>
-                      </div>
-                    )}
-                    {searchQuery && !isSearching && (
-                      <button onClick={() => setSearchQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-100 rounded-xl text-gray-300 transition-all">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    )}
+              {/* Center: Search */}
+              <div className="flex-1 max-w-[420px]">
+                <div className="relative flex items-center bg-gray-50/50 rounded-xl border border-gray-200/60 focus-within:bg-white focus-within:border-purple-200 focus-within:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 h-10">
+                  <div className="pl-3.5 text-gray-400 flex-shrink-0">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="primary"
-                    text="New Memory"
-                    startIcon={<PlusIcon />}
-                    onClick={() => setModalOpen(true)}
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search memories..."
+                    className="w-full py-2 px-3 text-[14px] text-gray-700 focus:outline-none placeholder:text-gray-400 font-medium bg-transparent"
                   />
-
-                  {google.normalized.state === 'connected' ? (
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={async () => {
-                          const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
-                          if (!ok) return;
-                          setGoogleActionError(null);
-                          setGoogleActionLoading(true);
-                          try {
-                            await google.disconnect();
-                            await google.refresh();
-                          } catch (err) {
-                            console.error('Disconnect failed', err);
-                            setGoogleActionError('Failed to disconnect Google.');
-                          } finally {
-                            setGoogleActionLoading(false);
-                          }
-                        }}
-                        className={`px-2.5 py-2 bg-white border border-gray-100 text-gray-700 rounded-lg transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm'}`}
-                        disabled={googleActionLoading}
-                      >
-                        {googleActionLoading ? 'Disconnecting...' : 'Disconnect'}
-                      </button>
-                      <span className="text-sm text-gray-500">Drive connected</span>
+                  {isSearching && (
+                    <div className="pr-3.5">
+                      <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin" />
                     </div>
+                  )}
+                  {searchQuery && !isSearching && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="pr-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Right: Actions */}
+              <div className="flex items-center gap-3 shrink-0">
+                {/* Share button */}
+                <button
+                  onClick={() => setShareModalOpen(true)}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200/60 bg-white text-gray-500 hover:text-purple-600 hover:border-purple-200 hover:shadow-sm transition-all duration-200 active:scale-95"
+                  title="Share brain"
+                >
+                  <div className="scale-110">{shareConfig.icon}</div>
+                </button>
+
+                {/* Drive status pill */}
+                <div className="relative flex">
+                  {google.normalized.state === 'connected' ? (
+                    <>
+                      <button
+                        onClick={() => setDriveDropdownOpen(v => !v)}
+                        className="h-10 flex items-center gap-2 px-3 rounded-xl border border-gray-200/60 bg-white hover:border-purple-200 hover:shadow-sm transition-all duration-200 active:scale-95"
+                      >
+                        {/* Google Drive icon */}
+                        <svg viewBox="0 0 87.3 78" className="w-4 h-4 flex-shrink-0" xmlns="http://www.w3.org/2000/svg">
+                          <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+                          <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
+                          <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+                          <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+                          <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+                          <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+                        </svg>
+                        <span className="text-[13px] font-bold text-gray-700">Drive</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 ml-0.5" />
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${driveDropdownOpen ? 'rotate-180' : ''}`}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                      </button>
+
+                      {/* Drive dropdown */}
+                      {driveDropdownOpen && (
+                        <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] z-50 overflow-hidden">
+                          <div className="px-4 py-3 border-b border-gray-50">
+                            <div className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                              <span className="text-[12px] font-bold text-gray-800 tracking-tight">Drive Connected</span>
+                            </div>
+                            <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">Google Drive sync active</p>
+                          </div>
+                          <div className="p-1.5">
+                            <button
+                              onClick={async () => {
+                                setDriveDropdownOpen(false);
+                                const ok = window.confirm('Disconnect Google? This will stop Drive/Docs ingestion.');
+                                if (!ok) return;
+                                setGoogleActionError(null);
+                                setGoogleActionLoading(true);
+                                try { await google.disconnect(); await google.refresh(); }
+                                catch { setGoogleActionError('Failed to disconnect Google.'); }
+                                finally { setGoogleActionLoading(false); }
+                              }}
+                              disabled={googleActionLoading}
+                              className="w-full text-left px-3 py-2 text-[12px] font-semibold text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {googleActionLoading ? 'Disconnecting...' : 'Disconnect account'}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <button
                       onClick={async () => {
                         setGoogleActionError(null);
                         setGoogleActionLoading(true);
-                        try {
-                          const url = await google.connect();
-                          if (url) window.location.href = url;
-                        } catch (err) {
-                          console.error('Failed to start Google connect', err);
-                          setGoogleActionError('Failed to start Google connect.');
-                        } finally {
-                          setGoogleActionLoading(false);
-                        }
+                        try { const url = await google.connect(); if (url) window.location.href = url; }
+                        catch { setGoogleActionError('Failed to start Google connect.'); }
+                        finally { setGoogleActionLoading(false); }
                       }}
-                      className={`px-3 py-2 bg-white border border-gray-100 text-gray-600 rounded-lg transition-all active:scale-95 ${googleActionLoading ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-sm hover:border-purple-200 hover:text-purple-600'}`}
                       disabled={googleActionLoading}
+                      className="h-10 flex items-center gap-2 px-3 rounded-xl border border-gray-200/60 bg-white text-gray-600 hover:border-purple-200 hover:text-purple-700 hover:shadow-sm transition-all duration-200 active:scale-95 disabled:opacity-50"
                     >
-                      {googleActionLoading ? 'Connecting...' : 'Enable Drive'}
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-4 h-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                      </svg>
+                      <span className="text-[13px] font-bold">
+                        {googleActionLoading ? 'Connecting...' : 'Connect Drive'}
+                      </span>
                     </button>
                   )}
-
-                  {googleActionError && <div className="text-red-600 text-sm ml-3">{googleActionError}</div>}
-
-                  <button
-                    onClick={() => setShareModalOpen(true)}
-                    className="p-2 bg-white border border-gray-100 text-gray-400 rounded-lg hover:shadow-md hover:border-purple-200 hover:text-purple-600 transition-all"
-                  >
-                    {shareConfig.icon}
-                  </button>
+                  {googleActionError && (
+                    <p className="absolute top-full right-0 mt-1.5 text-[11px] text-red-500 whitespace-nowrap">{googleActionError}</p>
+                  )}
                 </div>
+
+                {/* New Memory */}
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="h-10 flex items-center justify-center gap-2 px-4 rounded-xl bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow transition-all duration-200 active:scale-95"
+                >
+                  <div className="scale-100"><PlusIcon /></div>
+                  <span className="text-[14px] font-bold tracking-tight">New Memory</span>
+                </button>
               </div>
             </div>
           </header>
@@ -455,7 +501,7 @@ export function Dashboard() {
 
           {/* Empty State: High-Fidelity Narrative */}
           {filteredContents.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <div className="flex flex-col items-center justify-center pt-24 pb-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
               <div className="w-20 h-20 bg-purple-50/50 rounded-[28px] flex items-center justify-center mb-10 border border-purple-100/30 shadow-sm relative group overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-transparent"></div>
                 <svg className="w-8 h-8 text-purple-300 animate-pulse-semantic" fill="none" stroke="currentColor" viewBox="0 0 24 24">

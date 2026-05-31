@@ -583,7 +583,7 @@ Rules:
 - Never use general web/domain knowledge.
 - If extracted content is insufficient, keep title/description conservative and factual.
 - Do not fabricate details, entities, claims, or context.
-- Keep short_description under 30 words.
+- Write a detailed short_description that is roughly 6 to 7 sentences long.
 - summary_points: 2 to 4 concise bullets.
 - semantic_summary: 2 to 3 concise insights.
 - tags: 3 to 6 lowercase tags.

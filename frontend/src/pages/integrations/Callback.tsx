@@ -91,7 +91,7 @@ export default function IntegrationCallback() {
 
         {status.state === 'loading' && (
           <div className="flex items-center gap-3">
-            <div className="w-5 h-5 border-2 border-gray-200 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-gray-200 border-t-purple-500 rounded-full animate-spin"></div>
             <div>Verifying integration status...</div>
           </div>
         )}
@@ -100,7 +100,7 @@ export default function IntegrationCallback() {
           <div>
             <div className="mb-3 text-sm text-gray-700">You need to sign in to complete this integration. After signing in, return to this page or you will be redirected automatically.</div>
             <div className="flex gap-3">
-              <button onClick={() => navigate('/signin')} className="px-4 py-2 bg-indigo-600 text-white rounded">Sign in</button>
+              <button onClick={() => navigate('/signin')} className="px-4 py-2 bg-purple-600 text-white rounded">Sign in</button>
               <button onClick={() => navigate('/signup')} className="px-4 py-2 border rounded">Create account</button>
             </div>
           </div>
@@ -108,9 +108,9 @@ export default function IntegrationCallback() {
 
         {status.state === 'success' && (
           <div>
-            <div className="mb-4 text-green-700">{status.message || 'Connected.'}</div>
+            <div className="mb-4 text-purple-700">{status.message || 'Connected.'}</div>
             <div className="flex gap-3">
-              <button onClick={handleContinue} className="px-4 py-2 bg-indigo-600 text-white rounded">Go to Dashboard</button>
+              <button onClick={handleContinue} className="px-4 py-2 bg-purple-600 text-white rounded">Go to Dashboard</button>
             </div>
           </div>
         )}

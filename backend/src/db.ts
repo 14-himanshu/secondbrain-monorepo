@@ -23,7 +23,7 @@ const UserSchema = new Schema({
   },
 });
 
-export const UserModel = model("User",UserSchema);
+export const UserModel = (mongoose.models.User || model("User",UserSchema)) as mongoose.Model<any>;
 
 const ContentSchema = new Schema({
     title: String,
@@ -94,9 +94,9 @@ const LinkSchema = new Schema({
     shareType: { type: String, enum: ['private', 'link', 'public'], default: 'private' },
     isPublic: { type: Boolean, default: false },
 });
-export const LinkModel = model("Link", LinkSchema);
+export const LinkModel = (mongoose.models.Link || model("Link", LinkSchema)) as mongoose.Model<any>;
 
-export const ContentModel = model("Content",ContentSchema);
+export const ContentModel = (mongoose.models.Content || model("Content",ContentSchema)) as mongoose.Model<any>;
 
 const BrainInsightSchema = new Schema({
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true, unique: true },
@@ -112,4 +112,4 @@ const BrainInsightSchema = new Schema({
     contentVersion: Number // To track if we need to regenerate
 }, { timestamps: true });
 
-export const BrainInsightModel = model("BrainInsight", BrainInsightSchema);
+export const BrainInsightModel = (mongoose.models.BrainInsight || model("BrainInsight", BrainInsightSchema)) as mongoose.Model<any>;

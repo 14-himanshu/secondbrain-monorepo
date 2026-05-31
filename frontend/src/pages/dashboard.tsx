@@ -404,7 +404,7 @@ export function Dashboard() {
                           <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
                         </svg>
                         <span className="text-[13px] font-bold text-gray-700">Drive</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0 ml-0.5" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-500 flex-shrink-0 ml-0.5" />
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${driveDropdownOpen ? 'rotate-180' : ''}`}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                         </svg>
@@ -415,7 +415,7 @@ export function Dashboard() {
                         <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] z-50 overflow-hidden">
                           <div className="px-4 py-3 border-b border-gray-50">
                             <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                              <span className="w-2 h-2 rounded-full bg-purple-500" />
                               <span className="text-[12px] font-bold text-gray-800 tracking-tight">Drive Connected</span>
                             </div>
                             <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">

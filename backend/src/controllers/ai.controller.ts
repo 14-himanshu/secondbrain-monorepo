@@ -16,11 +16,11 @@ const chatRetrievalCache = new Map<string, { results: any[], timestamp: number }
 const RETRIEVAL_CACHE_TTL = 5 * 60 * 1000; // 5 mins
 
 export const aiChatController = async (req: Request, res: Response) => {
-  const { query, history = [], stream = false } = req.body;
+  const { query, history = [], stream = false, contentId } = req.body;
   const userId = req.userId;
   const cacheKey = `${userId}:${query.toLowerCase().trim()}`;
 
-  console.log("[CHAT_QUERY]", query);
+  console.log("[CHAT_QUERY]", query, "contentId:", contentId || "none");
 
   try {
     if (!query) {
@@ -152,6 +152,24 @@ export const aiChatController = async (req: Request, res: Response) => {
 
       chatRetrievalCache.set(cacheKey, { results: topContext, timestamp: Date.now() });
     }
+
+    // ── Inject Focused Context if contentId is provided ──────────────
+    if (contentId) {
+      try {
+        const focusedContent = await ContentModel.findOne({ _id: contentId, userId })
+          .select("title link type description");
+        if (focusedContent) {
+          // Remove it from topContext if it's already there to avoid duplicates
+          topContext = topContext.filter(c => c._id.toString() !== contentId);
+          // Prepend it so it has the highest priority
+          topContext.unshift(focusedContent);
+          console.log("[FOCUSED_CONTEXT_INJECTED]", contentId);
+        }
+      } catch (err: any) {
+        console.warn("[FOCUSED_CONTEXT_INJECTION_FAILED]", err.message);
+      }
+    }
+
     console.log("[VECTOR_RESULTS]", topContext.length);
 
     const sources = topContext.map(c => ({

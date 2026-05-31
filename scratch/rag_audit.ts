@@ -3,8 +3,13 @@ import mongoose from 'mongoose';
 import { ContentModel, UserModel } from '../backend/src/db.js';
 import { createEmbedding } from '../backend/src/services/ai.service.js';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: '../backend/.env' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, '../backend/.env') });
 
 const BACKEND_URL = 'http://localhost:3000';
 
@@ -13,7 +18,7 @@ async function runRAGAudit() {
 
   try {
     // 1. Setup Test Users
-    await mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/brain');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/brain');
     
     const userA = await UserModel.findOne({ username: 'audit_user_a' }) || await UserModel.create({ username: 'audit_user_a', password: 'password' });
     const userB = await UserModel.findOne({ username: 'audit_user_b' }) || await UserModel.create({ username: 'audit_user_b', password: 'password' });
@@ -97,7 +102,7 @@ async function runRAGAudit() {
     console.log(`RESULT: "${result2}"`);
     if (result2.toLowerCase().includes("paris")) {
        console.log("❌ FAIL: System hallucinated from base model knowledge (Grounded failure).");
-    } else if (result2.includes("could not find relevant information")) {
+    } else if (result2.includes("could not find relevant information") || result2.includes("don't have enough information")) {
        console.log("✅ PASS: System correctly refused to answer outside context.");
     } else {
        console.log("⚠️ UNCERTAIN: Response was ambiguous.");

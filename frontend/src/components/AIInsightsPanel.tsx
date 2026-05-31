@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { Content } from "../hooks/useContent";
 import { getConnections, updateContent } from "../services/content.api";
@@ -51,14 +51,14 @@ function OverviewTab({
   return (
     <div className="space-y-10">
       {/* Meta Row: Tiny & Minimal */}
-      <div className="flex items-center justify-between px-2">
+      <div className="flex items-center justify-between px-2 bg-purple-50/30 rounded-xl p-4 border border-purple-100/50">
         <div className="flex flex-col">
-          <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Source</span>
-          <span className="text-[12px] font-bold text-gray-600">{selectedContent.aiMetadata?.domain || "Link"}</span>
+          <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-[0.2em] mb-1">Source</span>
+          <span className="text-[12px] font-bold text-purple-900">{selectedContent.aiMetadata?.domain || "Link"}</span>
         </div>
         <div className="flex flex-col items-end">
-          <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mb-1">Fidelity</span>
-          <span className="text-[12px] font-bold text-purple-400 uppercase">{sections.metadata.difficulty}</span>
+          <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-[0.2em] mb-1">Fidelity</span>
+          <span className="text-[12px] font-bold text-purple-600 uppercase">{sections.metadata.difficulty}</span>
         </div>
       </div>
 
@@ -91,20 +91,20 @@ function OverviewTab({
           <section className="space-y-4">
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Executive Summary</span>
+                <div className="w-1.5 h-3.5 bg-purple-500 rounded-full"></div>
+                <span className="text-[10px] font-bold text-purple-400/80 uppercase tracking-[0.15em]">Executive Summary</span>
               </div>
               <button 
                 onClick={() => setIsEditing(true)}
-                className="text-[10px] font-bold text-gray-300 hover:text-purple-500 transition-all uppercase tracking-widest"
+                className="text-[10px] font-bold text-purple-400 hover:text-purple-600 transition-all uppercase tracking-widest bg-purple-50 px-2 py-1 rounded-md"
               >
                 Edit
               </button>
             </div>
             
-            <div className="bg-gray-50/30 rounded-2xl p-6 border border-gray-100/50">
-              <p className="text-[14px] text-gray-700 leading-relaxed font-medium antialiased">
-                {selectedContent?.description || "Neural engine is processing this node... Click the 'Lightning' icon on the card if this note hasn't been processed yet."}
+            <div className="bg-purple-50/40 rounded-2xl p-6 border border-purple-100/60 shadow-sm shadow-purple-100/20">
+              <p className="text-[13px] text-purple-950/80 leading-relaxed font-medium antialiased line-clamp-[7]">
+                {sections.short || "Neural engine is processing this node... Click the 'Lightning' icon on the card if this note hasn't been processed yet."}
               </p>
             </div>
           </section>
@@ -114,10 +114,10 @@ function OverviewTab({
             <div className="pt-8 border-t border-gray-50/50">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-3 bg-indigo-500 rounded-full"></div>
+                  <div className="w-1 h-3 bg-purple-500 rounded-full"></div>
                   <span className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Neural Connections</span>
                 </div>
-                <span className="text-[9px] font-bold text-indigo-500 uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded-full">Web of Knowledge</span>
+                <span className="text-[9px] font-bold text-purple-600 uppercase tracking-tighter bg-purple-50 px-2 py-0.5 rounded-full">Web of Knowledge</span>
               </div>
               
               <div className="space-y-3">
@@ -145,18 +145,18 @@ function OverviewTab({
 
           {/* Key Takeaways */}
           {sections.takeaways.length > 0 && (
-            <section className="space-y-4 pt-8 border-t border-gray-50/50">
+            <section className="space-y-4 pt-8 border-t border-purple-50/50">
               <div className="flex items-center gap-2 px-1">
-                <div className="w-1 h-3 bg-purple-400 rounded-full"></div>
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Core Intelligence</span>
+                <div className="w-1.5 h-3.5 bg-purple-400 rounded-full"></div>
+                <span className="text-[10px] font-bold text-purple-400/80 uppercase tracking-[0.15em]">Core Intelligence</span>
               </div>
               <div className="space-y-3">
                 {sections.takeaways.map((t, i) => (
-                  <div key={i} className="flex gap-4 p-4 hover:bg-gray-50/50 rounded-2xl transition-colors group">
-                    <div className="w-5 h-5 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-[10px] font-bold text-purple-400 shrink-0">
+                  <div key={i} className="flex gap-4 p-4 hover:bg-purple-50/50 rounded-2xl transition-colors group border border-transparent hover:border-purple-100/50">
+                    <div className="w-6 h-6 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-[11px] font-bold text-purple-700 shrink-0 group-hover:scale-105 transition-transform shadow-sm">
                       {i+1}
                     </div>
-                    <p className="text-[13px] font-medium text-gray-600 leading-snug antialiased">{t}</p>
+                    <p className="text-[13px] font-medium text-purple-950/80 leading-relaxed antialiased mt-0.5">{t}</p>
                   </div>
                 ))}
               </div>
@@ -237,16 +237,51 @@ export function AIInsightsPanel({
 
     const text = selectedContent.description;
     
-    // Improved Multi-line Regex Patterns
-    const shortMatch = text.split("\n\n")[0];
-    const mainIdeasMatch = text.match(/MAIN IDEAS:\n([\s\S]*?)(?=\n\n|$)/);
-    const takeawaysMatch = text.match(/KEY TAKEAWAYS:\n([\s\S]*?)(?=\n\n|$)/);
+    // Robust parsing that handles missing newlines
+    let shortText = text;
+    
+    const mainIdeasIndex = text.indexOf("MAIN IDEAS:");
+    const takeawaysIndex = text.indexOf("KEY TAKEAWAYS:");
+    const metaIndex = text.indexOf("Reading Time:");
+    
+    const firstSectionIndex = Math.min(
+      mainIdeasIndex !== -1 ? mainIdeasIndex : Infinity,
+      takeawaysIndex !== -1 ? takeawaysIndex : Infinity,
+      metaIndex !== -1 ? metaIndex : Infinity
+    );
+
+    if (firstSectionIndex !== Infinity) {
+      shortText = text.slice(0, firstSectionIndex).trim();
+    } else {
+      shortText = text.trim();
+    }
+
+    let mainIdeasText = "";
+    if (mainIdeasIndex !== -1) {
+      const endIdx = Math.min(
+        takeawaysIndex !== -1 && takeawaysIndex > mainIdeasIndex ? takeawaysIndex : Infinity,
+        metaIndex !== -1 && metaIndex > mainIdeasIndex ? metaIndex : Infinity
+      );
+      mainIdeasText = text.slice(mainIdeasIndex + "MAIN IDEAS:".length, endIdx !== Infinity ? endIdx : undefined).trim();
+    }
+    
+    let takeawaysText = "";
+    if (takeawaysIndex !== -1) {
+      const endIdx = metaIndex !== -1 && metaIndex > takeawaysIndex ? metaIndex : Infinity;
+      takeawaysText = text.slice(takeawaysIndex + "KEY TAKEAWAYS:".length, endIdx !== Infinity ? endIdx : undefined).trim();
+    }
+
+    const parseBullets = (str: string) => {
+      if (!str) return [];
+      return str.split(/[•·\n]+/).map(s => s.trim()).filter(Boolean);
+    };
+
     const metaMatch = text.match(/Reading Time: (\d+) min \| Difficulty: (\w+)/);
 
     return {
-      short: shortMatch || "",
-      mainIdeas: mainIdeasMatch ? mainIdeasMatch[1].split("\n").map(l => l.replace(/^•\s*/, "").trim()).filter(Boolean) : [],
-      takeaways: takeawaysMatch ? takeawaysMatch[1].split("\n").map(l => l.replace(/^•\s*/, "").trim()).filter(Boolean) : [],
+      short: shortText || text,
+      mainIdeas: parseBullets(mainIdeasText),
+      takeaways: parseBullets(takeawaysText),
       metadata: {
         readingTime: metaMatch ? metaMatch[1] : "1",
         difficulty: metaMatch ? metaMatch[2] : "Beginner"
@@ -263,26 +298,26 @@ export function AIInsightsPanel({
       }`}
     >
       {/* Header: Minimal & Airy */}
-      <div className="px-8 py-8">
+      <div className="px-8 py-8 border-b border-purple-50/50 bg-white/50 backdrop-blur-sm z-10 sticky top-0">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse-semantic"></div>
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.25em]">Neural Insight</span>
+            <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse-semantic shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div>
+            <span className="text-[11px] font-bold text-purple-400 uppercase tracking-[0.25em]">Neural Insight</span>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-50 rounded-xl text-gray-300 hover:text-gray-600 transition-all">
+          <button onClick={onClose} className="p-2 bg-purple-50 hover:bg-purple-100 rounded-xl text-purple-400 hover:text-purple-600 transition-all">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
-        <div className="flex items-center gap-2 p-1 bg-gray-50/50 rounded-xl border border-gray-100/50">
+        <div className="flex items-center gap-2 p-1.5 bg-purple-50/50 rounded-2xl border border-purple-100/50 backdrop-blur-sm">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${
+              className={`flex-1 py-2 rounded-xl text-[11px] font-bold transition-all duration-300 ${
                 activeTab === tab.id 
-                  ? "bg-white text-purple-600 shadow-sm border border-gray-100/50" 
-                  : "text-gray-400 hover:text-gray-600"
+                  ? "bg-white text-purple-700 shadow-sm border border-purple-100" 
+                  : "text-purple-400 hover:text-purple-600 hover:bg-white/50"
               }`}
             >
               {tab.label}
@@ -312,21 +347,45 @@ export function AIInsightsPanel({
             {activeTab === 'deep-dive' && (
               <div className="space-y-10 animate-in fade-in duration-500">
                 <section className="space-y-6">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Semantic Nodes</span>
+                  <div className="flex items-center gap-2 px-1">
+                    <div className="w-1.5 h-3.5 bg-purple-400 rounded-full"></div>
+                    <span className="text-[10px] font-bold text-purple-400/80 uppercase tracking-[0.15em]">Semantic Nodes</span>
+                  </div>
                   <div className="space-y-6">
-                    {sections.mainIdeas.map((idea, i) => (
-                      <div key={i} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-purple-300 before:rounded-full">
-                        <p className="text-[13.5px] text-gray-600 font-medium leading-relaxed antialiased">
-                          {idea}
-                        </p>
-                      </div>
-                    ))}
+                    {[...sections.mainIdeas, ...sections.takeaways].length > 0 ? (
+                      [...sections.mainIdeas, ...sections.takeaways].map((node, i) => (
+                        <div key={i} className="relative pl-6 before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:bg-purple-400 before:rounded-full">
+                          <p className="text-[13.5px] text-purple-950/80 font-medium leading-relaxed antialiased">
+                            {node}
+                          </p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[13px] text-gray-400 italic pl-1">No detailed semantic nodes extracted yet.</p>
+                    )}
                   </div>
                 </section>
 
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                  <p className="text-[12px] font-medium text-gray-400 leading-relaxed antialiased italic">
-                    "This node strengthens your knowledge cluster in {selectedContent.topics?.[0] || 'emerging domains'}."
+                {/* Additional tags/topics if present */}
+                {(selectedContent.tags?.length || selectedContent.topics?.length) ? (
+                  <section className="space-y-4">
+                    <div className="flex items-center gap-2 px-1">
+                      <div className="w-1.5 h-3.5 bg-purple-300 rounded-full"></div>
+                      <span className="text-[10px] font-bold text-purple-400/80 uppercase tracking-[0.15em]">Knowledge Vectors</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 px-1">
+                      {[...new Set([...(selectedContent.topics || []), ...(selectedContent.tags || [])])].filter(Boolean).map((t, i) => (
+                        <span key={i} className="px-3 py-1.5 bg-purple-50 text-purple-600 rounded-lg text-[11px] font-bold border border-purple-100/50 shadow-sm">
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
+
+                <div className="p-6 bg-purple-50/40 rounded-2xl border border-purple-100/60 shadow-sm shadow-purple-100/20">
+                  <p className="text-[12px] font-medium text-purple-900/60 leading-relaxed antialiased italic">
+                    "This node strengthens your knowledge cluster in <span className="font-bold text-purple-600">{selectedContent.topics?.[0] || 'emerging domains'}</span>."
                   </p>
                 </div>
               </div>
@@ -341,15 +400,44 @@ export function AIInsightsPanel({
                       </div>
                     )}
                     
-                    {messages.map((msg, i) => (
-                      <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} gap-2 animate-in fade-in slide-in-from-bottom-2`}>
-                        <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] font-medium leading-relaxed ${
-                          msg.role === 'user' ? 'bg-purple-600 text-white rounded-tr-none' : 'bg-gray-50 text-gray-700 rounded-tl-none border border-gray-100'
-                        }`}>
-                          {msg.content}
+                    {messages.map((msg, i) => {
+                      const renderContent = (content: string, sources?: Array<any>) => {
+                        const regex = /\[Source\s*(\d+)\]/gi;
+                        const parts: ReactNode[] = [];
+                        let lastIdx = 0;
+                        let match;
+                        while ((match = regex.exec(content)) !== null) {
+                          if (match.index > lastIdx) parts.push(content.slice(lastIdx, match.index));
+                          const sIdx = parseInt(match[1], 10) - 1;
+                          const source = sources?.[sIdx];
+                          parts.push(
+                            <a
+                              key={`src-${match.index}`}
+                              href={source?.link || "#"}
+                              target={source?.link ? "_blank" : undefined}
+                              rel="noopener noreferrer"
+                              title={source?.title || `Source ${sIdx + 1}`}
+                              className="inline-flex items-center px-1.5 py-0.5 mx-0.5 bg-purple-100/80 text-purple-700 rounded-md text-[10px] font-bold hover:bg-purple-200 transition-colors border border-purple-200/50 shadow-sm whitespace-nowrap align-baseline"
+                            >
+                              Source {sIdx + 1}
+                            </a>
+                          );
+                          lastIdx = regex.lastIndex;
+                        }
+                        if (lastIdx < content.length) parts.push(content.slice(lastIdx));
+                        return parts.length ? parts : content;
+                      };
+
+                      return (
+                        <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} gap-2 animate-in fade-in slide-in-from-bottom-2`}>
+                          <div className={`max-w-[85%] p-4 rounded-2xl text-[13px] font-medium leading-relaxed ${
+                            msg.role === 'user' ? 'bg-purple-600 text-white rounded-tr-none' : 'bg-gray-50 text-gray-700 rounded-tl-none border border-gray-100'
+                          }`}>
+                            {msg.role === 'user' ? msg.content : renderContent(msg.content, msg.sources)}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     
                     {isThinking && (
                       <div className="flex items-center gap-2 p-4 bg-white border border-gray-100 rounded-2xl w-24 shadow-sm animate-pulse">
@@ -388,14 +476,14 @@ export function AIInsightsPanel({
       </div>
 
       {/* Footer: Knowledge DNA */}
-      <div className="p-6 border-t border-gray-50 bg-gray-50/30">
+      <div className="p-6 border-t border-purple-100/30 bg-purple-50/20 backdrop-blur-md">
         <div className="flex items-center justify-between">
            <div className="flex gap-1.5">
               {[1,2,3,4,5,6].map(i => (
-                <div key={i} className="w-1 h-3.5 bg-purple-200/50 rounded-full animate-[pulse-semantic_3s_infinite]" style={{ animationDelay: `${i*0.15}s` }}></div>
+                <div key={i} className="w-1 h-3.5 bg-purple-300/60 rounded-full animate-[pulse-semantic_3s_infinite]" style={{ animationDelay: `${i*0.15}s` }}></div>
               ))}
            </div>
-           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-[0.25em]">Personal Knowledge OS</span>
+           <span className="text-[9px] font-bold text-purple-400 uppercase tracking-[0.25em]">Personal Knowledge OS</span>
         </div>
       </div>
     </div>

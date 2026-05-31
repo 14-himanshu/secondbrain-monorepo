@@ -86,38 +86,38 @@ export function Card({
       case "full_extraction":
         return {
           label: "Full Extraction",
-          pillClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
-          textClass: "text-emerald-600",
+          pillClass: "bg-purple-100 text-purple-700 border-purple-200",
+          textClass: "text-purple-600",
         };
       case "partial_extraction":
         return {
           label: "Partial Extraction",
-          pillClass: "bg-sky-50 text-sky-700 border-sky-100",
-          textClass: "text-sky-600",
+          pillClass: "bg-purple-50 text-purple-600 border-purple-100",
+          textClass: "text-purple-500",
         };
       case "metadata_only":
         return {
           label: "Metadata Only",
-          pillClass: "bg-amber-50 text-amber-700 border-amber-100",
-          textClass: "text-amber-600",
+          pillClass: "bg-gray-100 text-gray-700 border-gray-200",
+          textClass: "text-gray-600",
         };
       case "authentication_required":
         return {
           label: "Authentication Required",
-          pillClass: "bg-orange-50 text-orange-700 border-orange-100",
-          textClass: "text-orange-600",
+          pillClass: "bg-purple-50/50 text-purple-800 border-purple-200/50",
+          textClass: "text-purple-700",
         };
       case "unsupported":
         return {
           label: "Unsupported",
-          pillClass: "bg-slate-100 text-slate-600 border-slate-200",
-          textClass: "text-slate-500",
+          pillClass: "bg-gray-50 text-gray-500 border-gray-100",
+          textClass: "text-gray-400",
         };
       case "failed":
         return {
           label: "Failed",
-          pillClass: "bg-red-50 text-red-700 border-red-100",
-          textClass: "text-red-500",
+          pillClass: "bg-purple-50/30 text-purple-900 border-purple-200/30",
+          textClass: "text-purple-800",
         };
       default:
         return null;
@@ -242,7 +242,7 @@ export function Card({
       {isProcessing && (
         <div className="mt-4 w-full h-1 bg-purple-50 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-purple-300 via-purple-400 to-indigo-400 transition-all duration-400 ease-linear"
+            className="h-full bg-gradient-to-r from-purple-300 via-purple-400 to-purple-600 transition-all duration-400 ease-linear"
             style={{ width: `${progressWidth}%` }}
           />
         </div>

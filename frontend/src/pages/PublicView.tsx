@@ -77,7 +77,7 @@ export function PublicView() {
             </h1>
           </div>
           <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-500">
-            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
+            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"></div>
             READ ONLY MODE
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Logo } from "../icons/Logo";
 import { LibraryIcon } from "../icons/LibraryIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
+import { TwitterIcon } from "../icons/TwitterIcon";
 import type { Content } from "../hooks/useContent";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -111,8 +112,9 @@ export function Sidebar({
 
   const navItems = [
     { key: "all", label: "Knowledge Base", icon: <LibraryIcon /> },
-    { key: "post", label: "Articles", icon: <DocumentIcon /> },
+    { key: "post", label: "Posts", icon: <TwitterIcon /> },
     { key: "video", label: "Videos", icon: <YouTubeIcon /> },
+    { key: "document", label: "Documents", icon: <DocumentIcon /> },
   ];
 
   const sidebarWidth = isCollapsed ? "w-20" : "w-72";

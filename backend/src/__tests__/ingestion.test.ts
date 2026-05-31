@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { buildDeterministicDescription, shouldUseAiSynthesis } from "../services/ingestion/classification.js";
 import { normalizeUrl, detectPlatform } from "../services/ingestion/url.js";
-import { assessExtractionQuality } from "../services/ingestion/validation.js";
+import { assessExtractionQuality, deriveIngestionStatus } from "../services/ingestion/validation.js";
 import type { ExtractedContent } from "../services/ingestion/types.js";
 
 test("normalizeUrl canonicalizes YouTube URLs to video id", () => {
@@ -20,6 +20,7 @@ test("detectPlatform identifies configured platforms", () => {
   assert.equal(detectPlatform("https://reddit.com/r/typescript/comments/123/test"), "reddit");
   assert.equal(detectPlatform("https://x.com/openai/status/123"), "twitter");
   assert.equal(detectPlatform("https://www.notion.so/workspace/page-abcdefabcdefabcdefabcdefabcdefab"), "notion");
+  assert.equal(detectPlatform("https://app.notion.com/abcdefabcdefabcdefabcdefabcdefab"), "notion");
   assert.equal(detectPlatform("https://example.com/blog"), "generic");
 });
 
@@ -34,12 +35,36 @@ test("quality validation rejects noisy fallback content", () => {
   assert.ok(noisy.issues.includes("navigation-noise"));
 });
 
+test("google docs trusted extraction can be marked full when validation passes", () => {
+  const validation = assessExtractionQuality(
+    "This is a real Google document body with enough text to clear the extraction threshold even if the doc is relatively short.",
+    "google-docs",
+    "google"
+  );
+
+  assert.equal(validation.passed, true);
+  assert.equal(deriveIngestionStatus("google-docs", validation, "protected_source"), "full_extraction");
+});
+
+test("short but complete google docs extraction can still be marked full", () => {
+  const validation = assessExtractionQuality(
+    "Short Google doc body for bookmark testing only.",
+    "google-docs",
+    "google"
+  );
+
+  assert.equal(validation.issues.includes("too-short"), true);
+  assert.equal(deriveIngestionStatus("google-docs", validation, "public_source"), "full_extraction");
+});
+
 test("AI synthesis only runs on validated high-confidence extraction", () => {
   const extraction: ExtractedContent = {
     platform: "youtube",
     normalizedUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     source: "youtube-transcript",
     sourceType: "public_source",
+    ingestionStatus: "full_extraction",
+    acquisitionMethod: "transcript",
     confidence: 0.95,
     wordCount: 160,
     extractionQuality: "high",
@@ -61,7 +86,8 @@ test("AI synthesis only runs on validated high-confidence extraction", () => {
   };
 
   assert.equal(shouldUseAiSynthesis(extraction, "deep"), true);
-  assert.equal(shouldUseAiSynthesis({ ...extraction, confidence: 0.45 }, "deep"), false);
+  assert.equal(shouldUseAiSynthesis({ ...extraction, confidence: 0.45, ingestionStatus: "partial_extraction" }, "deep"), true);
+  assert.equal(shouldUseAiSynthesis({ ...extraction, ingestionStatus: "authentication_required", content: "" }, "deep"), false);
   assert.equal(shouldUseAiSynthesis(extraction, "quick"), false);
 });
 
@@ -71,6 +97,8 @@ test("deterministic description preserves a short summary and bullets", () => {
     normalizedUrl: "https://example.com/post",
     source: "readability",
     sourceType: "public_source",
+    ingestionStatus: "partial_extraction",
+    acquisitionMethod: "static_fetch",
     confidence: 0.85,
     wordCount: 30,
     extractionQuality: "medium",

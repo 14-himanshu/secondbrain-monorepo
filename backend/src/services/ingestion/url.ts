@@ -39,6 +39,42 @@ const normalizePath = (pathname: string) => {
   return trimmed || "/";
 };
 
+const getGoogleFileId = (url: URL) => {
+  const path = url.pathname;
+  let match = path.match(/\/(?:document|presentation|spreadsheets)\/d\/([a-zA-Z0-9-_]+)/);
+  if (match?.[1]) return match[1];
+
+  match = path.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+  if (match?.[1]) return match[1];
+
+  const queryId = url.searchParams.get("id");
+  if (queryId) return queryId;
+
+  return undefined;
+};
+
+const normalizeGoogleUrl = (url: URL) => {
+  const fileId = getGoogleFileId(url);
+  if (!fileId) {
+    const host = url.hostname.replace(/^www\./, "").toLowerCase();
+    return `${url.protocol}//${host}${normalizePath(url.pathname)}`;
+  }
+
+  if (url.hostname.includes("docs.google.com")) {
+    if (url.pathname.includes("/document/")) {
+      return `https://docs.google.com/document/d/${fileId}`;
+    }
+    if (url.pathname.includes("/presentation/")) {
+      return `https://docs.google.com/presentation/d/${fileId}`;
+    }
+    if (url.pathname.includes("/spreadsheets/")) {
+      return `https://docs.google.com/spreadsheets/d/${fileId}`;
+    }
+  }
+
+  return `https://drive.google.com/file/d/${fileId}`;
+};
+
 const getYouTubeVideoId = (url: URL) => {
   const host = url.hostname.replace(/^www\./, "").toLowerCase();
 
@@ -70,7 +106,13 @@ export const detectPlatform = (value: string | URL): Platform => {
   if (host.includes("medium.com")) return "medium";
   if (host === "redd.it" || host.includes("reddit.com")) return "reddit";
   if (host === "x.com" || host.includes("twitter.com")) return "twitter";
-  if (host.includes("notion.so") || host.includes("notion.site")) return "notion";
+  if (host === "app.notion.com" || host.includes("notion.so") || host.includes("notion.site")) return "notion";
+  if (
+    host === "drive.google.com" ||
+    host === "docs.google.com"
+  ) {
+    return "google";
+  }
   return "generic";
 };
 
@@ -107,6 +149,17 @@ export const normalizeUrl = (rawUrl: string): UrlTarget => {
       rawUrl,
       normalizedUrl: `https://${host}${normalizedPath}`,
       cacheKey: `twitter:${normalizedPath}`,
+      platform,
+      url,
+    };
+  }
+
+  if (platform === "google") {
+    const normalizedUrl = normalizeGoogleUrl(url);
+    return {
+      rawUrl,
+      normalizedUrl,
+      cacheKey: `google:${normalizedUrl}`,
       platform,
       url,
     };

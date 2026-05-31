@@ -98,6 +98,9 @@ export function PublicView() {
                 title={item.title}
                 link={item.link}
                 type={item.type}
+                aiMetadata={item.aiMetadata}
+                aiStatus={item.aiStatus}
+                description={item.description}
               />
             ))}
           </div>

@@ -4,6 +4,7 @@ import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
 import { useMemo, useState } from "react";
+import type { IngestionStatus } from "@secondbrain/contracts";
 
 interface CardProps {
   title: string;
@@ -17,6 +18,10 @@ interface CardProps {
     source?: string;
     contentType?: string;
     estimatedTopics?: string[];
+    ingestionStatus?: IngestionStatus;
+    ingestionReason?: string;
+    acquisitionMethod?: string;
+    accessRequirement?: "public" | "authenticated";
   };
   onDelete?: () => void;
   onEdit?: (newTitle: string) => void;
@@ -27,7 +32,21 @@ interface CardProps {
   similarity?: number;
 }
 
-export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit, onSelect, onGenerateInsight, isSelected, description, similarity }: CardProps) {
+export function Card({
+  title,
+  link,
+  type,
+  aiStatus,
+  aiProgress,
+  aiMetadata,
+  onDelete,
+  onEdit,
+  onSelect,
+  onGenerateInsight,
+  isSelected,
+  description,
+  similarity,
+}: CardProps) {
   const normalizedType = type?.toLowerCase() ?? "";
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
@@ -57,6 +76,53 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
   const faviconUrl = parsedUrl ? `https://icons.duckduckgo.com/ip3/${parsedUrl.hostname}.ico` : null;
   const source = parsedUrl?.hostname.replace(/^www\./, "") ?? "link";
   const badgeLabel = isVideo ? "Video" : isPost ? "Post" : "Document";
+  const isProcessing = Boolean(aiStatus && ["queued", "processing", "scraping", "analyzing"].includes(aiStatus));
+  const ingestionStatus = aiMetadata?.ingestionStatus ?? (
+    description && ["completed", "summarized"].includes(aiStatus || "") ? "full_extraction" : undefined
+  );
+
+  const ingestionBadge = useMemo(() => {
+    switch (ingestionStatus) {
+      case "full_extraction":
+        return {
+          label: "Full Extraction",
+          pillClass: "bg-emerald-50 text-emerald-700 border-emerald-100",
+          textClass: "text-emerald-600",
+        };
+      case "partial_extraction":
+        return {
+          label: "Partial Extraction",
+          pillClass: "bg-sky-50 text-sky-700 border-sky-100",
+          textClass: "text-sky-600",
+        };
+      case "metadata_only":
+        return {
+          label: "Metadata Only",
+          pillClass: "bg-amber-50 text-amber-700 border-amber-100",
+          textClass: "text-amber-600",
+        };
+      case "authentication_required":
+        return {
+          label: "Authentication Required",
+          pillClass: "bg-orange-50 text-orange-700 border-orange-100",
+          textClass: "text-orange-600",
+        };
+      case "unsupported":
+        return {
+          label: "Unsupported",
+          pillClass: "bg-slate-100 text-slate-600 border-slate-200",
+          textClass: "text-slate-500",
+        };
+      case "failed":
+        return {
+          label: "Failed",
+          pillClass: "bg-red-50 text-red-700 border-red-100",
+          textClass: "text-red-500",
+        };
+      default:
+        return null;
+    }
+  }, [ingestionStatus]);
   
 
   const handleSave = () => {
@@ -114,10 +180,10 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
         
         {/* Pulse & Link Actions */}
         <div className="flex items-center gap-2">
-          {description && (
-            <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-50 rounded-full border border-purple-50/40">
-               <div className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse-semantic" />
-               <span className="text-[10px] font-semibold text-purple-500 uppercase tracking-tight">Synthesized</span>
+          {!isProcessing && ingestionBadge && (
+            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border ${ingestionBadge.pillClass}`}>
+               <div className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+               <span className="text-[10px] font-semibold uppercase tracking-tight">{ingestionBadge.label}</span>
             </div>
           )}
           {link && (
@@ -173,7 +239,7 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
       </div>
 
       {/* Neural Progress Bar: Sleek & Sophisticated */}
-      {(aiStatus && ["scraping", "analyzing", "queued", "processing"].includes(aiStatus)) && (
+      {isProcessing && (
         <div className="mt-4 w-full h-1 bg-purple-50 rounded-full overflow-hidden">
           <div 
             className="h-full bg-gradient-to-r from-purple-300 via-purple-400 to-indigo-400 transition-all duration-400 ease-linear"
@@ -186,22 +252,22 @@ export function Card({ title, link, type, aiStatus, aiProgress, onDelete, onEdit
       <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-50">
         <div className="flex items-center gap-4">
            <div className="flex items-center">
-            {aiStatus && ["queued", "processing", "summarized", "scraping", "analyzing"].includes(aiStatus) ? (
+            {isProcessing ? (
               <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest flex items-center gap-2 border bg-gray-50/40 border-gray-50 text-purple-500 animate-pulse`}>
                 <div className="w-1.5 h-1.5 rounded-full bg-purple-300" />
-                {aiStatus === "queued" ? "Thinking" : 
-                 aiStatus === "scraping" ? "Reading Page" :
-                 aiStatus === "analyzing" ? "Analyzing" : "Processing"}
+                {aiStatus === "analyzing"
+                  ? "Generating Summary"
+                  : "Extracting Content"}
               </div>
-            ) : (aiStatus === "completed" || aiStatus === "summarized") ? (
-              <div className="text-[9px] font-bold text-purple-300 uppercase tracking-[0.15em] flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                {similarity ? `${Math.round(similarity * 100)}% Neural Match` : "Verified Insight"}
+            ) : ingestionBadge ? (
+              <div className={`text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-2 ${ingestionBadge.textClass}`}>
+                <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                {similarity && ingestionStatus === "full_extraction"
+                  ? `${Math.round(similarity * 100)}% Neural Match`
+                  : ingestionBadge.label}
               </div>
             ) : aiStatus === "failed" ? (
               <div className="text-[9px] font-bold text-red-300 uppercase tracking-[0.15em]">Synthesis Failed</div>
-            ) : aiStatus === "needs_manual_content" ? (
-              <div className="text-[9px] font-bold text-amber-500 uppercase tracking-[0.15em]">Manual Content Needed</div>
             ) : (
               <button 
                 onClick={(e) => { e.stopPropagation(); onGenerateInsight?.(); }}

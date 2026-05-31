@@ -4,6 +4,16 @@ export type ContentType = (typeof CONTENT_TYPES)[number];
 export const EMBEDDING_STATUSES = ["pending", "completed", "failed"] as const;
 export type EmbeddingStatus = (typeof EMBEDDING_STATUSES)[number];
 
+export const INGESTION_STATUSES = [
+  "full_extraction",
+  "partial_extraction",
+  "metadata_only",
+  "authentication_required",
+  "unsupported",
+  "failed",
+] as const;
+export type IngestionStatus = (typeof INGESTION_STATUSES)[number];
+
 export const AI_STATUSES = [
   "queued",
   "processing",
@@ -37,9 +47,11 @@ export interface ContentDto {
     sourceType?: string;
     extractionQuality?: string;
     extractionWordCount?: number;
-    ingestionStatus?: "ready" | "manual_content_required";
+    ingestionStatus?: IngestionStatus;
     ingestionReason?: string;
     summarizationSkipped?: boolean;
+    acquisitionMethod?: string;
+    accessRequirement?: "public" | "authenticated";
   };
   aiError?: string;
 }

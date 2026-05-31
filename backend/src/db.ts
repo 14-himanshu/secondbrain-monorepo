@@ -63,6 +63,8 @@ const ContentSchema = new Schema({
         ingestionStatus: String,
         ingestionReason: String,
         summarizationSkipped: Boolean,
+        acquisitionMethod: String,
+        accessRequirement: String,
         transcriptAvailable: Boolean,
         author: String,
         channel: String,

@@ -1,5 +1,7 @@
 import { getNotionApiVersion, getNotionToken } from "../../../config.js";
-import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality } from "../validation.js";
+import { renderPageSnapshot } from "../browser.js";
+import { createDom, extractStructuredMetadata, mergeStructuredMetadata, normalizeWhitespace as normalizeHtmlWhitespace } from "../html.js";
+import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
 
 const parseNotionPageId = (url: URL) => {
@@ -29,22 +31,116 @@ const collectBlockText = (block: any): string[] => {
 };
 
 const listBlockChildren = async (blockId: string, token: string, notionVersion: string) => {
-  const response = await fetch(
-    `https://api.notion.com/v1/blocks/${blockId}/children?page_size=100`,
-    {
+  const results: any[] = [];
+  let nextCursor: string | undefined;
+
+  do {
+    const url = new URL(`https://api.notion.com/v1/blocks/${blockId}/children`);
+    url.searchParams.set("page_size", "100");
+    if (nextCursor) {
+      url.searchParams.set("start_cursor", nextCursor);
+    }
+
+    const response = await fetch(url.toString(), {
       headers: {
         Authorization: `Bearer ${token}`,
         "Notion-Version": notionVersion,
       },
-    }
-  );
+    });
 
-  if (!response.ok) {
-    throw new Error(`NOTION_CHILDREN_${response.status}`);
+    if (!response.ok) {
+      throw new Error(`NOTION_CHILDREN_${response.status}`);
+    }
+
+    const payload = (await response.json()) as { results?: any[]; next_cursor?: string | null; has_more?: boolean };
+    results.push(...(Array.isArray(payload.results) ? payload.results : []));
+    nextCursor = payload.has_more ? payload.next_cursor || undefined : undefined;
+  } while (nextCursor);
+
+  return results;
+};
+
+const collectNestedBlockText = async (
+  blockId: string,
+  token: string,
+  notionVersion: string,
+  depth = 0
+): Promise<string[]> => {
+  if (depth > 6) return [];
+  const children = await listBlockChildren(blockId, token, notionVersion);
+  const parts: string[] = [];
+
+  for (const child of children) {
+    parts.push(...collectBlockText(child));
+    if (child?.has_children && child?.id) {
+      parts.push(...(await collectNestedBlockText(String(child.id), token, notionVersion, depth + 1)));
+    }
   }
 
-  const payload = (await response.json()) as { results?: any[] };
-  return Array.isArray(payload.results) ? payload.results : [];
+  return parts;
+};
+
+const extractPublicNotionContent = async (target: UrlTarget): Promise<ExtractedContent | null> => {
+  const rendered = await renderPageSnapshot(target.normalizedUrl, { extraDelayMs: 3000, timeoutMs: 22000 });
+  if (!rendered?.text) return null;
+
+  const lower = rendered.text.toLowerCase();
+  if (
+    lower.includes("request access") ||
+    lower.includes("you do not have access") ||
+    lower.includes("log in to continue")
+  ) {
+    const validation = assessExtractionQuality("", "unavailable", target.platform);
+    return {
+      platform: target.platform,
+      normalizedUrl: target.normalizedUrl,
+      source: "unavailable",
+      sourceType: "protected_source",
+      ingestionStatus: "authentication_required",
+      ingestionReason: "notion_authentication_required",
+      acquisitionMethod: "browser_render",
+      confidence: 0.05,
+      wordCount: validation.wordCount,
+      extractionQuality: deriveExtractionQuality(validation, "protected_source"),
+      cacheable: false,
+      content: "",
+      metadata: {
+        title: target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "Notion page",
+        description: "This Notion page requires access before it can be extracted.",
+        tags: ["notion", "protected"],
+        contentType: "document",
+      },
+      validation,
+      contentType: "document",
+    };
+  }
+
+  const dom = createDom(rendered.html, rendered.finalUrl);
+  const metadata = mergeStructuredMetadata(extractStructuredMetadata(dom.window.document), {
+    title: target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "Notion page",
+    tags: ["notion", "public"],
+    contentType: "document",
+  });
+  const content = normalizeHtmlWhitespace(rendered.text).slice(0, 40000);
+  const validation = assessExtractionQuality(content, "body-fallback", target.platform);
+
+  return {
+    platform: target.platform,
+    normalizedUrl: target.normalizedUrl,
+    source: "body-fallback",
+    sourceType: "public_source",
+    ingestionStatus: deriveIngestionStatus("body-fallback", validation, "public_source"),
+    ingestionReason: validation.passed ? undefined : "public_notion_partial",
+    acquisitionMethod: "browser_render",
+    confidence: adjustConfidence(0.82, validation),
+    wordCount: validation.wordCount,
+    extractionQuality: deriveExtractionQuality(validation, "public_source"),
+    cacheable: validation.passed,
+    content,
+    metadata,
+    validation,
+    contentType: "document",
+  };
 };
 
 export const extractNotionContent = async (
@@ -56,12 +152,18 @@ export const extractNotionContent = async (
   const pageId = parseNotionPageId(target.url);
 
   if (!notionToken || !pageId) {
+    const publicExtraction = await extractPublicNotionContent(target);
+    if (publicExtraction) return publicExtraction;
+
     const validation = assessExtractionQuality("", "unavailable", target.platform);
     return {
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: "unavailable",
       sourceType: "protected_source",
+      ingestionStatus: "authentication_required",
+      ingestionReason: "notion_authentication_required",
+      acquisitionMethod: "browser_render",
       confidence: 0.05,
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "protected_source"),
@@ -69,7 +171,7 @@ export const extractNotionContent = async (
       content: "",
       metadata: {
         title: target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "Notion page",
-        description: "Protected Notion content requires authenticated ingestion.",
+        description: "Connect Notion to extract private workspace content.",
         tags: ["notion", "protected"],
         contentType: "document",
       },
@@ -97,16 +199,31 @@ export const extractNotionContent = async (
     ) || "Notion page";
 
     const blocks = await listBlockChildren(pageId, notionToken, notionVersion);
-    const bodyText = normalizeWhitespace(blocks.flatMap((block) => collectBlockText(block)).join(" "));
+    const nestedText = (
+      await Promise.all(
+        blocks
+          .filter((block) => block?.has_children && block?.id)
+          .map((block) => collectNestedBlockText(String(block.id), notionToken, notionVersion))
+      )
+    ).flat();
+    const bodyText = normalizeWhitespace(
+      [...blocks.flatMap((block) => collectBlockText(block)), ...nestedText].join(" ")
+    ).slice(0, 40000);
     const validation = assessExtractionQuality(bodyText, "notion-api", target.platform);
     const confidence = adjustConfidence(0.93, validation);
 
     if (!bodyText) {
+      const publicFallback = await extractPublicNotionContent(target);
+      if (publicFallback) return publicFallback;
+
       return {
         platform: target.platform,
         normalizedUrl: target.normalizedUrl,
         source: "notion-api",
         sourceType: "protected_source",
+        ingestionStatus: "authentication_required",
+        ingestionReason: "notion_empty_or_restricted",
+        acquisitionMethod: "api",
         confidence: 0.1,
         wordCount: validation.wordCount,
         extractionQuality: deriveExtractionQuality(validation, "protected_source"),
@@ -128,10 +245,13 @@ export const extractNotionContent = async (
         platform: target.platform,
         normalizedUrl: target.normalizedUrl,
         source: "notion-api",
-        sourceType: "public_source",
+        sourceType: "protected_source",
+        ingestionStatus: deriveIngestionStatus("notion-api", validation, "protected_source"),
+        ingestionReason: "quick_notion_preview",
+        acquisitionMethod: "api",
         confidence,
         wordCount: validation.wordCount,
-        extractionQuality: deriveExtractionQuality(validation, "public_source"),
+        extractionQuality: deriveExtractionQuality(validation, "protected_source"),
         cacheable: false,
         content: normalizeWhitespace(`${title}. ${bodyText.slice(0, 320)}`),
         metadata: {
@@ -149,10 +269,12 @@ export const extractNotionContent = async (
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: "notion-api",
-      sourceType: "public_source",
+      sourceType: "protected_source",
+      ingestionStatus: deriveIngestionStatus("notion-api", validation, "protected_source"),
+      acquisitionMethod: "api",
       confidence,
       wordCount: validation.wordCount,
-      extractionQuality: deriveExtractionQuality(validation, "public_source"),
+      extractionQuality: deriveExtractionQuality(validation, "protected_source"),
       cacheable: validation.passed,
       content: bodyText,
       metadata: {
@@ -165,12 +287,18 @@ export const extractNotionContent = async (
       contentType: "document",
     };
   } catch {
+    const publicFallback = await extractPublicNotionContent(target);
+    if (publicFallback) return publicFallback;
+
     const validation = assessExtractionQuality("", "unavailable", target.platform);
     return {
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
       source: "unavailable",
       sourceType: "protected_source",
+      ingestionStatus: "authentication_required",
+      ingestionReason: "notion_api_failed",
+      acquisitionMethod: "api",
       confidence: 0.05,
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "protected_source"),
@@ -187,4 +315,3 @@ export const extractNotionContent = async (
     };
   }
 };
-

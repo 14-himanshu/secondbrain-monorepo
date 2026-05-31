@@ -22,6 +22,22 @@ export type BackendContentType = "video" | "post" | "document";
 
 export type ClassificationMode = "quick" | "deep";
 
+export type IngestionStatus =
+  | "full_extraction"
+  | "partial_extraction"
+  | "metadata_only"
+  | "authentication_required"
+  | "unsupported"
+  | "failed";
+
+export type AcquisitionMethod =
+  | "api"
+  | "static_fetch"
+  | "browser_render"
+  | "file_download"
+  | "transcript"
+  | "metadata";
+
 export interface UrlTarget {
   rawUrl: string;
   normalizedUrl: string;
@@ -60,6 +76,9 @@ export interface ExtractedContent {
   normalizedUrl: string;
   source: ExtractionSource;
   sourceType: SourceType;
+  ingestionStatus: IngestionStatus;
+  ingestionReason?: string | undefined;
+  acquisitionMethod: AcquisitionMethod;
   confidence: number;
   wordCount: number;
   extractionQuality: ExtractionQuality;

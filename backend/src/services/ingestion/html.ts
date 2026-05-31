@@ -104,6 +104,31 @@ export const fetchJsonResponse = async <T>(url: string, timeoutMs = 12000): Prom
   }
 };
 
+export const fetchArrayBufferResponse = async (url: string, timeoutMs = 12000) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      headers: REQUEST_HEADERS,
+      redirect: "follow",
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP_${response.status}`);
+    }
+
+    return {
+      finalUrl: response.url || url,
+      contentType: response.headers.get("content-type") || "",
+      body: await response.arrayBuffer(),
+    };
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
 export const extractJsonLd = (document: Document) => {
   const nodes = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
   return nodes.flatMap((node) => flattenJsonLdNode(safeJsonParse(node.textContent || "")));
@@ -234,4 +259,3 @@ export const extractBodyText = (document: Document) => {
 
   return normalizeWhitespace(clone.textContent || "");
 };
-

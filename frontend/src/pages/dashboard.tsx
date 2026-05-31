@@ -101,7 +101,7 @@ export function Dashboard() {
   // ON-DEMAND POLLING: Only poll for the SELECTED content if it's processing
   useEffect(() => {
     const selected = contents.find(c => c._id === selectedContentId);
-    const isProcessing = selected?.aiStatus && ["queued", "processing", "summarized"].includes(selected.aiStatus);
+    const isProcessing = selected?.aiStatus && ["queued", "processing", "scraping", "analyzing"].includes(selected.aiStatus);
 
     if (isProcessing) {
       const interval = setInterval(() => {
@@ -253,6 +253,10 @@ export function Dashboard() {
       : displayContents.filter(
         (content) => content.type?.toLowerCase() === selectedFilter
       );
+  const googleEmail =
+    google.data && typeof (google.data as { email?: unknown }).email === "string"
+      ? String((google.data as { email?: string }).email)
+      : null;
 
   const getShareButtonConfig = () => {
     switch (shareStatus.shareType) {
@@ -414,7 +418,9 @@ export function Dashboard() {
                               <span className="w-2 h-2 rounded-full bg-emerald-400" />
                               <span className="text-[12px] font-bold text-gray-800 tracking-tight">Drive Connected</span>
                             </div>
-                            <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">Google Drive sync active</p>
+                            <p className="text-[11px] text-gray-400 mt-0.5 leading-tight">
+                              {googleEmail ? `Connected as ${googleEmail}` : "Google Drive sync active"}
+                            </p>
                           </div>
                           <div className="p-1.5">
                             <button
@@ -479,13 +485,14 @@ export function Dashboard() {
             className="grid gap-6 pb-20"
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
           >
-            {filteredContents.map(({ type, link, title, _id, aiStatus, description }) => (
+            {filteredContents.map(({ type, link, title, _id, aiStatus, description, aiMetadata }) => (
               <Card
                 key={_id}
                 title={title}
                 link={link}
                 type={type}
                 aiStatus={aiStatus}
+                aiMetadata={aiMetadata}
                 description={description}
                 isSelected={selectedContentId === _id}
                 onGenerateInsight={() => handleGenerateInsight(_id)}

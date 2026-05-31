@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getContent } from "../services/content.api";
 import { queryKeys } from "../lib/queryKeys";
-import type { ContentDto, AiStatus, EmbeddingStatus } from "@secondbrain/contracts";
+import type { ContentDto, AiStatus, EmbeddingStatus, IngestionStatus } from "@secondbrain/contracts";
 
 export interface Content extends Omit<ContentDto, "aiStatus" | "embeddingStatus"> {
   embeddingStatus?: EmbeddingStatus;
@@ -11,6 +11,10 @@ export interface Content extends Omit<ContentDto, "aiStatus" | "embeddingStatus"
     source?: string;
     contentType?: string;
     estimatedTopics?: string[];
+    ingestionStatus?: IngestionStatus;
+    ingestionReason?: string;
+    acquisitionMethod?: string;
+    accessRequirement?: "public" | "authenticated";
   };
   aiError?: string;
   description?: string;

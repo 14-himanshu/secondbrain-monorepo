@@ -1,5 +1,6 @@
+import { renderPageSnapshot } from "../browser.js";
 import { createDom, extractStructuredMetadata, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
-import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality } from "../validation.js";
+import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
 
 const extractHashtags = (value: string) =>
@@ -15,19 +16,71 @@ export const extractTwitterContent = async (
     const metadata = extractStructuredMetadata(dom.window.document);
     const tags = Array.from(new Set([...metadata.tags, ...extractHashtags(`${metadata.title || ""} ${metadata.description || ""}`)])).slice(0, 8);
     const mergedMetadata = mergeStructuredMetadata(metadata, { tags, contentType: "post" });
-    const content = normalizeWhitespace([mergedMetadata.title, mergedMetadata.description].filter(Boolean).join(". "));
-    const validation = assessExtractionQuality(content, "twitter-metadata", target.platform);
+    const metadataContent = normalizeWhitespace([mergedMetadata.title, mergedMetadata.description].filter(Boolean).join(". "));
+    const validation = assessExtractionQuality(metadataContent, "twitter-metadata", target.platform);
+
+    if (!validation.passed || validation.wordCount < 20) {
+      const rendered = await renderPageSnapshot(target.normalizedUrl, { extraDelayMs: 1500, timeoutMs: 20000 });
+      if (rendered?.text) {
+        const renderedDom = createDom(rendered.html, rendered.finalUrl);
+        const renderedMetadata = mergeStructuredMetadata(
+          mergedMetadata,
+          extractStructuredMetadata(renderedDom.window.document)
+        );
+        const renderedContent = normalizeWhitespace(
+          [
+            renderedMetadata.title,
+            renderedMetadata.description,
+            rendered.text,
+          ]
+            .filter(Boolean)
+            .join(". ")
+        ).slice(0, 12000);
+        const renderedValidation = assessExtractionQuality(renderedContent, "body-fallback", target.platform);
+
+        return {
+          platform: target.platform,
+          normalizedUrl: target.normalizedUrl,
+          source: "body-fallback",
+          sourceType: "public_source",
+          ingestionStatus: deriveIngestionStatus("body-fallback", renderedValidation, "public_source"),
+          ingestionReason: renderedValidation.passed ? undefined : "rendered_tweet_partial",
+          acquisitionMethod: "browser_render",
+          confidence: adjustConfidence(0.81, renderedValidation),
+          wordCount: renderedValidation.wordCount,
+          extractionQuality: deriveExtractionQuality(renderedValidation, "public_source"),
+          cacheable: renderedValidation.passed,
+          content: renderedContent,
+          metadata: {
+            ...renderedMetadata,
+            tags: Array.from(
+              new Set([
+                ...renderedMetadata.tags,
+                ...extractHashtags(renderedContent),
+              ])
+            ).slice(0, 8),
+          },
+          validation: renderedValidation,
+          contentType: "post",
+        };
+      }
+    }
 
     return {
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
-      source: content ? "twitter-metadata" : "unavailable",
+      source: metadataContent ? "twitter-metadata" : "unavailable",
       sourceType: "public_source",
-      confidence: content ? adjustConfidence(0.72, validation) : 0.05,
+      ingestionStatus: metadataContent
+        ? deriveIngestionStatus("twitter-metadata", validation, "public_source")
+        : "failed",
+      ingestionReason: metadataContent ? "metadata_only_tweet" : "tweet_fetch_failed",
+      acquisitionMethod: "metadata",
+      confidence: metadataContent ? adjustConfidence(0.72, validation) : 0.05,
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "public_source"),
-      cacheable: validation.passed && content.length > 40,
-      content,
+      cacheable: validation.passed && metadataContent.length > 40,
+      content: metadataContent,
       metadata: mergedMetadata,
       validation,
       contentType: "post",
@@ -39,6 +92,9 @@ export const extractTwitterContent = async (
       normalizedUrl: target.normalizedUrl,
       source: "unavailable",
       sourceType: "public_source",
+      ingestionStatus: "failed",
+      ingestionReason: "tweet_fetch_failed",
+      acquisitionMethod: "static_fetch",
       confidence: 0.05,
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "public_source"),

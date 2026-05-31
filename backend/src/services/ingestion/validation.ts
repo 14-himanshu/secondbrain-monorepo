@@ -1,4 +1,11 @@
-import type { ExtractionSource, Platform, ExtractionValidation, ExtractionQuality, SourceType } from "./types.js";
+import type {
+  ExtractionSource,
+  Platform,
+  ExtractionValidation,
+  ExtractionQuality,
+  SourceType,
+  IngestionStatus,
+} from "./types.js";
 
 const NOISE_PHRASES = [
   "recommended videos",
@@ -104,8 +111,43 @@ export const deriveExtractionQuality = (
   validation: ExtractionValidation,
   sourceType: SourceType
 ): ExtractionQuality => {
-  if (sourceType === "protected_source") return "low";
   if (!validation.passed || validation.score < 0.55 || validation.wordCount < 40) return "low";
   if (validation.score >= 0.82 && validation.wordCount >= 120) return "high";
   return "medium";
+};
+
+export const deriveIngestionStatus = (
+  source: ExtractionSource,
+  validation: ExtractionValidation,
+  sourceType: SourceType
+): IngestionStatus => {
+  if (source === "unavailable") {
+    return sourceType === "protected_source" ? "authentication_required" : "failed";
+  }
+
+  if (source === "metadata" || source.endsWith("-metadata")) {
+    return validation.wordCount > 0 ? "metadata_only" : "failed";
+  }
+
+  if (
+    source === "google-docs" &&
+    validation.wordCount > 0 &&
+    validation.issues.every((issue) => issue === "too-short")
+  ) {
+    return "full_extraction";
+  }
+
+  if (source === "google-docs" && validation.passed) {
+    return "full_extraction";
+  }
+
+  if (validation.passed && validation.wordCount >= 80) {
+    return "full_extraction";
+  }
+
+  if (validation.wordCount > 0) {
+    return "partial_extraction";
+  }
+
+  return sourceType === "protected_source" ? "authentication_required" : "failed";
 };

@@ -75,6 +75,7 @@ export default function Recents() {
                   link={c.link}
                   type={c.type}
                   aiStatus={c.aiStatus}
+                  aiMetadata={c.aiMetadata}
                   description={c.description}
                   onSelect={() => navigate('/', { state: { openId: c._id } })}
                   onEdit={(newTitle) => editContent({ contentId: c._id, title: newTitle })}

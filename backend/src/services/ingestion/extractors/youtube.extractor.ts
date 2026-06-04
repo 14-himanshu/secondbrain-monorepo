@@ -106,33 +106,71 @@ const getCachedTranscript = (key: string) => {
   return cached.transcript;
 };
 
+const fetchYouTubeOEmbed = async (url: string): Promise<any> => {
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+    const data = await fetchJsonResponse<any>(oembedUrl, 5000);
+    return data;
+  } catch (err) {
+    console.warn("[YOUTUBE_OEMBED_FALLBACK_FAILED]", err);
+    return null;
+  }
+};
+
 const readYouTubePage = async (target: UrlTarget) => {
   const cacheKey = target.videoId || target.normalizedUrl;
   const cached = getCachedYouTubePage(cacheKey);
   if (cached) return cached;
 
-  const fetched = await fetchTextResponse(target.normalizedUrl, 8000);
-  const dom = createDom(fetched.body, fetched.finalUrl);
-  const htmlMetadata = extractStructuredMetadata(dom.window.document);
-  const jsonLdMetadata = mergeStructuredMetadata(htmlMetadata, {
-    channel: htmlMetadata.siteName,
-  });
+  let metadata: any = null;
+  let metadataContent = "";
+  let playerResponse: any = null;
 
-  const playerResponse =
-    findJsonObjectAfter(fetched.body, "var ytInitialPlayerResponse =") ||
-    findJsonObjectAfter(fetched.body, "ytInitialPlayerResponse =") ||
-    findJsonObjectAfter(fetched.body, '"captions":');
+  try {
+    const fetched = await fetchTextResponse(target.normalizedUrl, 8000);
+    const dom = createDom(fetched.body, fetched.finalUrl);
+    const htmlMetadata = extractStructuredMetadata(dom.window.document);
+    const jsonLdMetadata = mergeStructuredMetadata(htmlMetadata, {
+      channel: htmlMetadata.siteName,
+    });
 
-  const videoDetails = playerResponse?.videoDetails;
-  const metadata = mergeStructuredMetadata(jsonLdMetadata, {
-    title: videoDetails?.title,
-    description: normalizeWhitespace(String(videoDetails?.shortDescription || "")) || undefined,
-    channel: normalizeWhitespace(String(videoDetails?.author || "")) || undefined,
-    tags: Array.isArray(videoDetails?.keywords) ? videoDetails.keywords : [],
-    durationSeconds: Number(videoDetails?.lengthSeconds || 0) || undefined,
-    contentType: "video",
-  });
-  const metadataContent = normalizeWhitespace([metadata.title, metadata.description].filter(Boolean).join(". "));
+    playerResponse =
+      findJsonObjectAfter(fetched.body, "var ytInitialPlayerResponse =") ||
+      findJsonObjectAfter(fetched.body, "ytInitialPlayerResponse =") ||
+      findJsonObjectAfter(fetched.body, '"captions":');
+
+    const videoDetails = playerResponse?.videoDetails;
+    metadata = mergeStructuredMetadata(jsonLdMetadata, {
+      title: videoDetails?.title,
+      description: normalizeWhitespace(String(videoDetails?.shortDescription || "")) || undefined,
+      channel: normalizeWhitespace(String(videoDetails?.author || "")) || undefined,
+      tags: Array.isArray(videoDetails?.keywords) ? videoDetails.keywords : [],
+      durationSeconds: Number(videoDetails?.lengthSeconds || 0) || undefined,
+      contentType: "video",
+    });
+    metadataContent = normalizeWhitespace([metadata.title, metadata.description].filter(Boolean).join(". "));
+  } catch (e: any) {
+    console.warn("[YOUTUBE_HTML_FETCH_FAILED] Attempting oEmbed fallback...", e.message || e);
+  }
+
+  // Fallback to oEmbed if page fetch failed or returned empty content
+  if (!metadata?.title || !metadataContent) {
+    const oembed = await fetchYouTubeOEmbed(target.normalizedUrl);
+    if (oembed) {
+      metadata = {
+        title: oembed.title || "YouTube Video",
+        description: oembed.title ? `A video by ${oembed.author_name || "creator"}.` : undefined,
+        channel: oembed.author_name || undefined,
+        tags: [],
+        contentType: "video",
+      };
+      metadataContent = normalizeWhitespace([metadata.title, metadata.description].filter(Boolean).join(". "));
+    }
+  }
+
+  if (!metadata || !metadataContent) {
+    throw new Error("youtube_fetch_failed");
+  }
 
   const snapshot = {
     fetchedAt: Date.now(),

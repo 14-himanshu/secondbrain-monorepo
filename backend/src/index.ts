@@ -16,7 +16,7 @@ import { initCronJobs } from "./cron.js";
 import aiRouter from "./routes/ai.js";
 import { enqueueAiIngestionJob, getAiQueueMetrics, initQueueObservers } from "./queue/ai-jobs.js";
 import { CONTENT_TYPES } from "@secondbrain/contracts";
-
+import { createCheckoutOrderController, verifyPaymentController } from "./controllers/billing.controller.js";
 
 declare global {
   namespace Express {
@@ -27,7 +27,7 @@ declare global {
 }
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
 app.use(
   cors({
     origin: getFrontendUrls() ?? true,
@@ -43,7 +43,9 @@ const signupSchema = z.object({
       /^[a-zA-Z0-9_]+$/,
       "Username can contain only letters, numbers and underscores"
     ),
-
+  email: z
+    .string()
+    .email("Invalid email address"),
   password: z
     .string()
     .min(1, "Password must not be empty"),
@@ -69,15 +71,34 @@ app.post("/api/v1/signup", async (req, res) => {
     return res.status(400).json({ errors: parsed.error.issues });
   }
 
-  const { username, password } = parsed.data;
+  const { username, email, password } = parsed.data;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    await UserModel.create({ username, password: hashedPassword });
+    const existingEmail = await UserModel.findOne({
+      $or: [
+        { email: email },
+        { username: email }
+      ]
+    });
+    if (existingEmail) {
+      return res.status(400).json({ 
+        errors: [{ path: ["email"], message: "Email is already registered" }] 
+      });
+    }
+
+    await UserModel.create({ username, email, password: hashedPassword });
     res.json({ message: "User signed up" });
-  } catch (e) {
-    return res.status(411).json({ message: "User already exists" });
+  } catch (e: any) {
+    if (e.code === 11000) {
+      return res.status(400).json({ 
+        errors: [{ path: ["username"], message: "Username is already taken" }] 
+      });
+    }
+    return res.status(400).json({ 
+      errors: [{ path: ["general"], message: "Registration failed. Try again." }] 
+    });
   }
 });
 
@@ -142,7 +163,7 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
       description: description || "",
       userId: req.userId,
       embeddingStatus: "pending",
-      aiStatus: "queued",
+      aiStatus: "unprocessed",
       aiMetadata: {
         domain,
         source: domain,
@@ -152,38 +173,76 @@ app.post("/api/v1/content", userMiddleware, async (req, res) => {
       },
     });
 
-    // STEP 2: Trigger AI Auto-Pilot (Background)
-    let queueJobId: string | null = null;
-    if (link && !description) {
-      try {
-        const queueResult = await enqueueAiIngestionJob({
-          contentId: String(content._id),
-          normalizedLink: normalizedTarget.normalizedUrl,
-          trigger: "create",
-        });
-        queueJobId = queueResult.jobId;
-
-        if (!queueResult.enqueued) {
-          processContentEmbedding(content._id.toString()).catch((err) =>
-            console.error("[AUTO_AI_FAILED]", err.message)
-          );
-        }
-      } catch (err) {
-        console.warn("[AUTO_AI_ENQUEUE_FAILED]", (err as Error).message);
-        processContentEmbedding(content._id.toString()).catch((e) =>
-          console.error("[AUTO_AI_FAILED]", e.message)
-        );
-      }
-    }
+    // STEP 2: Content is saved as unprocessed. AI is triggered manually.
 
     res.json({
       success: true,
-      message: "Content added. Neural synthesis triggered.",
+      message: "Content added.",
       contentId: content._id,
-      jobId: queueJobId,
     });
   } catch (error) {
     console.error("[CONTENT_CREATE_FAILED]", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/api/v1/content/:id/extract", userMiddleware, async (req, res) => {
+  try {
+    const content = await ContentModel.findOne({ _id: req.params.id, userId: req.userId });
+    if (!content) return res.status(404).json({ message: "Content not found" });
+
+    if (content.aiStatus !== "unprocessed" && content.aiStatus !== "failed") {
+      return res.status(400).json({ message: "Content is already being processed or completed" });
+    }
+
+    const user = await UserModel.findById(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Enforce quota for free users
+    if (user.subscriptionPlan !== "pro") {
+      if (user.aiCreditsRemaining <= 0) {
+        return res.status(403).json({ code: "QUOTA_EXCEEDED", message: "AI credits exhausted" });
+      }
+      // Deduct credit atomically
+      const updatedUser = await UserModel.findOneAndUpdate(
+        { _id: req.userId, aiCreditsRemaining: { $gt: 0 } },
+        { $inc: { aiCreditsRemaining: -1 } },
+        { new: true }
+      );
+      if (!updatedUser) {
+        return res.status(403).json({ code: "QUOTA_EXCEEDED", message: "AI credits exhausted" });
+      }
+    }
+
+    // Set processing state
+    content.aiStatus = "processing";
+    await content.save();
+
+    // Enqueue job
+    try {
+      const queueResult = await enqueueAiIngestionJob({
+        contentId: String(content._id),
+        normalizedLink: content.normalizedLink || content.link,
+        trigger: "reprocess",
+      });
+      
+      if (!queueResult.enqueued) {
+         // Queue is not enabled, so we fall back to synchronous processing
+         processContentEmbedding(content._id.toString()).catch((e) =>
+           console.error("[AUTO_AI_FAILED]", e.message)
+         );
+      }
+      res.json({ success: true, message: "Extraction started", jobId: queueResult.jobId });
+    } catch (e) {
+      // Refund on failure to enqueue
+      if (user.subscriptionPlan !== "pro") {
+        await UserModel.updateOne({ _id: req.userId }, { $inc: { aiCreditsRemaining: 1 } });
+      }
+      content.aiStatus = "failed";
+      await content.save();
+      res.status(500).json({ message: "Failed to start extraction" });
+    }
+  } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -223,14 +282,95 @@ app.get("/api/v1/ai/queue-metrics", userMiddleware, async (_req, res) => {
   res.json(metrics);
 });
 
+app.post('/api/v1/billing/checkout', userMiddleware, createCheckoutOrderController);
+app.post('/api/v1/billing/verify', userMiddleware, verifyPaymentController);
+
 // Minimal user profile
 app.get('/api/v1/me', userMiddleware, async (req, res) => {
   try {
-    const user = await UserModel.findById(req.userId).select('username google');
+    let user = await UserModel.findById(req.userId).select('username google email bio aiPreferences avatarBase64 subscriptionPlan subscriptionPeriodEnd aiCreditsRemaining billingCycleEnd');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    return res.json({ username: user.username, google: user.google || {} });
+    
+    // Lazy Quota Reset
+    const now = new Date();
+    let updatedQuota = false;
+    if (!user.billingCycleEnd || now > user.billingCycleEnd) {
+      const nextMonth = new Date();
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      user.aiCreditsRemaining = 5;
+      user.billingCycleEnd = nextMonth;
+      updatedQuota = true;
+      await user.save();
+    }
+
+    return res.json({ 
+      username: user.username, 
+      email: user.email || "",
+      bio: user.bio || "",
+      avatarBase64: user.avatarBase64 || "",
+      aiPreferences: user.aiPreferences || { tone: "Concise & Professional", autoTagging: false, deepExtraction: true },
+      google: user.google || {},
+      subscriptionPlan: user.subscriptionPlan || "free",
+      subscriptionPeriodEnd: user.subscriptionPeriodEnd || null,
+      aiCreditsRemaining: user.aiCreditsRemaining,
+      billingCycleEnd: user.billingCycleEnd
+    });
   } catch (e) {
     return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.put('/api/v1/me', userMiddleware, async (req, res) => {
+  try {
+    const { username, email, bio, aiPreferences, avatarBase64 } = req.body;
+    const updateData: any = {};
+    if (username !== undefined) updateData.username = username;
+    if (email !== undefined) updateData.email = email;
+    if (bio !== undefined) updateData.bio = bio;
+    if (avatarBase64 !== undefined) updateData.avatarBase64 = avatarBase64;
+    if (aiPreferences !== undefined) {
+      if (aiPreferences.tone !== undefined) updateData['aiPreferences.tone'] = aiPreferences.tone;
+      if (aiPreferences.autoTagging !== undefined) updateData['aiPreferences.autoTagging'] = aiPreferences.autoTagging;
+      if (aiPreferences.deepExtraction !== undefined) updateData['aiPreferences.deepExtraction'] = aiPreferences.deepExtraction;
+    }
+    await UserModel.updateOne({ _id: req.userId }, { $set: updateData });
+    res.json({ success: true, message: 'Profile updated' });
+  } catch (e: any) {
+    console.error("Error updating profile:", e);
+    if (e.code === 11000) {
+      return res.status(400).json({ message: 'Username is already taken' });
+    }
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/api/v1/user/password', userMiddleware, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: "Current and new password required" });
+  }
+  try {
+    const user = await UserModel.findById(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    // @ts-ignore
+    const passwordMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!passwordMatch) return res.status(403).json({ message: "Incorrect current password" });
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await UserModel.updateOne({ _id: req.userId }, { password: hashedPassword });
+    res.json({ success: true, message: "Password updated successfully" });
+  } catch (e) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.delete('/api/v1/user/account', userMiddleware, async (req, res) => {
+  try {
+    await ContentModel.deleteMany({ userId: req.userId });
+    await LinkModel.deleteMany({ userId: req.userId });
+    await UserModel.deleteOne({ _id: req.userId });
+    res.json({ success: true, message: "Account completely deleted" });
+  } catch (e) {
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

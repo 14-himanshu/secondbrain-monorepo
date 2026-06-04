@@ -13,13 +13,34 @@ const startWorker = async () => {
       trigger: job.data.trigger,
     });
 
-    await processContentEmbedding(job.data.contentId);
-
-    console.log("[WORKER][DONE]", {
-      jobId: job.id,
-      contentId: job.data.contentId,
-      durationMs: Date.now() - startedAt,
-    });
+    try {
+      await processContentEmbedding(job.data.contentId);
+      console.log("[WORKER][DONE]", {
+        jobId: job.id,
+        contentId: job.data.contentId,
+        durationMs: Date.now() - startedAt,
+      });
+    } catch (e) {
+      console.error("[WORKER][FAILED]", {
+        jobId: job.id,
+        contentId: job.data.contentId,
+        error: e,
+      });
+      // Refund logic
+      const { ContentModel, UserModel } = await import("./db.js");
+      const content = await ContentModel.findById(job.data.contentId);
+      if (content) {
+        content.aiStatus = "failed";
+        content.aiError = e instanceof Error ? e.message : String(e);
+        await content.save();
+        if (content.userId) {
+          const user = await UserModel.findById(content.userId);
+          if (user && user.subscriptionPlan !== "pro") {
+            await UserModel.updateOne({ _id: content.userId }, { $inc: { aiCreditsRemaining: 1 } });
+          }
+        }
+      }
+    }
   });
 
   if (!worker) {

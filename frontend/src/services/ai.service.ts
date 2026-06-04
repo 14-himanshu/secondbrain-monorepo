@@ -19,7 +19,7 @@ export const aiService = {
    * Triggers manual re-analysis for a note.
    */
   reprocessNote: async (contentId: string) => {
-    return apiClient.post(AI_ENDPOINTS.REPROCESS, { contentId });
+    return apiClient.post(`/api/v1/content/${contentId}/extract`);
   },
 
   /**

@@ -5,7 +5,7 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { pipeline } from "@xenova/transformers";
 import { getGroqApiKey } from "../config.js";
-import { ContentModel, BrainInsightModel } from "../db.js";
+import { ContentModel, BrainInsightModel, UserModel } from "../db.js";
 import { buildDeterministicDescription, deriveCategory, deriveDeterministicTags, deriveTopics, shouldUseAiSynthesis, toBackendType, truncateForSynthesis } from "./ingestion/classification.js";
 import { extractContentFromUrl } from "./ingestion/registry.js";
 import type { ClassificationMode, ExtractedContent, IngestionStatus } from "./ingestion/types.js";
@@ -495,7 +495,19 @@ const shouldReuseCachedSummary = (doc: any, normalizedLink: string) =>
  */
 import type { ExtractContext } from "./ingestion/types.js";
 
-export const getAiClassification = async (url: string, mode: ClassificationMode = "deep", context?: ExtractContext) => {
+export const getAiClassification = async (
+  url: string,
+  mode: ClassificationMode = "deep",
+  context?: ExtractContext
+): Promise<AiClassification> => {
+  const result = await getAiClassificationInternal(url, mode, context);
+  if (context?.aiPrefs?.autoTagging === false) {
+    result.tags = [];
+  }
+  return result;
+};
+
+const getAiClassificationInternal = async (url: string, mode: ClassificationMode = "deep", context?: ExtractContext): Promise<AiClassification> => {
   try {
     const { target, extraction } = await extractContentFromUrl(url, mode, context);
     const blockedStatus = getBlockedIngestionStatus(extraction, mode);
@@ -566,6 +578,16 @@ export const getAiClassification = async (url: string, mode: ClassificationMode 
           ? "The extracted content is partial. Summaries must stay conservative and acknowledge missing detail."
           : "Only source metadata or a limited excerpt was available. Summaries must stay tightly grounded in that limited input.";
 
+    const toneInstruction = context?.aiPrefs?.tone === "Detailed & Academic" 
+      ? "Use a highly academic, comprehensive, and analytical tone for the description and summary points." 
+      : context?.aiPrefs?.tone === "Creative & Casual" 
+        ? "Use a creative, casual, engaging, and conversational tone for the description." 
+        : "Use a concise, highly professional, direct, and factual tone.";
+
+    const tagInstruction = context?.aiPrefs?.autoTagging === false
+      ? "- tags: [] (Return an empty array for tags as auto-tagging is disabled)."
+      : "- tags: 3 to 6 lowercase tags.";
+
     const synthesisPrompt = `You summarize only verified extracted web content.
 Return valid JSON only with:
 {
@@ -583,10 +605,11 @@ Rules:
 - Never use general web/domain knowledge.
 - If extracted content is insufficient, keep title/description conservative and factual.
 - Do not fabricate details, entities, claims, or context.
-- Write a detailed short_description that is roughly 6 to 7 sentences long.
+- Write a short_description that is roughly 6 to 7 sentences long.
+- ${toneInstruction}
 - summary_points: 2 to 4 concise bullets.
 - semantic_summary: 2 to 3 concise insights.
-- tags: 3 to 6 lowercase tags.
+- ${tagInstruction}
 - Be literal and deterministic.
 - ${sourceCoverageNote}`;
 
@@ -617,7 +640,7 @@ ${truncateForSynthesis(extraction.content)}`,
     const llmResponse = response.choices[0]?.message?.content || "{}";
     const result = parseJsonObject(llmResponse) as Record<string, any>;
     const tags = normalizeTags(result.tags);
-    const finalTags = tags.length > 0 ? tags : fallbackClassification.tags;
+    const finalTags = context?.aiPrefs?.autoTagging === false ? [] : (tags.length > 0 ? tags : fallbackClassification.tags);
     const category = String(result.category || "").trim() || deriveCategory(extraction);
     const topics = deriveTopics(finalTags, category);
 
@@ -726,6 +749,14 @@ export const processContentEmbedding = async (contentId: string) => {
       try {
         const content = await ContentModel.findById(contentId);
         if (!content || content.embeddingStatus === "completed") break;
+        
+        let aiPrefs = undefined;
+        if (content.userId) {
+          const user = await UserModel.findById(content.userId);
+          if (user && user.aiPreferences) {
+            aiPrefs = user.aiPreferences;
+          }
+        }
 
         const normalizedLink = String((content as any).normalizedLink || content.link || "");
         if (!normalizedLink) {
@@ -813,9 +844,11 @@ export const processContentEmbedding = async (contentId: string) => {
               console.warn("[GOOGLE_AUTH][ENSURE_FAILED]", (e as Error).message);
             }
 
+            const extractionMode = aiPrefs && aiPrefs.deepExtraction === false ? "quick" : "deep";
             const classification = await withTimeout(
-              getAiClassification(content.link!, "deep", {
+              getAiClassification(content.link!, extractionMode, {
                 userId: content.userId ? String(content.userId) : undefined,
+                aiPrefs
               }),
               45000,
               "ExtractAndSummarize"
@@ -912,8 +945,29 @@ export const processContentEmbedding = async (contentId: string) => {
       }
     }
   } catch (error) {
-    console.error(`[AI][FATAL_ERROR] contentId: ${contentId}`);
-    await ContentModel.findByIdAndUpdate(contentId, { embeddingStatus: "failed" }).catch(() => {});
+    console.error(`[AI][FATAL_ERROR] contentId: ${contentId}`, error);
+    try {
+      const content = await ContentModel.findById(contentId);
+      if (content) {
+        content.aiStatus = "failed";
+        content.embeddingStatus = "failed";
+        content.aiError = error instanceof Error ? error.message : String(error);
+        await content.save();
+        if (content.userId) {
+          const user = await UserModel.findById(content.userId);
+          if (user && user.subscriptionPlan !== "pro") {
+            await UserModel.updateOne(
+              { _id: content.userId },
+              { $inc: { aiCreditsRemaining: 1 } }
+            );
+            console.log(`[AI_REFUND] Refunded credit for content ${contentId} to user ${content.userId}`);
+          }
+        }
+      }
+    } catch (refundError) {
+      console.error("[AI_REFUND_FAILED]", refundError);
+    }
+    throw error;
   } finally {
     currentlyProcessing.delete(contentId);
   }

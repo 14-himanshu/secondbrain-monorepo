@@ -5,16 +5,20 @@ Second Brain is a full-stack knowledge workspace for saving links, notes, videos
 ## Highlights
 
 - Secure authentication with JWT and Google sign-in
+- Email collection during signup with legacy Google OAuth account merging
 - Content capture for posts, videos, and documents
 - Search, filtering, editing, and deletion
 - Shareable public brain pages
 - Responsive dashboard UI
-- AI and integration-ready backend architecture
+- **Premium Razorpay Pro Plan Upgrade**: Elegant payment integration with an animated glassmorphic Upgrade Modal on quota exhaustion, and a dedicated high-fidelity Payment Success page (`/payment-success`)
+- **Settings Hub**: Custom tabs (General, Security, Integrations, AI Preferences, Billing) supporting deep-linking (`/settings?tab=billing`), profile updating (custom avatars), password changes, and account deletion
+- **Descriptive Ask AI Citations**: AI chat answers with grounded context, displaying descriptive inline badges with truncated card titles (e.g., `[1] Card Title...`) and a interactive Cited Sources list at the bottom of response bubbles
+- **Workspace UI Enhancements**: Type-specific icons for Recents, stateful dashboard redirection for manual extractions, and de-congested profile actions
 
 ## Tech Stack
 
-**Frontend:** React, TypeScript, Vite, React Router, Axios, Tailwind CSS  
-**Backend:** Node.js, Express, TypeScript, MongoDB, Mongoose, JWT, bcrypt, Zod  
+**Frontend:** React, TypeScript, Vite, React Router, Axios, Tailwind CSS, TanStack Query  
+**Backend:** Node.js, Express, TypeScript, MongoDB, Mongoose, JWT, bcrypt, Zod, Razorpay  
 **Shared:** `@secondbrain/contracts`
 
 ## Project Structure

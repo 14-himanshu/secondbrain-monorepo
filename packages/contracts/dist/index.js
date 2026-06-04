@@ -9,6 +9,7 @@ export const INGESTION_STATUSES = [
     "failed",
 ];
 export const AI_STATUSES = [
+    "unprocessed",
     "queued",
     "processing",
     "scraping",

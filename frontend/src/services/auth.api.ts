@@ -10,10 +10,10 @@ export const signIn = async (username: string, password: string) => {
   return response.data;
 };
 
-export const signUp = async (username: string, password: string) => {
+export const signUp = async (username: string, email: string, password: string) => {
   const response = await apiClient.post<{ message: string; errors?: ValidationIssue[] }>(
     "/api/v1/signup",
-    { username, password }
+    { username, email, password }
   );
   return response.data;
 };

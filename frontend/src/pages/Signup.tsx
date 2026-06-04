@@ -15,6 +15,7 @@ interface ValidationError {
 
 export function Signup() {
   const usernameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -27,9 +28,10 @@ export function Signup() {
     setSuccessMsg("");
     setLoading(true);
     const username = usernameRef.current?.value ?? "";
+    const email = emailRef.current?.value ?? "";
     const password = passwordRef.current?.value ?? "";
     try {
-      await signUp(username, password);
+      await signUp(username, email, password);
       setSuccessMsg("Account created! Redirecting you to sign in…");
       setTimeout(() => navigate("/signin"), 1500);
     } catch (e) {
@@ -49,6 +51,7 @@ export function Signup() {
   }
 
   const usernameErrors = errors.filter((e) => e.path?.includes("username"));
+  const emailErrors = errors.filter((e) => e.path?.includes("email"));
   const passwordErrors = errors.filter((e) => e.path?.includes("password"));
   const generalErrors = errors.filter((e) => e.path?.includes("general"));
 
@@ -145,6 +148,23 @@ export function Signup() {
             {usernameErrors.length > 0 && (
               <div className="mt-1.5 flex flex-col gap-0.5">
                 {usernameErrors.map((err, i) => (
+                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
+                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                    </svg>
+                    {err.message}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Email field */}
+          <div className="mb-4">
+            <Input ref={emailRef} placeholder="Enter your email address" label="Email Address" type="email" />
+            {emailErrors.length > 0 && (
+              <div className="mt-1.5 flex flex-col gap-0.5">
+                {emailErrors.map((err, i) => (
                   <p key={i} className="text-red-500 text-xs flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
                       <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />

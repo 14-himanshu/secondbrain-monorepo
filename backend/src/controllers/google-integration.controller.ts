@@ -201,9 +201,39 @@ export const googleCallbackController = async (req: Request, res: Response) => {
       }
 
       // Find or create user
-      let user = await UserModel.findOne({ username: email });
+      let user = await UserModel.findOne({
+        $or: [
+          { username: email },
+          { email: email },
+          { "google.email": email }
+        ]
+      });
+
       if (!user) {
-        user = await UserModel.create({ username: email, password: Math.random().toString(36), google: { loginOnly: true } });
+        user = await UserModel.create({ 
+          username: email, 
+          email: email,
+          password: Math.random().toString(36), 
+          google: { loginOnly: true, connected: true, email: email } 
+        });
+      } else {
+        // If user exists, ensure email is populated and Google login is connected
+        let updated = false;
+        if (!user.email) {
+          user.email = email;
+          updated = true;
+        }
+        if (!user.google || !user.google.connected) {
+          user.google = {
+            connected: true,
+            email: email,
+            loginOnly: false
+          };
+          updated = true;
+        }
+        if (updated) {
+          await user.save();
+        }
       }
 
       // Create short-lived one-time login code (2m)

@@ -25,6 +25,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const payload = error.response?.data as { message?: string } | undefined;
+    
+    // Automatically log out if token verification fails
+    // Only redirect on 401 (Unauthorized), not 403 (Forbidden/Quota)
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/signin";
+    }
+
     const normalized: ApiError = {
       status: error.response?.status,
       code: error.code,

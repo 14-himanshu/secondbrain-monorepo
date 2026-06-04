@@ -15,6 +15,7 @@ export const INGESTION_STATUSES = [
 export type IngestionStatus = (typeof INGESTION_STATUSES)[number];
 
 export const AI_STATUSES = [
+  "unprocessed",
   "queued",
   "processing",
   "scraping",

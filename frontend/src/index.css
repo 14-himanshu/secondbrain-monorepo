@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @tailwind utilities;
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --color-purple-50: #f8f7ff;
@@ -24,7 +25,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-slate-900 antialiased;
+    @apply bg-gray-50 text-slate-900 antialiased dark:bg-[#0a0a0b] dark:text-gray-100 transition-colors duration-200;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

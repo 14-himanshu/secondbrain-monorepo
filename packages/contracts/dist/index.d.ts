@@ -4,7 +4,7 @@ export declare const EMBEDDING_STATUSES: readonly ["pending", "completed", "fail
 export type EmbeddingStatus = (typeof EMBEDDING_STATUSES)[number];
 export declare const INGESTION_STATUSES: readonly ["full_extraction", "partial_extraction", "metadata_only", "authentication_required", "unsupported", "failed"];
 export type IngestionStatus = (typeof INGESTION_STATUSES)[number];
-export declare const AI_STATUSES: readonly ["queued", "processing", "scraping", "analyzing", "summarized", "needs_manual_content", "completed", "failed"];
+export declare const AI_STATUSES: readonly ["unprocessed", "queued", "processing", "scraping", "analyzing", "summarized", "needs_manual_content", "completed", "failed"];
 export type AiStatus = (typeof AI_STATUSES)[number];
 export type ShareType = "private" | "link" | "public";
 export interface ContentDto {

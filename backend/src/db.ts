@@ -8,6 +8,21 @@ export const connectToDatabase = async () => {
 const UserSchema = new Schema({
   username: { type: String, unique: true },
   password: String,
+  email: String,
+  bio: String,
+  avatarBase64: { type: String, select: true },
+  aiPreferences: {
+    tone: { type: String, default: "Concise & Professional" },
+    autoTagging: { type: Boolean, default: false },
+    deepExtraction: { type: Boolean, default: true }
+  },
+  razorpayCustomerId: String,
+  razorpaySubscriptionId: String,
+  subscriptionPlan: { type: String, default: 'free' },
+  subscriptionStatus: { type: String, default: 'inactive' },
+  subscriptionPeriodEnd: Date,
+  aiCreditsRemaining: { type: Number, default: 5 },
+  billingCycleEnd: Date,
   google: {
     connected: { type: Boolean, default: false },
     email: String,
@@ -43,7 +58,7 @@ const ContentSchema = new Schema({
     aiStatus: {
         type: String,
         enum: AI_STATUSES,
-        default: 'queued'
+        default: 'unprocessed'
     },
     aiProgress: { type: Number, default: 0 },
     aiMetadata: {

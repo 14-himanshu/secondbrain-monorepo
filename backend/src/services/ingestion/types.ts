@@ -47,7 +47,14 @@ export interface UrlTarget {
   videoId?: string | undefined;
 }
 
-export type ExtractContext = { userId?: string | undefined };
+export type ExtractContext = { 
+  userId?: string | undefined;
+  aiPrefs?: {
+    tone: string;
+    autoTagging: boolean;
+    deepExtraction: boolean;
+  } | undefined;
+};
 
 
 export interface StructuredMetadata {

@@ -78,6 +78,7 @@ export default function Recents() {
                   aiMetadata={c.aiMetadata}
                   description={c.description}
                   onSelect={() => navigate('/', { state: { openId: c._id } })}
+                  onGenerateInsight={() => navigate('/', { state: { openId: c._id, triggerExtract: true } })}
                   onEdit={(newTitle) => editContent({ contentId: c._id, title: newTitle })}
                   onDelete={() => deleteContent(c._id)}
                 />

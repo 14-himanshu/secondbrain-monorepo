@@ -34,3 +34,5 @@ export const getGoogleScopes = () =>
     .filter(Boolean);
 
 export const getTokenEncryptionKey = () => process.env.TOKEN_ENCRYPTION_KEY?.trim();
+export const getRazorpayKeyId = () => process.env.RAZORPAY_KEY_ID?.trim();
+export const getRazorpayKeySecret = () => process.env.RAZORPAY_KEY_SECRET?.trim();

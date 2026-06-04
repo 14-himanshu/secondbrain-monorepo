@@ -1,6 +1,7 @@
 import { createDom, extractStructuredMetadata, fetchJsonResponse, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
 import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
+import { YoutubeTranscript } from "youtube-transcript";
 
 type CachedYouTubePage = {
   fetchedAt: number;
@@ -174,61 +175,55 @@ export const extractYouTubeContent = async (
       };
     }
 
-    const captionTrack = chooseCaptionTrack(playerResponse);
-    if (captionTrack?.baseUrl) {
-      try {
-        const cachedTranscript = getCachedTranscript(cacheKey);
-        if (cachedTranscript) {
-          const cachedValidation = assessExtractionQuality(cachedTranscript, "youtube-transcript", target.platform);
-          if (cachedValidation.passed) {
-            return {
-              platform: target.platform,
-              normalizedUrl: target.normalizedUrl,
-              source: "youtube-transcript",
-              sourceType: "public_source",
-              ingestionStatus: deriveIngestionStatus("youtube-transcript", cachedValidation, "public_source"),
-              acquisitionMethod: "transcript",
-              confidence: adjustConfidence(0.95, cachedValidation),
-              wordCount: cachedValidation.wordCount,
-              extractionQuality: deriveExtractionQuality(cachedValidation, "public_source"),
-              cacheable: true,
-              content: cachedTranscript,
-              metadata,
-              validation: cachedValidation,
-              contentType: "video",
-            };
-          }
-        }
-
-        const transcriptUrl = captionTrack.baseUrl.includes("fmt=")
-          ? captionTrack.baseUrl
-          : `${captionTrack.baseUrl}${captionTrack.baseUrl.includes("?") ? "&" : "?"}fmt=json3`;
-        const transcriptPayload = await fetchJsonResponse<any>(transcriptUrl, 4500);
-        const transcript = extractTranscriptText(transcriptPayload);
-        const validation = assessExtractionQuality(transcript, "youtube-transcript", target.platform);
-
-        if (transcript && validation.passed) {
-          youtubeTranscriptCache.set(cacheKey, { fetchedAt: Date.now(), transcript });
+    try {
+      const cachedTranscript = getCachedTranscript(cacheKey);
+      if (cachedTranscript) {
+        const cachedValidation = assessExtractionQuality(cachedTranscript, "youtube-transcript", target.platform);
+        if (cachedValidation.passed) {
           return {
             platform: target.platform,
             normalizedUrl: target.normalizedUrl,
             source: "youtube-transcript",
             sourceType: "public_source",
-            ingestionStatus: deriveIngestionStatus("youtube-transcript", validation, "public_source"),
+            ingestionStatus: deriveIngestionStatus("youtube-transcript", cachedValidation, "public_source"),
             acquisitionMethod: "transcript",
-            confidence: adjustConfidence(0.95, validation),
-            wordCount: validation.wordCount,
-            extractionQuality: deriveExtractionQuality(validation, "public_source"),
+            confidence: adjustConfidence(0.95, cachedValidation),
+            wordCount: cachedValidation.wordCount,
+            extractionQuality: deriveExtractionQuality(cachedValidation, "public_source"),
             cacheable: true,
-            content: transcript,
+            content: cachedTranscript,
             metadata,
-            validation,
+            validation: cachedValidation,
             contentType: "video",
           };
         }
-      } catch {
-        // Transcript is optional. Metadata fallback below remains deterministic.
       }
+
+      const transcriptResponse = await YoutubeTranscript.fetchTranscript(target.videoId || target.normalizedUrl);
+      const transcript = normalizeWhitespace(transcriptResponse.map((t) => t.text).join(" "));
+      const validation = assessExtractionQuality(transcript, "youtube-transcript", target.platform);
+
+      if (transcript && validation.passed) {
+        youtubeTranscriptCache.set(cacheKey, { fetchedAt: Date.now(), transcript });
+        return {
+          platform: target.platform,
+          normalizedUrl: target.normalizedUrl,
+          source: "youtube-transcript",
+          sourceType: "public_source",
+          ingestionStatus: deriveIngestionStatus("youtube-transcript", validation, "public_source"),
+          acquisitionMethod: "transcript",
+          confidence: adjustConfidence(0.95, validation),
+          wordCount: validation.wordCount,
+          extractionQuality: deriveExtractionQuality(validation, "public_source"),
+          cacheable: true,
+          content: transcript,
+          metadata,
+          validation,
+          contentType: "video",
+        };
+      }
+    } catch (e) {
+      // Transcript is optional. Metadata fallback below remains deterministic.
     }
     const validation = assessExtractionQuality(metadataContent, "youtube-metadata", target.platform);
 

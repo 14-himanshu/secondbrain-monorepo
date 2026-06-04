@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import { getAiClassification, processContentEmbedding, generateAiChatAnswerStream, generateAiChatAnswer, createEmbedding, generateBrainIntelligence, getDeterministicAnalytics, AIError, AIErrorCode } from "../services/ai.service.js";
 import { cosineSimilarity } from "../utils.js";
-import { ContentModel, BrainInsightModel } from "../db.js";
+import { ContentModel, BrainInsightModel, UserModel } from "../db.js";
 import { z } from "zod";
 import { enqueueAiIngestionJob } from "../queue/ai-jobs.js";
 
@@ -248,8 +248,11 @@ export const aiTagController = async (req: Request, res: Response) => {
 
     const { url } = parsed.data;
     
-    // Attempt classification with the service
-    const classification = await getAiClassification(url, "quick", { userId: req.userId });
+    const user = await UserModel.findById(req.userId);
+    const classification = await getAiClassification(url, "quick", {
+      userId: req.userId,
+      aiPrefs: user?.aiPreferences
+    });
 
     // If classification is returned with fallback values, we still consider it a success
     // but the frontend can decide how to display it.
@@ -277,55 +280,7 @@ export const aiTagController = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * AI Reprocess Controller
- * Manually triggers AI analysis for a specific piece of content.
- */
-export const aiReprocessController = async (req: Request, res: Response) => {
-  try {
-    const { contentId } = req.body;
-    const userId = req.userId;
 
-    if (!contentId) {
-      return res.status(400).json({ success: false, message: "Content ID is required." });
-    }
-
-    const content = await ContentModel.findOne({ _id: contentId, userId });
-
-    if (!content) {
-      return res.status(404).json({ success: false, message: "Memory not found." });
-    }
-
-    // Skip if already deeply synthesized and not forced
-    if (content.aiStatus === "summarized" || content.aiStatus === "completed") {
-      return res.json({ success: true, data: content, message: "Already synthesized." });
-    }
-
-    // Trigger Synthesis
-    await ContentModel.updateOne({ _id: contentId }, { aiStatus: "processing" });
-
-    const normalizedLink = content.normalizedLink || content.link || "";
-    const queueResult = await enqueueAiIngestionJob({
-      contentId,
-      normalizedLink,
-      trigger: "reprocess",
-    });
-
-    if (!queueResult.enqueued) {
-      processContentEmbedding(contentId).catch(err => console.error("[BG_SYNTHESIS_FAILED]", err));
-    }
-
-    res.json({
-      success: true,
-      message: "Synthesis triggered.",
-      jobId: queueResult.jobId,
-    });
-
-  } catch (error: any) {
-    console.error("[AI_REPROCESS_FAILURE]", error.message);
-    res.status(500).json({ success: false, message: "Failed to synthesize memory." });
-  }
-};
 
 /**
  * AI Insights Controller (Production Grade)

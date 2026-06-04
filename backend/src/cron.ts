@@ -12,10 +12,8 @@ export const initCronJobs = () => {
       const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
 
       const stuckContent = await ContentModel.find({
-        $or: [
-          { embeddingStatus: "pending", updatedAt: { $lt: twoMinutesAgo } },
-          { aiStatus: "queued" }
-        ]
+        aiStatus: { $in: ["queued", "processing"] },
+        updatedAt: { $lt: twoMinutesAgo }
       });
 
       if (stuckContent.length === 0) {

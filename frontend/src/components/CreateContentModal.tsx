@@ -121,13 +121,13 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={handleClose}></div>
           
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg relative p-8 transition-all">
+          <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-xl w-full max-w-lg relative p-8 transition-all">
             <button onClick={handleClose} className="absolute top-6 right-6 p-1 text-gray-400 hover:text-gray-600 transition-colors">
               <CrossIcon />
             </button>
 
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Add Content</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">Add Content</h2>
               <p className="text-xs text-gray-400 font-medium tracking-wide">Capture and categorize your insights.</p>
             </div>
 
@@ -136,7 +136,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
               <div>
                 <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Source Link</label>
                 <div className={`flex items-center rounded-xl border transition-all ${
-                  aiError ? "border-red-200" : "border-gray-200 focus-within:border-purple-300 focus-within:ring-2 focus-within:ring-purple-50"
+                  aiError ? "border-red-200 dark:border-red-800/50" : "border-gray-200 dark:border-gray-800 focus-within:border-purple-300 dark:focus-within:border-purple-800 focus-within:ring-2 focus-within:ring-purple-50 dark:focus-within:ring-purple-900/30"
                 }`}>
                   <input
                     value={link}
@@ -145,12 +145,12 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                       if (aiError) setAiError(null);
                     }}
                     placeholder="https://..."
-                    className="flex-1 px-4 py-2.5 outline-none text-sm text-gray-700 bg-transparent placeholder:text-gray-300"
+                    className="flex-1 px-4 py-2.5 outline-none text-sm text-gray-700 dark:text-gray-200 bg-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600"
                   />
                   <button
                     onClick={suggestMetadata}
                     disabled={isAnalyzing || !link}
-                    className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-purple-600 disabled:text-gray-300 transition-colors border-l border-gray-100"
+                    className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 disabled:text-gray-300 dark:disabled:text-gray-600 transition-colors border-l border-gray-100 dark:border-gray-800"
                   >
                     {isAnalyzing ? (
                       <div className="w-3.5 h-3.5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
@@ -172,7 +172,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Note title..."
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-50 outline-none transition-all text-sm text-gray-700 placeholder:text-gray-300"
+                  className="w-full bg-transparent px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:border-purple-300 dark:focus:border-purple-800 focus:ring-2 focus:ring-purple-50 dark:focus:ring-purple-900/30 outline-none transition-all text-sm text-gray-700 dark:text-gray-200 placeholder:text-gray-400 dark:placeholder:text-gray-600"
                 />
               </div>
 
@@ -186,8 +186,8 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                       onClick={() => setType(value)}
                       className={`py-2.5 rounded-xl text-xs font-bold transition-all duration-200 active:scale-95 border-2 ${
                         type === value 
-                          ? "bg-purple-50 border-purple-200 text-purple-700 shadow-sm shadow-purple-100/60" 
-                          : "bg-white border-gray-100 text-gray-400 hover:bg-gray-50 hover:border-gray-200"
+                          ? "bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-400 shadow-sm shadow-purple-100/60 dark:shadow-none" 
+                          : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
                       }`}
                     >
                       {key}
@@ -201,7 +201,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                 <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tags</label>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {tags.map((tag) => (
-                    <span key={tag} className="bg-purple-50 text-purple-600 px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-purple-100">
+                    <span key={tag} className="bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 px-3 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1.5 border border-purple-100 dark:border-purple-800">
                       #{tag}
                       <button onClick={() => removeTag(tag)} className="hover:text-red-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-3 h-3">
@@ -211,13 +211,13 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center rounded-xl border border-gray-200 focus-within:border-purple-300 focus-within:ring-2 focus-within:ring-purple-50 transition-all bg-transparent">
+                <div className="flex items-center rounded-xl border border-gray-200 dark:border-gray-800 focus-within:border-purple-300 dark:focus-within:border-purple-800 focus-within:ring-2 focus-within:ring-purple-50 dark:focus-within:ring-purple-900/30 transition-all bg-transparent">
                   <input
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleAddTag}
                     placeholder="Add tags (press Enter or click +)..."
-                    className="flex-1 px-4 py-2.5 outline-none text-sm text-gray-700 bg-transparent placeholder:text-gray-300"
+                    className="flex-1 px-4 py-2.5 outline-none text-sm text-gray-700 dark:text-gray-200 bg-transparent placeholder:text-gray-400 dark:placeholder:text-gray-600"
                   />
                   <button
                     onClick={(e) => {
@@ -228,7 +228,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
                       }
                     }}
                     disabled={!tagInput.trim()}
-                    className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-purple-600 disabled:text-gray-300 transition-colors border-l border-gray-100"
+                    className="px-4 py-2.5 text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 disabled:text-gray-300 dark:disabled:text-gray-600 transition-colors border-l border-gray-100 dark:border-gray-800"
                     title="Add tag"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor" className="w-4 h-4">
@@ -239,7 +239,7 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
               </div>
 
               {validationError && (
-                <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5 animate-in fade-in duration-200">
+                <div className="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 flex items-start gap-2.5 animate-in fade-in duration-200">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
                     <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
                   </svg>

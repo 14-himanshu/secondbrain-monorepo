@@ -70,7 +70,7 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
       ></div>
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl transition-all space-y-6">
+      <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 p-6 shadow-2xl transition-all space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -80,18 +80,18 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Share Brain</h3>
-              <p className="text-sm text-gray-500">Control who can view your brain</p>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Share Brain</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Control who can view your brain</p>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors">
+          <button onClick={onClose} className="rounded-full p-1 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
             <CrossIcon />
           </button>
         </div>
 
         {/* Error banner */}
         {error && (
-          <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5 animate-in fade-in duration-200" role="alert">
+          <div className="px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 flex items-start gap-2.5 animate-in fade-in duration-200" role="alert">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
               <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
             </svg>
@@ -114,18 +114,18 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
                 disabled={loading}
                 className={`flex items-center gap-3.5 rounded-xl border p-3.5 text-left transition-all duration-200 ${
                   shareType === mode.id 
-                    ? 'border-purple-200 bg-purple-50/40 shadow-[0_2px_8px_rgba(109,99,255,0.05)] ring-1 ring-purple-100/50' 
-                    : 'border-gray-100/80 bg-white hover:border-gray-200 hover:bg-gray-50/50 hover:shadow-sm'
+                    ? 'border-purple-200 dark:border-purple-800 bg-purple-50/40 dark:bg-purple-900/20 shadow-[0_2px_8px_rgba(109,99,255,0.05)] ring-1 ring-purple-100/50 dark:ring-purple-900/50' 
+                    : 'border-gray-100/80 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-gray-200 dark:hover:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 hover:shadow-sm'
                 }`}
               >
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${shareType === mode.id ? 'bg-purple-100/60 text-purple-600' : 'bg-gray-50 text-gray-400'}`}>
+                <div className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${shareType === mode.id ? 'bg-purple-100/60 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400' : 'bg-gray-50 dark:bg-gray-800 text-gray-400 dark:text-gray-500'}`}>
                   {mode.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className={`text-[14px] font-bold tracking-tight ${shareType === mode.id ? 'text-purple-900' : 'text-gray-900'}`}>{mode.label}</div>
-                  <div className={`text-[12px] font-medium mt-0.5 ${shareType === mode.id ? 'text-purple-600/70' : 'text-gray-500'}`}>{mode.desc}</div>
+                  <div className={`text-[14px] font-bold tracking-tight ${shareType === mode.id ? 'text-purple-900 dark:text-purple-300' : 'text-gray-900 dark:text-gray-200'}`}>{mode.label}</div>
+                  <div className={`text-[12px] font-medium mt-0.5 ${shareType === mode.id ? 'text-purple-600/70 dark:text-purple-400/70' : 'text-gray-500 dark:text-gray-400'}`}>{mode.desc}</div>
                 </div>
-                <div className={`transition-all duration-200 ${shareType === mode.id ? 'opacity-100 scale-100 text-purple-600' : 'opacity-0 scale-75 text-transparent'}`}>
+                <div className={`transition-all duration-200 ${shareType === mode.id ? 'opacity-100 scale-100 text-purple-600 dark:text-purple-400' : 'opacity-0 scale-75 text-transparent'}`}>
                   <CheckIcon />
                 </div>
               </button>
@@ -135,19 +135,19 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
 
         {/* Link Management (Visible if not Private) */}
         {shareType !== 'private' && shareId && (
-          <div className="space-y-3 rounded-xl bg-gray-50/40 p-4 border border-gray-100/80 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="space-y-3 rounded-xl bg-gray-50/40 dark:bg-gray-800/40 p-4 border border-gray-100/80 dark:border-gray-800 animate-in fade-in slide-in-from-top-2 duration-300">
             <div className="flex items-center justify-between">
               <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Shareable Link</label>
               <button 
                 onClick={() => updateShareSettings(shareType, true)}
-                className="text-[11px] font-bold text-purple-600 hover:text-purple-700 hover:bg-purple-100/80 uppercase tracking-wide flex items-center gap-1.5 bg-purple-50 px-2.5 py-1.5 rounded-lg transition-colors"
+                className="text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 hover:bg-purple-100/80 dark:hover:bg-purple-900/50 uppercase tracking-wide flex items-center gap-1.5 bg-purple-50 dark:bg-purple-900/30 px-2.5 py-1.5 rounded-lg transition-colors"
                 disabled={loading}
               >
                 <RefreshIcon /> REGENERATE
               </button>
             </div>
             <div className="flex items-center gap-2">
-              <div className="flex-1 overflow-hidden rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[13px] font-medium text-gray-600 shadow-sm truncate">
+              <div className="flex-1 overflow-hidden rounded-xl border border-gray-200/80 dark:border-gray-700 bg-white dark:bg-gray-900 px-3.5 py-2.5 text-[13px] font-medium text-gray-600 dark:text-gray-300 shadow-sm truncate">
                 {shareUrl}
               </div>
               <button
@@ -166,11 +166,11 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
         )}
 
         {/* Permissions & Scope */}
-        <div className="grid grid-cols-2 gap-4 mt-2 pt-6 border-t border-gray-100/60">
+        <div className="grid grid-cols-2 gap-4 mt-2 pt-6 border-t border-gray-100/60 dark:border-gray-800">
           <div className="space-y-2.5">
             <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1">Permissions</label>
             <div className="relative">
-              <select className="w-full rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[14px] font-bold text-gray-600 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+              <select className="w-full rounded-xl border border-gray-200/80 dark:border-gray-700 bg-white dark:bg-gray-900 px-3.5 py-2.5 text-[14px] font-bold text-gray-600 dark:text-gray-300 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
                 <option>View only</option>
                 <option disabled>Edit (Coming soon)</option>
               </select>
@@ -182,7 +182,7 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
           <div className="space-y-2.5">
             <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1">Scope</label>
             <div className="relative">
-              <select className="w-full rounded-xl border border-gray-200/80 bg-white px-3.5 py-2.5 text-[14px] font-bold text-gray-700 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+              <select className="w-full rounded-xl border border-gray-200/80 dark:border-gray-700 bg-white dark:bg-gray-900 px-3.5 py-2.5 text-[14px] font-bold text-gray-700 dark:text-gray-300 focus:outline-none appearance-none cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
                 <option>Entire Brain</option>
                 <option disabled>Selected Items</option>
               </select>
@@ -198,7 +198,7 @@ export function ShareModal({ open, onClose, onStatusChange, shareStatus }: Share
           <div className="pt-2">
             <button
               onClick={() => updateShareSettings('private')}
-              className="w-full rounded-xl border border-red-100/60 bg-[#FFF0F0] py-3 text-[14px] font-bold text-[#FF3B30] hover:bg-[#FFE5E5] hover:border-red-200 transition-colors shadow-sm active:scale-[0.98]"
+              className="w-full rounded-xl border border-red-100/60 dark:border-red-900/50 bg-[#FFF0F0] dark:bg-red-900/10 py-3 text-[14px] font-bold text-[#FF3B30] dark:text-red-400 hover:bg-[#FFE5E5] dark:hover:bg-red-900/20 hover:border-red-200 dark:hover:border-red-800 transition-colors shadow-sm active:scale-[0.98]"
               disabled={loading}
             >
               Stop Sharing

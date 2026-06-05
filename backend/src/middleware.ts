@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { getJwtPassword } from "./config.js";
+import { UserModel } from "./db.js";
 
-export const userMiddleware = (
+export const userMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -37,6 +38,13 @@ export const userMiddleware = (
 
     // @ts-ignore
     req.userId = decoded.id;
+
+    // Verify user actually exists in the database to prevent session drift/dead tokens (e.g. database resets)
+    const exists = await UserModel.exists({ _id: decoded.id });
+    if (!exists) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
     next();
   } catch (err) {
     return res.status(403).json({ message: "Token verification failed" });

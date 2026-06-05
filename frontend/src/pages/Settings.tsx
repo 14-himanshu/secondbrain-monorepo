@@ -26,6 +26,7 @@ export function Settings() {
     aiPreferences: { tone: "Concise & Professional", autoTagging: false, deepExtraction: true } 
   });
   const [saveMsg, setSaveMsg] = useState("");
+  const [saveMsgType, setSaveMsgType] = useState<"success" | "error" | "">("");
   
   // Password state
   const [currentPassword, setCurrentPassword] = useState("");
@@ -55,14 +56,16 @@ export function Settings() {
   };
 
   const handleSaveProfile = async () => {
-    setIsLoading(true); setSaveMsg("");
+    setIsLoading(true); setSaveMsg(""); setSaveMsgType("");
     try {
       await apiClient.put('/api/v1/me', { username: user.username, email: user.email, bio: user.bio, avatarBase64: user.avatarBase64 });
       localStorage.setItem("username", user.username);
       setSaveMsg("Profile updated.");
-      setTimeout(() => setSaveMsg(""), 3000);
+      setSaveMsgType("success");
+      setTimeout(() => { setSaveMsg(""); setSaveMsgType(""); }, 3000);
     } catch (e: any) { 
-      setSaveMsg(e.response?.data?.message || "Failed to save profile."); 
+      setSaveMsg(e.message || "Failed to save profile."); 
+      setSaveMsgType("error");
     }
     setIsLoading(false);
   };
@@ -85,7 +88,7 @@ export function Settings() {
       setCurrentPassword("");
       setNewPassword("");
     } catch (e: any) {
-      setPasswordMsg({ type: "error", text: e.response?.data?.message || e.message || "Failed to update password." });
+      setPasswordMsg({ type: "error", text: e.message || "Failed to update password." });
     }
     setIsLoading(false);
   };
@@ -123,6 +126,13 @@ export function Settings() {
     reader.readAsDataURL(file);
   };
 
+  const handleRemoveAvatar = () => {
+    setUser({ ...user, avatarBase64: "" });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleConnectGoogle = async () => {
     if (user.google?.connected) {
       // Disconnect
@@ -148,7 +158,7 @@ export function Settings() {
         setIsLoading(false);
       }
     } catch (e: any) {
-      alert(e.response?.data?.message || "Failed to start Google connection");
+      alert(e.message || "Failed to start Google connection");
       setIsLoading(false);
     }
   };
@@ -279,9 +289,16 @@ export function Settings() {
                   </div>
                   <div>
                     <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/png, image/jpeg, image/gif" className="hidden" />
-                    <button onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-bold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                      Change Avatar
-                    </button>
+                    <div className="flex gap-2">
+                      <button onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-bold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        Change Avatar
+                      </button>
+                      {user.avatarBase64 && (
+                        <button onClick={handleRemoveAvatar} className="px-4 py-2 bg-red-50 dark:bg-red-950/30 text-red-650 dark:text-red-400 text-sm font-bold rounded-xl border border-red-200 dark:border-red-900/30 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
+                          Remove
+                        </button>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">JPG, GIF or PNG. Max size of 800K</p>
                   </div>
                 </div>
@@ -303,7 +320,11 @@ export function Settings() {
                     <button onClick={handleSaveProfile} disabled={isLoading} className="px-5 py-2.5 bg-purple-600 text-white text-sm font-bold rounded-xl hover:bg-purple-700 disabled:opacity-50 shadow-sm transition-all active:scale-95">
                       {isLoading ? "Saving..." : "Save Changes"}
                     </button>
-                    {saveMsg && <span className="text-sm font-medium text-green-600">{saveMsg}</span>}
+                    {saveMsg && (
+                      <span className={`text-sm font-medium ${saveMsgType === "error" ? "text-red-500" : "text-purple-600"}`}>
+                        {saveMsg}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

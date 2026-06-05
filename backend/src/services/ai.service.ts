@@ -807,6 +807,7 @@ export const processContentEmbedding = async (contentId: string) => {
                 const quickClassification = await withTimeout(
                   getAiClassification(content.link!, "quick", {
                     userId: content.userId ? String(content.userId) : undefined,
+                    aiPrefs,
                   }),
                   8000,
                   "YouTubeQuickPreview"

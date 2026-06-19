@@ -11,9 +11,10 @@ import {
 import { UserModel } from "../db.js";
 
 type OAuthStatePayload = {
-  type: "google_oauth_state";
-  userId: string;
+  type: "google_oauth_state" | "google_oauth_login";
+  userId?: string;
   nonce: string;
+  redirectBase?: string;
 };
 
 const getFrontendRedirectBase = () => getFrontendUrls()?.[0] || "http://localhost:5173";
@@ -36,8 +37,8 @@ const getGoogleConfig = (): GoogleConfig => {
   return { clientId: clientId!, clientSecret: clientSecret!, redirectUri: redirectUri! };
 };
 
-const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: string) => {
-  const url = new URL("/integrations/callback", getFrontendRedirectBase());
+const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: string, redirectBase?: string) => {
+  const url = new URL("/integrations/callback", redirectBase || getFrontendRedirectBase());
   url.searchParams.set("integration", "google");
   url.searchParams.set("status", status);
   if (reason) {
@@ -46,8 +47,8 @@ const buildFrontendCallbackUrl = (status: "connected" | "failed", reason?: strin
   return url.toString();
 };
 
-const buildFrontendAuthCallbackUrl = (status: "success" | "failed", loginCode?: string, reason?: string) => {
-  const url = new URL("/auth/callback", getFrontendRedirectBase());
+const buildFrontendAuthCallbackUrl = (status: "success" | "failed", loginCode?: string, reason?: string, redirectBase?: string) => {
+  const url = new URL("/auth/callback", redirectBase || getFrontendRedirectBase());
   url.searchParams.set("status", status);
   if (loginCode) url.searchParams.set("login_code", loginCode);
   if (reason) url.searchParams.set("reason", reason);
@@ -122,10 +123,19 @@ export const googleConnectController = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
+  const origin = req.headers.origin || req.headers.referer || "";
+  const allowedFrontends = getFrontendUrls() || [];
+  let redirectBase = getFrontendRedirectBase();
+  const matchedOrigin = allowedFrontends.find((url) => origin.startsWith(url));
+  if (matchedOrigin) {
+    redirectBase = matchedOrigin;
+  }
+
   const statePayload: OAuthStatePayload = {
     type: "google_oauth_state",
     userId,
     nonce: Math.random().toString(36).slice(2),
+    redirectBase,
   };
 
   const state = jwt.sign(statePayload, getJwtPassword(), { expiresIn: "10m" });
@@ -153,10 +163,19 @@ export const googleSigninStart = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Google integration is not configured." });
   }
 
-  const statePayload = {
+  const origin = req.headers.origin || req.headers.referer || "";
+  const allowedFrontends = getFrontendUrls() || [];
+  let redirectBase = getFrontendRedirectBase();
+  const matchedOrigin = allowedFrontends.find((url) => origin.startsWith(url));
+  if (matchedOrigin) {
+    redirectBase = matchedOrigin;
+  }
+
+  const statePayload: OAuthStatePayload = {
     type: "google_oauth_login",
     nonce: Math.random().toString(36).slice(2),
-  } as any as OAuthStatePayload;
+    redirectBase,
+  };
 
   const state = jwt.sign(statePayload, getJwtPassword(), { expiresIn: "10m" });
   // minimal scopes for signin
@@ -197,7 +216,7 @@ export const googleCallbackController = async (req: Request, res: Response) => {
       const email = await fetchGoogleEmail(tokenResponse.access_token);
 
       if (!email) {
-        return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "no_email_returned"));
+        return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "no_email_returned", payload?.redirectBase));
       }
 
       // Find or create user
@@ -239,16 +258,16 @@ export const googleCallbackController = async (req: Request, res: Response) => {
       // Create short-lived one-time login code (2m)
       const loginCode = jwt.sign({ type: "google_login_code", userId: user._id }, getJwtPassword(), { expiresIn: "2m" });
 
-      return res.redirect(buildFrontendAuthCallbackUrl("success", loginCode));
+      return res.redirect(buildFrontendAuthCallbackUrl("success", loginCode, undefined, payload?.redirectBase));
     } catch (e) {
       console.error("[GOOGLE_OAUTH_LOGIN_FAILED]", e);
-      return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "token_exchange_failed"));
+      return res.redirect(buildFrontendAuthCallbackUrl("failed", undefined, "token_exchange_failed", payload?.redirectBase));
     }
   }
 
   // Existing connect flow: requires userId in state
   if (!payload?.userId || payload.type !== "google_oauth_state") {
-    return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state_payload"));
+    return res.redirect(buildFrontendCallbackUrl("failed", "invalid_state_payload", payload?.redirectBase));
   }
 
   try {
@@ -279,10 +298,10 @@ export const googleCallbackController = async (req: Request, res: Response) => {
     }
 
     await UserModel.updateOne({ _id: payload.userId }, { $set: update });
-    return res.redirect(buildFrontendCallbackUrl("connected"));
+    return res.redirect(buildFrontendCallbackUrl("connected", undefined, payload?.redirectBase));
   } catch (oauthError) {
     console.error("[GOOGLE_OAUTH_CALLBACK_FAILED]", oauthError);
-    return res.redirect(buildFrontendCallbackUrl("failed", "token_exchange_failed"));
+    return res.redirect(buildFrontendCallbackUrl("failed", "token_exchange_failed", payload?.redirectBase));
   }
 };
 

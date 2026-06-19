@@ -136,7 +136,7 @@ export function Dashboard() {
   useEffect(() => {
     if (openIdFromState || locationState?.filter) {
       if (locationState?.filter) {
-        setSelectedFilter(locationState.filter);
+        setTimeout(() => setSelectedFilter(locationState!.filter!), 0);
       }
       navigate(location.pathname, { replace: true, state: {} });
     }
@@ -221,7 +221,7 @@ export function Dashboard() {
   } catch (error) {
     if (isApiError(error) && error.code === "ERR_CANCELED") return;
 
-    if (isApiError(error) && (error.details as any)?.code === "QUOTA_EXCEEDED") {
+    if (isApiError(error) && (error.details as Record<string, unknown>)?.code === "QUOTA_EXCEEDED") {
       setUpgradeModalOpen(true);
       // Revert optimistic UI
       queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
@@ -244,10 +244,11 @@ export function Dashboard() {
 
   useEffect(() => {
     if (locationState?.triggerExtract && openIdFromState) {
-      handleGenerateInsight(openIdFromState);
+      setTimeout(() => handleGenerateInsight(openIdFromState), 0);
       // Clear trigger flag so it doesn't re-run on subsequent renders
       navigate(".", { replace: true, state: { openId: openIdFromState } });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationState, openIdFromState]);
 
   let displayContents = contents;

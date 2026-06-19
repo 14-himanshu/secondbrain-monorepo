@@ -16,7 +16,7 @@ export const getMongoDbUri = () => getRequiredEnv("MONGODB_URI");
 export const getFrontendUrls = () =>
   process.env.FRONTEND_URL
     ?.split(",")
-    .map((url) => url.trim())
+    .map((url) => url.trim().replace(/\/$/, ""))
     .filter(Boolean);
 export const getGroqApiKey = () => process.env.GROQ_API_KEY?.trim();
 export const getOpenAiApiKey = () => process.env.OPENAI_API_KEY?.trim();

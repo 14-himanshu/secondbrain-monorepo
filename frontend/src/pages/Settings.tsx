@@ -12,6 +12,12 @@ const TABS = [
   { id: "appearance", label: "Appearance", icon: "paint-brush" },
   { id: "privacy", label: "Data Privacy", icon: "lock-closed" },
 ];
+const SectionTitle = ({ title, desc }: { title: string; desc: string }) => (
+  <div className="mb-6">
+    <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h2>
+    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{desc}</p>
+  </div>
+);
 
 export function Settings() {
   const navigate = useNavigate();
@@ -230,12 +236,7 @@ export function Settings() {
     }
   };
 
-  const SectionTitle = ({ title, desc }: { title: string; desc: string }) => (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h2>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{desc}</p>
-    </div>
-  );
+
 
   return (
     <div className="min-h-screen bg-gray-50/50 dark:bg-gray-950 flex">

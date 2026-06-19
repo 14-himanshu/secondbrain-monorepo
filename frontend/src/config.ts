@@ -1,5 +1,5 @@
 const resolveBackendUrl = () => {
-  const envUrl = import.meta.env.VITE_BACKEND_URL?.trim();
+  const envUrl = import.meta.env.VITE_BACKEND_URL?.trim().replace(/\/$/, "");
   const hasEnvUrl = Boolean(envUrl);
   const isBrowser = typeof window !== "undefined";
   const hostname = isBrowser ? window.location.hostname : "";
@@ -13,7 +13,7 @@ const resolveBackendUrl = () => {
     return window.location.origin;
   }
 
-  return "http://localhost:5000";
+  return "http://localhost:5001";
 };
 
 export const BACKEND_URL = resolveBackendUrl();

@@ -47,17 +47,17 @@ const ContentSchema = new Schema({
     normalizedLink: String,
     tags: [String],
     topics: [String], // AI-extracted themes
-    type: { type: String, enum: CONTENT_TYPES },
+    type: { type: String, enum: CONTENT_TYPES as unknown as string[] },
     userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
     embedding: { type: [Number], select: false },
     embeddingStatus: { 
         type: String, 
-        enum: EMBEDDING_STATUSES, 
+        enum: EMBEDDING_STATUSES as unknown as string[], 
         default: 'pending' 
     },
     aiStatus: {
         type: String,
-        enum: AI_STATUSES,
+        enum: AI_STATUSES as unknown as string[],
         default: 'unprocessed'
     },
     aiProgress: { type: Number, default: 0 },

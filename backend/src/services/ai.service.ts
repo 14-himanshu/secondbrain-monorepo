@@ -28,8 +28,7 @@ const getExtractor = async () => {
     return extractorPromise;
 };
 
-// @ts-ignore
-puppeteer.use(StealthPlugin());
+(puppeteer as any).use((StealthPlugin as any)());
 
 // --- Reliability Engine (Production Errors & Metrics) ---
 // ... (existing code)
@@ -42,8 +41,7 @@ const deepScrape = async (url: string): Promise<string> => {
   console.log(`[AI][DEEP_SCRAPE_START] ${url}`);
   let browser;
   try {
-    // @ts-ignore
-    browser = await puppeteer.launch({
+    browser = await (puppeteer as any).launch({
       headless: true,
       args: [
         '--no-sandbox', 

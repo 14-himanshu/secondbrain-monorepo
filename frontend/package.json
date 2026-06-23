@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "vitest --environment jsdom --setupFiles src/test/setupTests.ts --run",
+    "test": "vitest --environment jsdom --run",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-hooks": "^8.0.0",
     "@types/node": "^24.10.0",

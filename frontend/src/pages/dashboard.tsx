@@ -40,6 +40,7 @@ export function Dashboard() {
   });
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [semanticResults, setSemanticResults] = useState<Content[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(() => openIdFromState);
@@ -306,15 +307,6 @@ export function Dashboard() {
 
   return (
     <div className="flex bg-gray-100 dark:bg-gray-950 min-h-screen relative overflow-hidden">
-      {/* Mobile open sidebar button */}
-      <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-md bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Open navigation"
-      >
-        <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-
       <Sidebar
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
@@ -345,25 +337,36 @@ export function Dashboard() {
         />
 
         {/* ── Header ── */}
-        <header className="sticky top-0 z-20 bg-white/50 dark:bg-gray-950/50 backdrop-blur-lg px-6 pt-6 pb-4 border-b border-gray-100/50 dark:border-gray-800/50 font-inter">
-          <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-6">
+        <header className="sticky top-0 z-20 bg-white/50 dark:bg-gray-950/50 backdrop-blur-lg px-4 md:px-6 pt-4 md:pt-6 pb-4 border-b border-gray-100/50 dark:border-gray-800/50 font-inter">
+          <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-3 md:gap-6">
               
-              {/* Left: Title */}
-              <div className="shrink-0 min-w-[160px]">
-                <h1 className="text-[26px] font-bold text-gray-900 dark:text-white tracking-tight leading-none font-outfit">
-                  {selectedFilter === "all"      && "All Items"}
-                  {selectedFilter === "post"     && "Posts"}
-                  {selectedFilter === "video"    && "Videos"}
-                  {selectedFilter === "document" && "Documents"}
-                </h1>
-                <p className="text-[12px] text-gray-400 font-bold uppercase tracking-[0.15em] mt-2">
-                  {filteredContents.length} {filteredContents.length === 1 ? "item" : "items"}
-                </p>
-              </div>
+              {/* Left: Title & Hamburger */}
+              {!mobileSearchOpen && (
+                <div className="flex items-center gap-3 shrink-0 min-w-[120px] md:min-w-[160px]">
+                  <button
+                    className="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-gray-50/50 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 text-gray-600 dark:text-gray-400 active:scale-95 transition-all"
+                    onClick={() => setSidebarOpen(true)}
+                    aria-label="Open navigation"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                  </button>
+                  <div>
+                    <h1 className="text-[20px] md:text-[26px] font-bold text-gray-900 dark:text-white tracking-tight leading-none font-outfit">
+                      {selectedFilter === "all"      && "All Items"}
+                      {selectedFilter === "post"     && "Posts"}
+                      {selectedFilter === "video"    && "Videos"}
+                      {selectedFilter === "document" && "Documents"}
+                    </h1>
+                    <p className="text-[11px] md:text-[12px] text-gray-600 dark:text-gray-400 font-bold uppercase tracking-[0.15em] mt-1.5 md:mt-2">
+                      {filteredContents.length} {filteredContents.length === 1 ? "item" : "items"}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Center: Search */}
-              <div className="flex-1 max-w-[420px]">
-                <div className="relative flex items-center bg-gray-50/50 dark:bg-gray-900/50 rounded-xl border border-gray-200/60 dark:border-gray-800/60 focus-within:bg-white dark:focus-within:bg-gray-900 focus-within:border-purple-200 dark:focus-within:border-purple-800 focus-within:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 h-10">
+              <div className={`flex-1 max-w-[600px] w-full ${mobileSearchOpen ? 'flex' : 'hidden md:flex'}`}>
+                <div className="relative flex items-center w-full bg-gray-50/50 dark:bg-gray-900/50 rounded-xl border border-gray-200/60 dark:border-gray-800/60 focus-within:bg-white dark:focus-within:bg-gray-900 focus-within:border-purple-200 dark:focus-within:border-purple-800 focus-within:shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 h-11">
                   <div className="pl-3.5 text-gray-400 flex-shrink-0">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                   </div>
@@ -373,61 +376,73 @@ export function Dashboard() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."
                     className="w-full py-2 px-3 text-[14px] text-gray-700 dark:text-gray-200 focus:outline-none placeholder:text-gray-400 font-medium bg-transparent"
+                    autoFocus={mobileSearchOpen}
                   />
                   {isSearching && (
                     <div className="pr-3.5">
                       <div className="w-4 h-4 border-2 border-purple-100 border-t-purple-500 rounded-full animate-spin" />
                     </div>
                   )}
-                  {searchQuery && !isSearching && (
+                  {(searchQuery || mobileSearchOpen) && !isSearching && (
                     <button
-                      onClick={() => setSearchQuery("")}
-                      className="pr-3.5 text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={() => {
+                        setSearchQuery("");
+                        if (mobileSearchOpen && !searchQuery) setMobileSearchOpen(false);
+                      }}
+                      className="pr-3.5 pl-2 text-gray-400 hover:text-gray-600 transition-colors w-10 h-10 flex items-center justify-center"
                     >
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                   )}
                 </div>
               </div>
 
               {/* Right: Actions */}
-              <div className="flex items-center gap-3 shrink-0">
-                {/* Share button */}
-                <button
-                  onClick={() => setShareModalOpen(true)}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl border border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm transition-all duration-200 active:scale-95"
-                  title="Share brain"
-                >
-                  <div className="scale-110">{shareConfig.icon}</div>
-                </button>
+              {!mobileSearchOpen && (
+                <div className="flex items-center gap-2 md:gap-3 shrink-0 ml-auto md:ml-0">
+                  {/* Mobile Search Toggle */}
+                  <button
+                    onClick={() => setMobileSearchOpen(true)}
+                    className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-gray-50/50 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 text-gray-500 hover:text-gray-700 dark:text-gray-400 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                  </button>
 
+                  {/* Share button */}
+                  <button
+                    onClick={() => setShareModalOpen(true)}
+                    className="w-11 h-11 flex items-center justify-center rounded-xl border border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm transition-all duration-200 active:scale-95"
+                    title="Share brain"
+                  >
+                    <div className="scale-110">{shareConfig.icon}</div>
+                  </button>
 
-                {/* Ask AI / Neural Insight */}
-                <button
-                  onClick={() => setIsAiPanelOpen((prev) => !prev)}
-                  className="h-10 flex items-center justify-center gap-2 px-4 rounded-xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-300 shadow-sm transition-all duration-200 active:scale-95"
-                  title="Toggle Neural Workspace (Cmd/Ctrl+I)"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  <span className="text-[14px] font-bold tracking-tight">Ask AI</span>
-                </button>
+                  {/* Ask AI */}
+                  <button
+                    onClick={() => setIsAiPanelOpen((prev) => !prev)}
+                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-300 shadow-sm transition-all duration-200 active:scale-95"
+                    title="Toggle Neural Workspace (Cmd/Ctrl+I)"
+                  >
+                    <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    <span className="hidden md:inline text-[14px] font-bold tracking-tight">Ask AI</span>
+                  </button>
 
-                {/* New Memory */}
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="h-10 flex items-center justify-center gap-2 px-4 rounded-xl bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow transition-all duration-200 active:scale-95"
-                >
-                  <div className="scale-100"><PlusIcon /></div>
-                  <span className="text-[14px] font-bold tracking-tight">Add New</span>
-                </button>
-              </div>
+                  {/* New Memory */}
+                  <button
+                    onClick={() => setModalOpen(true)}
+                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow transition-all duration-200 active:scale-95"
+                  >
+                    <div className="scale-110 md:scale-100"><PlusIcon /></div>
+                    <span className="hidden md:inline text-[14px] font-bold tracking-tight">Add New</span>
+                  </button>
+                </div>
+              )}
             </div>
         </header>
 
         <div className="px-6 pt-8 pb-8 max-w-[1400px] mx-auto font-inter">
           <div
-            className="grid gap-6 pb-20"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20"
           >
             {filteredContents.map(({ type, link, title, _id, aiStatus, description, aiMetadata }) => (
               <Card

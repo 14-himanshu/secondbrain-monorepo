@@ -37,6 +37,7 @@ export function Settings() {
   // Password state
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [passwordMsg, setPasswordMsg] = useState({ type: "", text: "" });
 
   // Privacy state
@@ -85,7 +86,7 @@ export function Settings() {
   };
 
   const handlePasswordChange = async () => {
-    if (!currentPassword || !newPassword) return;
+    if (!currentPassword || !newPassword || newPassword !== confirmNewPassword) return;
     setIsLoading(true);
     setPasswordMsg({ type: "", text: "" });
     try {
@@ -93,6 +94,7 @@ export function Settings() {
       setPasswordMsg({ type: "success", text: "Password updated successfully." });
       setCurrentPassword("");
       setNewPassword("");
+      setConfirmNewPassword("");
     } catch (e: any) {
       setPasswordMsg({ type: "error", text: e.message || "Failed to update password." });
     }
@@ -348,13 +350,20 @@ export function Settings() {
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">New Password</label>
                     <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full bg-transparent px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all" />
                   </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Confirm New Password</label>
+                    <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} className="w-full bg-transparent px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-100 dark:focus:ring-purple-900/30 outline-none transition-all" />
+                  </div>
                   {passwordMsg.text && (
                     <p className={`text-sm font-medium ${passwordMsg.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>{passwordMsg.text}</p>
                   )}
+                  {newPassword && confirmNewPassword && newPassword !== confirmNewPassword && !passwordMsg.text && (
+                    <p className="text-sm font-medium text-red-500">Passwords do not match.</p>
+                  )}
                   <button 
                     onClick={handlePasswordChange}
-                    disabled={isLoading || !currentPassword || !newPassword}
-                    className="px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-gray-800 disabled:opacity-50 shadow-sm transition-all"
+                    disabled={isLoading || !currentPassword || !newPassword || newPassword !== confirmNewPassword}
+                    className="px-5 py-2.5 bg-purple-600 text-white text-sm font-bold rounded-xl hover:bg-purple-700 disabled:bg-gray-100 disabled:text-gray-400 dark:disabled:bg-gray-800 dark:disabled:text-gray-600 disabled:cursor-not-allowed shadow-sm transition-all"
                   >
                     {isLoading ? "Updating..." : "Update Password"}
                   </button>
@@ -364,7 +373,7 @@ export function Settings() {
               <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
                 <h3 className="text-md font-bold text-gray-900 dark:text-white mb-2">Two-Factor Authentication</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Add an extra layer of security to your account. (Mock feature)</p>
-                <button className="px-5 py-2.5 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-bold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <button className="px-5 py-2.5 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-bold rounded-xl border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                   Enable 2FA
                 </button>
               </div>
@@ -423,7 +432,7 @@ export function Settings() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white">Deep Neural Extraction</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Automatically extract full transcripts from YouTube videos and long articles.</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Automatically extract full transcripts from YouTube videos and long articles.</p>
                   </div>
                   <div onClick={() => handleSaveAiPrefs({ deepExtraction: !user.aiPreferences?.deepExtraction })} className={`w-10 h-5 rounded-full flex items-center p-1 cursor-pointer transition-colors ${user.aiPreferences?.deepExtraction ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}>
                     <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform ${user.aiPreferences?.deepExtraction ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -433,7 +442,7 @@ export function Settings() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-sm font-bold text-gray-900 dark:text-white">Auto-Tagging</h3>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">AI automatically generates tags for new content.</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">AI automatically generates tags for new content.</p>
                   </div>
                   <div onClick={() => handleSaveAiPrefs({ autoTagging: !user.aiPreferences?.autoTagging })} className={`w-10 h-5 rounded-full flex items-center p-1 cursor-pointer transition-colors ${user.aiPreferences?.autoTagging ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'}`}>
                     <div className={`w-3.5 h-3.5 bg-white rounded-full shadow-sm transition-transform ${user.aiPreferences?.autoTagging ? 'translate-x-4' : 'translate-x-0'}`} />
@@ -462,9 +471,11 @@ export function Settings() {
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <span className="px-2.5 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-sm">
-                        {user.subscriptionPlan === "pro" ? "Pro Plan" : "Free Plan"}
-                      </span>
+                      {user.subscriptionPlan === "pro" ? (
+                        <span className="px-2.5 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-sm">Pro Plan</span>
+                      ) : (
+                        <span className="px-2.5 py-1 bg-white text-purple-900 rounded-full text-xs font-bold tracking-wider uppercase shadow-sm">Free Plan</span>
+                      )}
                       {user.subscriptionPlan === "pro" ? (
                         <h2 className="text-3xl font-bold mt-3">₹999<span className="text-lg text-purple-200 font-medium">/mo</span></h2>
                       ) : (
@@ -486,11 +497,19 @@ export function Settings() {
                       <span className="text-purple-200">Neural Extractions</span>
                       <span className="font-bold">{user.subscriptionPlan === "pro" ? "Unlimited" : `${5 - (user.aiCreditsRemaining || 0)} / 5 Used`}</span>
                     </div>
-                    {user.subscriptionPlan !== "pro" && (
-                      <div className="w-full h-1.5 bg-black/20 rounded-full overflow-hidden">
-                        <div className="h-full bg-green-400 rounded-full transition-all duration-500" style={{ width: `${((5 - (user.aiCreditsRemaining || 0)) / 5) * 100}%` }} />
-                      </div>
-                    )}
+                    {user.subscriptionPlan !== "pro" && (() => {
+                      const max = 5;
+                      const used = max - (user.aiCreditsRemaining || 0);
+                      const percent = (used / max) * 100;
+                      let color = "bg-green-400";
+                      if (percent >= 100) color = "bg-red-500";
+                      else if (percent >= 80) color = "bg-orange-400";
+                      return (
+                        <div className="w-full h-1.5 bg-black/20 rounded-full overflow-hidden">
+                          <div className={`h-full ${color} rounded-full transition-all duration-500`} style={{ width: `${percent}%` }} />
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
@@ -504,8 +523,13 @@ export function Settings() {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div 
                   onClick={() => theme !== 'light' && setTheme('light')}
-                  className={`border-2 ${theme === 'light' ? 'border-purple-600' : 'border-transparent dark:border-gray-800'} bg-white dark:bg-gray-900 p-4 rounded-xl cursor-pointer hover:border-purple-300 transition-all`}
+                  className={`relative border-2 ${theme === 'light' ? 'border-purple-600' : 'border-transparent dark:border-gray-800'} bg-white dark:bg-gray-900 p-4 rounded-xl cursor-pointer hover:border-purple-300 transition-all`}
                 >
+                  {theme === 'light' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-purple-600 text-white rounded-full flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                  )}
                   <div className="w-full h-24 bg-gray-50 rounded-lg border border-gray-100 mb-3 flex items-center justify-center">
                     <div className="w-16 h-12 bg-white shadow-sm rounded-md" />
                   </div>
@@ -513,8 +537,13 @@ export function Settings() {
                 </div>
                 <div 
                   onClick={() => theme !== 'dark' && setTheme('dark')}
-                  className={`border-2 ${theme === 'dark' ? 'border-purple-600' : 'border-transparent dark:border-gray-800'} bg-white dark:bg-gray-900 p-4 rounded-xl cursor-pointer hover:border-purple-300 transition-all`}
+                  className={`relative border-2 ${theme === 'dark' ? 'border-purple-600' : 'border-transparent dark:border-gray-800'} bg-white dark:bg-gray-900 p-4 rounded-xl cursor-pointer hover:border-purple-300 transition-all`}
                 >
+                  {theme === 'dark' && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-purple-600 text-white rounded-full flex items-center justify-center">
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    </div>
+                  )}
                   <div className="w-full h-24 bg-gray-900 rounded-lg border border-gray-800 mb-3 flex items-center justify-center">
                     <div className="w-16 h-12 bg-gray-800 shadow-sm rounded-md border border-gray-700" />
                   </div>
@@ -537,7 +566,7 @@ export function Settings() {
                 </button>
               </div>
 
-              <div className="bg-red-50/50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/30 p-6 shadow-sm">
+              <div className="bg-red-50/50 dark:bg-red-900/10 rounded-2xl border border-red-300 dark:border-red-800 p-6 shadow-sm">
                 <h3 className="text-md font-bold text-red-800 dark:text-red-400 mb-2">Danger Zone</h3>
                 <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-6">Permanently delete your account and all associated data. This action cannot be undone.</p>
                 
@@ -548,14 +577,14 @@ export function Settings() {
                       type="text" 
                       value={deleteConfirm} 
                       onChange={e => setDeleteConfirm(e.target.value)} 
-                      className="w-full px-4 py-2 border border-red-200 dark:border-red-900/50 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900/50 outline-none transition-all" 
+                      className="w-full px-4 py-2 border border-red-300 dark:border-red-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-red-400 dark:focus:ring-red-700 outline-none transition-all" 
                     />
                   </div>
                   {deleteMsg && <p className="text-sm font-medium text-red-600">{deleteMsg}</p>}
                   <button 
                     onClick={handleDeleteAccount}
                     disabled={deleteConfirm !== "DELETE" || isLoading}
-                    className="px-5 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-red-600 shadow-sm transition-all"
+                    className="px-5 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-500 dark:disabled:bg-gray-800 dark:disabled:text-gray-600 disabled:cursor-not-allowed shadow-sm transition-all"
                   >
                     {isLoading ? "Deleting..." : "Permanently Delete Account"}
                   </button>

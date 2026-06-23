@@ -65,6 +65,12 @@ export function Card({
   const isPost     = normalizedType === "post"     || normalizedType === "twitter";
   const isDocument = normalizedType === "document";
 
+  const iconBgClass = isVideo 
+    ? "bg-red-50 text-red-500 dark:bg-red-500/20 dark:text-red-400 border-red-100 dark:border-red-900/50" 
+    : isPost 
+      ? "bg-sky-50 text-sky-500 dark:bg-sky-500/20 dark:text-sky-400 border-sky-100 dark:border-sky-900/50" 
+      : "bg-purple-50 text-purple-500 dark:bg-purple-500/20 dark:text-purple-400 border-purple-100 dark:border-purple-900/50";
+
   const parsedUrl = useMemo(() => {
     try {
       return new URL(link);
@@ -86,14 +92,14 @@ export function Card({
       case "full_extraction":
         return {
           label: "Full Extraction",
-          pillClass: "bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-100 dark:border-purple-800",
-          textClass: "text-purple-600 dark:text-purple-400",
+          pillClass: "bg-gray-50/50 dark:bg-gray-800/30 text-gray-500 dark:text-gray-400 border-gray-100/50 dark:border-gray-700/30",
+          textClass: "text-gray-600 dark:text-gray-400",
         };
       case "partial_extraction":
         return {
           label: "Partial Extraction",
-          pillClass: "bg-purple-50/50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 border-purple-50 dark:border-purple-900/50",
-          textClass: "text-purple-500 dark:text-purple-500",
+          pillClass: "bg-gray-50 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 border-gray-100 dark:border-gray-800",
+          textClass: "text-gray-600 dark:text-gray-500",
         };
       case "metadata_only":
         return {
@@ -159,17 +165,17 @@ export function Card({
   return (
     <div 
       onClick={onSelect}
-      className={`group bg-white dark:bg-gray-900 border border-gray-100/60 dark:border-gray-800 rounded-xl p-5 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col h-full relative cursor-pointer ${
+      className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col h-full relative cursor-pointer overflow-hidden ${
         isSelected 
-          ? 'border-purple-200 dark:border-purple-700 ring-2 ring-purple-50/50 dark:ring-purple-900/50 shadow-sm -translate-y-0.5' 
-          : 'hover:border-purple-100/70 dark:hover:border-purple-800/70 hover:-translate-y-1 hover:shadow-md hover:shadow-purple-100/20 dark:hover:shadow-purple-900/20 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.02)] dark:shadow-none'
+          ? 'border-purple-300 dark:border-purple-600 ring-2 ring-purple-50/50 dark:ring-purple-900/50 shadow-sm -translate-y-0.5' 
+          : 'hover:border-gray-300 dark:hover:border-gray-600 hover:-translate-y-1 hover:shadow-md hover:shadow-gray-100 dark:hover:shadow-gray-900/20 shadow-[0_2px_8px_-4px_rgba(0,0,0,0.02)] dark:shadow-none'
       }`}
     >
       
       {/* Header: Intelligence Row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gray-50 dark:bg-gray-800 rounded-md flex items-center justify-center border border-gray-50 dark:border-gray-700 transition-transform duration-150">
+          <div className={`w-8 h-8 rounded-md flex items-center justify-center border transition-transform duration-150 ${iconBgClass}`}>
             {getIcon()}
           </div>
           <div className="flex flex-col min-w-0">
@@ -181,9 +187,9 @@ export function Card({
         {/* Pulse & Link Actions */}
         <div className="flex items-center gap-2">
           {!isProcessing && ingestionBadge && (
-            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border ${ingestionBadge.pillClass}`}>
+            <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border ${ingestionBadge.pillClass}`}>
                <div className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-               <span className="text-[10px] font-semibold uppercase tracking-tight">{ingestionBadge.label}</span>
+               <span className="text-[8.5px] font-bold uppercase tracking-tight">{ingestionBadge.label}</span>
             </div>
           )}
           {link && (
@@ -204,7 +210,7 @@ export function Card({
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-grow min-w-0 flex flex-col">
         {isEditing ? (
           <div className="space-y-3">
             <input
@@ -228,9 +234,8 @@ export function Card({
             <h3 className="text-[14px] font-semibold text-purple-700 dark:text-purple-400 leading-[1.35] group-hover:text-purple-500 dark:group-hover:text-purple-300 transition-colors tracking-tight line-clamp-2 antialiased" title={title}>
               {title}
             </h3>
-            {/* Quick Preview */}
             {description && (
-              <p className="text-[13px] text-gray-600 dark:text-gray-400 font-medium line-clamp-3 leading-relaxed mt-2">
+              <p className="text-[13px] text-gray-700 dark:text-gray-300 font-medium line-clamp-3 leading-relaxed mt-2">
                 {description.split('\n\n')[0]}
               </p>
             )}
@@ -238,6 +243,7 @@ export function Card({
         )}
       </div>
 
+      <div className="mt-auto w-full flex flex-col justify-end">
       {/* Neural Progress Bar: Sleek & Sophisticated */}
       {isProcessing && (
         <div className="mt-4 w-full h-1.5 bg-purple-50 dark:bg-purple-900/20 rounded-full overflow-hidden shadow-inner">
@@ -250,69 +256,62 @@ export function Card({
         </div>
       )}
 
-      {/* Manual Extraction Action */}
-      {aiStatus === "unprocessed" && (
-        <div className="mt-4">
+
+      {/* Footer: Metadata & Actions */}
+      <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-50 dark:border-gray-800 min-h-[60px]">
+        {aiStatus === "unprocessed" ? (
           <button
             onClick={(e) => {
               e.stopPropagation();
               onGenerateInsight?.();
             }}
-            className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-semibold text-[12px] hover:border-purple-300 hover:text-purple-600 dark:hover:border-purple-700 dark:hover:text-purple-400 hover:shadow-sm transition-all duration-200"
+            className="flex-1 min-h-[44px] flex items-center justify-center gap-2 py-1.5 px-3 rounded-xl font-medium text-[13px] bg-gray-50 hover:bg-purple-50 dark:bg-gray-800/50 dark:hover:bg-purple-900/30 text-gray-700 dark:text-gray-300 hover:text-purple-700 dark:hover:text-purple-300 border border-gray-200 dark:border-gray-700 hover:border-purple-200 dark:hover:border-purple-800 transition-all duration-200 mr-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="w-4 h-4 text-purple-500 dark:text-purple-400">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 21l8.982-11.761a.75.75 0 0 0-.616-1.218H14.07m-4.257 5.877L15 9.1l-8.982 11.761a.75.75 0 0 0 .616 1.218h3.19M15 9.1a2.25 2.25 0 0 1 2.248 2.354c-.059.665-.389 1.266-.88 1.685L15 15.34" />
             </svg>
             Generate Summary
           </button>
-        </div>
-      )}
-
-      {/* Footer: Metadata & Actions */}
-      <div className="pt-4 mt-4 flex items-center justify-between border-t border-gray-50 dark:border-gray-800">
-        <div className="flex items-center gap-4">
-           <div className="flex items-center">
-            {isProcessing ? (
-              <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest flex items-center gap-2 border bg-purple-50/30 dark:bg-purple-900/20 border-purple-50 dark:border-purple-900/30 text-purple-600 dark:text-purple-400 animate-pulse`}>
-                <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                {aiStatus === "analyzing"
-                  ? "Generating Summary"
-                  : "Extracting Content"}
-              </div>
-            ) : ingestionBadge ? (
-              similarity && ingestionStatus === "full_extraction" ? (
-                <div className={`text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-2 ${ingestionBadge.textClass}`}>
-                  <div className="w-1.5 h-1.5 rounded-full bg-current" />
-                  {Math.round(similarity * 100)}% Neural Match
+        ) : (
+          <div className="flex items-center gap-4">
+            <div className="flex items-center">
+              {isProcessing ? (
+                <div className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest flex items-center gap-2 border bg-purple-50/30 dark:bg-purple-900/20 border-purple-50 dark:border-purple-900/30 text-purple-600 dark:text-purple-400 animate-pulse`}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  {aiStatus === "analyzing"
+                    ? "Generating Summary"
+                    : "Extracting Content"}
                 </div>
-              ) : ingestionStatus === "full_extraction" ? (
-                <div className="text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 text-purple-600/80 dark:text-purple-400/80">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  Insights Ready
-                </div>
-              ) : (
-                <div className="text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 text-gray-400">
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                  Saved to Library
-                </div>
-              )
-            ) : aiStatus === "failed" ? (
-              <div className="text-[9px] font-bold text-red-400 uppercase tracking-[0.15em]">Synthesis Failed</div>
-            ) : aiStatus === "unprocessed" ? (
-              <div className="text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 text-gray-400">
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                Saved
-              </div>
-            ) : null}
-           </div>
-        </div>
+              ) : ingestionBadge ? (
+                similarity && ingestionStatus === "full_extraction" ? (
+                  <div className={`text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-2 ${ingestionBadge.textClass}`}>
+                    <div className="w-1.5 h-1.5 rounded-full bg-current" />
+                    {Math.round(similarity * 100)}% Neural Match
+                  </div>
+                ) : ingestionStatus === "full_extraction" ? (
+                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 text-purple-600/80 dark:text-purple-400/80">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    Insights Ready
+                  </div>
+                ) : (
+                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                    Saved to Library
+                  </div>
+                )
+              ) : aiStatus === "failed" ? (
+                <div className="text-[9px] font-bold text-red-400 uppercase tracking-[0.15em]">Synthesis Failed</div>
+              ) : null}
+            </div>
+          </div>
+        )}
 
         {!isEditing && (
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-[92px] shrink-0">
             {onEdit && (
               <button
                 onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
-                className="p-2 text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg transition-all"
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/30 rounded-lg transition-all"
                 title="Edit Title"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-4 h-4">
@@ -323,7 +322,7 @@ export function Card({
             {onDelete && (
               <button
                 onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
-                className="p-2 text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-all"
                 title="Remove"
               >
                 <DeleteIcon />
@@ -331,6 +330,7 @@ export function Card({
             )}
           </div>
         )}
+      </div>
       </div>
     </div>
   );

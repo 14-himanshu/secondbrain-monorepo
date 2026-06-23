@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig, type UserConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from "@tailwindcss/vite";
 
@@ -13,4 +14,7 @@ export default defineConfig({
       },
     },
   },
-});
+  test: {
+    setupFiles: ['src/test/setupTests.ts'],
+  },
+} as UserConfig & { test: any });

@@ -156,7 +156,7 @@ export function Sidebar({
       )}
 
       <aside
-        className={`h-screen fixed left-0 top-0 z-30 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-100/80 dark:border-gray-800 shadow-[1px_0_0_0_rgba(0,0,0,0.03)] ${sidebarWidth} transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]`}
+        className={`h-screen fixed left-0 top-0 z-30 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-100/80 dark:border-gray-800 shadow-[1px_0_0_0_rgba(0,0,0,0.03)] ${sidebarWidth} transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* ── Collapse Toggle ── */}
         <button
@@ -263,7 +263,7 @@ export function Sidebar({
                       <div className="scale-75 flex items-center justify-center">
                         {getRecentIcon(c.type)}
                       </div>
-                      <span className="pointer-events-none absolute left-full ml-3 z-50 whitespace-nowrap rounded-lg bg-gray-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 max-w-[180px] truncate">
+                      <span className="pointer-events-none absolute left-full ml-3 z-50 rounded-lg bg-gray-900 px-2.5 py-1.5 text-[11px] font-semibold text-white shadow-lg opacity-0 translate-x-[-6px] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 w-[180px] line-clamp-2 whitespace-normal break-words leading-snug">
                         {c.title}
                       </span>
                     </button>
@@ -273,7 +273,7 @@ export function Sidebar({
                   <button
                     key={c._id}
                     onClick={() => onSelectContent?.(c._id)}
-                    className={`group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200 text-left ${isActive ? "bg-purple-50/50 dark:bg-purple-900/30" : "hover:bg-purple-50/30 dark:hover:bg-purple-900/20"}`}
+                    className={`group relative w-full flex items-center gap-2.5 px-3 py-3 rounded-xl transition-all duration-200 text-left ${isActive ? "bg-purple-50/50 dark:bg-purple-900/30" : "hover:bg-purple-50/30 dark:hover:bg-purple-900/20"}`}
                   >
                     {isActive && (
                       <span className="absolute left-0 top-1/2 -translate-y-1/2 h-4 w-1 rounded-r-full bg-purple-500" />
@@ -284,11 +284,18 @@ export function Sidebar({
                       </div>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className={`text-[12px] font-medium truncate leading-tight ${isActive ? "text-purple-900 dark:text-purple-300" : "text-gray-600 dark:text-gray-400 group-hover:text-purple-800 dark:group-hover:text-purple-300"}`}>
+                      <div className={`text-[12px] font-medium line-clamp-2 leading-tight whitespace-normal break-words ${isActive ? "text-purple-900 dark:text-purple-300" : "text-gray-600 dark:text-gray-400 group-hover:text-purple-800 dark:group-hover:text-purple-300"}`}>
                         {c.title}
                       </div>
-                      <div className="text-[10px] text-gray-400 truncate mt-0.5">
-                        {c.type} · {formatSource(c.link)}
+                      <div className="flex items-center justify-between mt-0.5">
+                        <div className="text-[10px] text-gray-500 dark:text-gray-400 truncate">
+                          {c.type} · {formatSource(c.link)}
+                        </div>
+                        {('createdAt' in c && c.createdAt) ? (
+                          <div className="text-[9px] font-medium text-gray-400/80 dark:text-gray-500 shrink-0 ml-2">
+                            {new Date(c.createdAt as string).toLocaleDateString()}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </button>
@@ -296,7 +303,7 @@ export function Sidebar({
               })
             ) : (
               !isCollapsed && (
-                <div className="px-3 py-2 text-[12px] text-gray-400">
+                <div className="px-3 py-3 text-[12px] text-gray-400">
                   No recent items
                 </div>
               )
@@ -312,7 +319,7 @@ export function Sidebar({
               <div className="relative flex justify-center">
                 <button
                   onClick={() => setProfileMenuOpen((v) => !v)}
-                  className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 font-bold text-[13px] hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                  className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 font-bold text-[13px] hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
                   title={userProfile.username}
                 >
                   {userProfile.username.charAt(0).toUpperCase()}
@@ -321,11 +328,11 @@ export function Sidebar({
                   <div className="absolute bottom-full left-0 mb-2 w-44 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg py-1.5 z-50">
                     <div className="px-3 py-2 border-b border-gray-50 dark:border-gray-700">
                       <div className="text-[12px] font-semibold text-gray-800 dark:text-gray-200 truncate">{userProfile.username}</div>
-                      <div className="text-[10px] text-gray-400">Member</div>
+                      <div className="text-[10px] text-gray-500">Member</div>
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-3 py-2 text-[12px] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-2"
+                      className="w-full text-left px-3 py-3 text-[12px] text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-2"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-3.5 h-3.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
@@ -338,7 +345,7 @@ export function Sidebar({
             ) : (
                        <div className="flex items-center justify-between p-2 group border-t border-gray-50/50 dark:border-gray-800/50 pt-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 font-bold text-[13px] overflow-hidden">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-700 dark:text-gray-200 font-bold text-[13px] overflow-hidden">
                     {userProfile.avatarBase64 ? (
                       <img src={userProfile.avatarBase64} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
@@ -349,7 +356,7 @@ export function Sidebar({
                     <div className="text-[13px] font-semibold text-gray-800 dark:text-gray-200 leading-none truncate max-w-[100px]">
                       {userProfile.username}
                     </div>
-                    <div className="text-[11px] text-gray-400 mt-1 leading-none">Member</div>
+                    <div className="text-[11px] text-gray-500 mt-1 leading-none">Member</div>
                   </div>
                 </div>
 

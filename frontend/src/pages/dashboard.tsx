@@ -48,6 +48,7 @@ export function Dashboard() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
     () => localStorage.getItem("sb-sidebar-collapsed") === "true"
   );
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
   
   /**
    * AI Panel State Management
@@ -306,7 +307,7 @@ export function Dashboard() {
   const shareConfig = getShareButtonConfig();
 
   return (
-    <div className="flex bg-gray-100 dark:bg-gray-950 min-h-screen relative overflow-hidden">
+    <div className="flex bg-gray-100 dark:bg-[#0d0d0f] min-h-screen">
       <Sidebar
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
@@ -319,7 +320,7 @@ export function Dashboard() {
       />
 
       {/* Main Content Area */}
-      <main className={`flex-1 overflow-x-hidden min-h-screen bg-[#FAFAFA] dark:bg-[#0a0a0a] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
+      <main className={`flex-1 overflow-x-hidden min-h-screen bg-[#FAFAFA] dark:bg-[#0d0d0f] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         <CreateContentModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -337,7 +338,7 @@ export function Dashboard() {
         />
 
         {/* ── Header ── */}
-        <header className="sticky top-0 z-20 bg-white/50 dark:bg-gray-950/50 backdrop-blur-lg px-4 md:px-6 pt-4 md:pt-6 pb-4 border-b border-gray-100/50 dark:border-gray-800/50 font-inter">
+        <header className="sticky top-0 z-20 bg-white/50 dark:bg-[#0d0d0f]/80 backdrop-blur-lg px-4 md:px-6 pt-4 md:pt-6 pb-4 border-b border-gray-100/50 dark:border-[#252530]/80 font-inter">
           <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-3 md:gap-6">
               
               {/* Left: Title & Hamburger */}
@@ -351,13 +352,13 @@ export function Dashboard() {
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                   </button>
                   <div>
-                    <h1 className="text-[20px] md:text-[26px] font-bold text-gray-900 dark:text-white tracking-tight leading-none font-outfit">
+                    <h1 className="text-[20px] md:text-[26px] font-bold text-slate-900 dark:text-white tracking-tight leading-none font-outfit">
                       {selectedFilter === "all"      && "All Items"}
                       {selectedFilter === "post"     && "Posts"}
                       {selectedFilter === "video"    && "Videos"}
                       {selectedFilter === "document" && "Documents"}
                     </h1>
-                    <p className="text-[11px] md:text-[12px] text-gray-600 dark:text-gray-400 font-bold uppercase tracking-[0.15em] mt-1.5 md:mt-2">
+                    <p className="text-[11px] md:text-[12px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-[0.15em] mt-1.5 md:mt-2">
                       {filteredContents.length} {filteredContents.length === 1 ? "item" : "items"}
                     </p>
                   </div>
@@ -375,7 +376,7 @@ export function Dashboard() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search..."
-                    className="w-full py-2 px-3 text-[14px] text-gray-700 dark:text-gray-200 focus:outline-none placeholder:text-gray-400 font-medium bg-transparent"
+                    className="w-full py-2 px-3 text-[14px] text-slate-900 dark:text-slate-200 focus:outline-none placeholder:text-slate-400 font-medium bg-transparent"
                     autoFocus={mobileSearchOpen}
                   />
                   {isSearching && (
@@ -411,7 +412,7 @@ export function Dashboard() {
                   {/* Share button */}
                   <button
                     onClick={() => setShareModalOpen(true)}
-                    className="w-11 h-11 flex items-center justify-center rounded-xl border border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm transition-all duration-200 active:scale-95"
+                    className="w-11 h-11 flex items-center justify-center rounded-xl border border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900 text-slate-500 dark:text-slate-400 hover:text-[#6f63d9] dark:hover:text-[#8378e8] hover:border-purple-200 dark:hover:border-purple-800 hover:shadow-sm transition-all duration-200 active:scale-95"
                     title="Share brain"
                   >
                     <div className="scale-110">{shareConfig.icon}</div>
@@ -420,7 +421,7 @@ export function Dashboard() {
                   {/* Ask AI */}
                   <button
                     onClick={() => setIsAiPanelOpen((prev) => !prev)}
-                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl border border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-300 shadow-sm transition-all duration-200 active:scale-95"
+                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl border border-purple-200 bg-purple-50 text-[#6f63d9] hover:bg-purple-100 hover:border-purple-300 shadow-sm transition-all duration-200 active:scale-95"
                     title="Toggle Neural Workspace (Cmd/Ctrl+I)"
                   >
                     <svg className="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
@@ -430,7 +431,7 @@ export function Dashboard() {
                   {/* New Memory */}
                   <button
                     onClick={() => setModalOpen(true)}
-                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl bg-purple-600 text-white hover:bg-purple-700 shadow-sm hover:shadow transition-all duration-200 active:scale-95"
+                    className="w-11 h-11 md:w-auto md:h-11 flex items-center justify-center gap-2 px-0 md:px-4 rounded-xl bg-[#6f63d9] text-white hover:bg-[#5b50b5] shadow-sm hover:shadow transition-all duration-200 active:scale-95"
                   >
                     <div className="scale-110 md:scale-100"><PlusIcon /></div>
                     <span className="hidden md:inline text-[14px] font-bold tracking-tight">Add New</span>
@@ -441,10 +442,12 @@ export function Dashboard() {
         </header>
 
         <div className="px-6 pt-8 pb-8 max-w-[1400px] mx-auto font-inter">
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20 items-start">
             {filteredContents.map(({ type, link, title, _id, aiStatus, description, aiMetadata }) => (
+              <div
+                key={_id}
+                ref={el => { cardRefs.current[_id] = el; }}
+              >
               <Card
                 key={_id}
                 title={title}
@@ -456,12 +459,18 @@ export function Dashboard() {
                 isSelected={selectedContentId === _id}
                 onGenerateInsight={() => handleGenerateInsight(_id)}
                 onSelect={() => {
-                  setSelectedContentId(prev => prev === _id ? null : _id);
-                  setIsAiPanelOpen(true);
+                  const isDeselecting = selectedContentId === _id;
+                  setSelectedContentId(isDeselecting ? null : _id);
+                  if (!isDeselecting) {
+                    setIsAiPanelOpen(true);
+                  } else {
+                    setIsAiPanelOpen(false);
+                  }
                 }}
                 onEdit={(newTitle) => editContent({ contentId: _id, title: newTitle })}
                 onDelete={() => deleteContent(_id)}
               />
+              </div>
             ))}
           </div>
 
@@ -474,10 +483,10 @@ export function Dashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                 </svg>
               </div>
-              <h3 className="text-[22px] font-bold text-gray-800 dark:text-gray-200 mb-3 tracking-tight font-outfit">
+              <h3 className="text-[22px] font-bold text-slate-900 dark:text-slate-200 mb-3 tracking-tight font-outfit">
                 {searchQuery ? "No results found" : "Nothing here yet"}
               </h3>
-              <p className="text-gray-400 text-[13px] max-w-[340px] mb-12 leading-relaxed font-medium">
+              <p className="text-slate-700 text-[13px] max-w-[340px] mb-12 leading-relaxed font-medium">
                 {searchQuery
                   ? `We couldn't find anything matching "${searchQuery}".`
                   : "Save your links, documents, and notes to get started."}

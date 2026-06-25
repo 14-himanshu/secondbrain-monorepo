@@ -1,5 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { CrossIcon } from "../icons/CrossIcon";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -17,39 +23,24 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" 
-        onClick={onClose}
-      ></div>
-
-      {/* Modal Container */}
-      <div className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-6 shadow-2xl transition-all space-y-6 animate-in zoom-in-95 duration-200">
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+      <DialogContent className="sm:max-w-md p-6 overflow-hidden">
         {/* Glow Effects */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Header */}
-        <div className="flex items-start justify-between relative z-10">
-          <div className="flex items-center gap-3.5">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 shadow-inner">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="w-6 h-6 animate-pulse">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 21l8.982-11.761a.75.75 0 0 0-.616-1.218H14.07m-4.257 5.877L15 9.1l-8.982 11.761a.75.75 0 0 0 .616 1.218h3.19M15 9.1a2.25 2.25 0 0 1 2.248 2.354c-.059.665-.389 1.266-.88 1.685L15 15.34" />
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white leading-snug">Upgrade to Pro</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase mt-0.5">AI Credits Exhausted</p>
-            </div>
+        <DialogHeader className="flex flex-row items-start gap-3.5 space-y-0 text-left relative z-10">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2.2" stroke="currentColor" className="w-6 h-6 animate-pulse">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 21l8.982-11.761a.75.75 0 0 0-.616-1.218H14.07m-4.257 5.877L15 9.1l-8.982 11.761a.75.75 0 0 0 .616 1.218h3.19M15 9.1a2.25 2.25 0 0 1 2.248 2.354c-.059.665-.389 1.266-.88 1.685L15 15.34" />
+            </svg>
           </div>
-          <button 
-            onClick={onClose} 
-            className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-          >
-            <CrossIcon />
-          </button>
-        </div>
+          <div>
+            <DialogTitle className="text-xl font-extrabold text-slate-900 dark:text-white leading-snug">Upgrade to Pro</DialogTitle>
+            <DialogDescription className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wide uppercase mt-0.5">AI Credits Exhausted</DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* Info Content */}
         <div className="space-y-4 relative z-10">
@@ -99,7 +90,7 @@ export function UpgradeModal({ open, onClose }: UpgradeModalProps) {
             Maybe Later
           </button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

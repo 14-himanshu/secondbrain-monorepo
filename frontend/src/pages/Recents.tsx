@@ -16,7 +16,7 @@ export default function Recents() {
   );
 
   return (
-    <div className="flex bg-gray-100 min-h-screen relative overflow-hidden">
+    <div className="flex bg-gray-100 dark:bg-[#0d0d0f] min-h-screen relative overflow-hidden">
       {/* Mobile open sidebar button */}
       <button
         className="lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl bg-white border border-gray-100 shadow-sm"
@@ -39,10 +39,10 @@ export default function Recents() {
         onCollapsedChange={setSidebarCollapsed}
       />
 
-      <main className={`flex-1 min-h-screen bg-[#FDFDFD] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
+      <main className={`flex-1 min-h-screen bg-[#FDFDFD] dark:bg-[#0d0d0f] transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         <div className="px-6 pt-6 pb-8 max-w-[1200px] mx-auto">
 
-          <header className="mb-8 pt-5 pb-6 border-b border-gray-100/60">
+          <header className="mb-8 pt-5 pb-6 border-b border-gray-100/60 dark:border-[#252530]">
             <h1 className="text-[22px] font-bold text-gray-900 tracking-tight leading-none font-outfit">
               Recent Items
             </h1>

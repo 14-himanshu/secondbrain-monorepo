@@ -21,12 +21,73 @@
 
   --font-inter: "Inter", "system-ui", "sans-serif";
   --font-outfit: "Outfit", "system-ui", "sans-serif";
+
+  /* Map CSS variables into Tailwind token system */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+}
+
+/* ── Light Mode Variables ── */
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #6f63d9;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f7;
+  --secondary-foreground: #111111;
+  --muted: #f5f5f7;
+  --muted-foreground: #71717a;
+  --accent: #f5f5f7;
+  --accent-foreground: #111111;
+  --destructive: #ef4444;
+  --border: #eaeaed;
+  --input: #eaeaed;
+  --ring: #8378e8;
+  --radius: 0.625rem;
+}
+
+/* ── Dark Mode Variables ── */
+.dark {
+  --background: #0d0d0f;
+  --foreground: #f0efff;
+  --card: #141418;
+  --card-foreground: #f0efff;
+  --popover: #141418;
+  --popover-foreground: #f0efff;
+  --primary: #8378e8;
+  --primary-foreground: #ffffff;
+  --secondary: #1c1c22;
+  --secondary-foreground: #d4d3f0;
+  --muted: #1c1c22;
+  --muted-foreground: #8888a0;
+  --accent: #22222a;
+  --accent-foreground: #f0efff;
+  --destructive: #ef4444;
+  --border: #252530;
+  --input: #252530;
+  --ring: #8378e8;
 }
 
 @layer base {
   body {
-    @apply bg-gray-50 text-slate-900 antialiased dark:bg-[#0a0a0b] dark:text-gray-100 transition-colors duration-200;
+    @apply bg-background text-foreground antialiased transition-colors duration-200;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  * {
+    border-color: var(--border);
   }
 }
 
@@ -35,14 +96,19 @@
     @apply relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent;
   }
 
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray-200) transparent;
+  }
   .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
+    width: 3px;
+    height: 3px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-200 rounded-full hover:bg-purple-200 transition-colors;
+    @apply bg-gray-200/60 dark:bg-gray-700/50 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors;
   }
 
   .glass-panel {

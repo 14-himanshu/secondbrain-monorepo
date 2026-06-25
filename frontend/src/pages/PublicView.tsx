@@ -37,8 +37,8 @@ export function PublicView() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 font-medium animate-pulse">Loading shared brain...</p>
+          <div className="h-12 w-12 border-4 border-[#6f63d9] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-slate-700 font-medium animate-pulse">Loading shared brain...</p>
         </div>
       </div>
     );
@@ -54,10 +54,10 @@ export function PublicView() {
             </svg>
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-gray-900">Access Denied</h2>
-            <p className="text-gray-500">{error}</p>
+            <h2 className="text-xl font-bold text-slate-900">Access Denied</h2>
+            <p className="text-slate-700">{error}</p>
           </div>
-          <a href="/" className="inline-block text-purple-600 font-bold hover:underline">Go to Home</a>
+          <a href="/" className="inline-block text-[#6f63d9] font-bold hover:underline">Go to Home</a>
         </div>
       </div>
     );
@@ -69,15 +69,15 @@ export function PublicView() {
       <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-purple-600">
+            <div className="text-[#6f63d9]">
               <Logo />
             </div>
-            <h1 className="text-xl font-bold text-gray-900">
+            <h1 className="text-xl font-bold text-slate-900">
               {username}'s Second Brain
             </h1>
           </div>
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-500">
-            <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"></div>
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-slate-500">
+            <div className="w-1.5 h-1.5 bg-[#6f63d9] rounded-full animate-pulse"></div>
             READ ONLY MODE
           </div>
         </div>
@@ -86,12 +86,12 @@ export function PublicView() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Shared Notes</h2>
-          <p className="text-gray-500 mt-2 font-medium">Viewing {content.length} items from {username}'s collection</p>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Shared Notes</h2>
+          <p className="text-slate-700 mt-2 font-medium">Viewing {content.length} items from {username}'s collection</p>
         </div>
 
         {content.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start">
             {content.map((item) => (
               <Card 
                 key={item._id}
@@ -101,12 +101,13 @@ export function PublicView() {
                 aiMetadata={item.aiMetadata}
                 aiStatus={item.aiStatus}
                 description={item.description}
+                readOnly={true}
               />
             ))}
           </div>
         ) : (
           <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200">
-            <p className="text-gray-400 font-medium italic">This brain is currently empty.</p>
+            <p className="text-slate-500 font-medium italic">This brain is currently empty.</p>
           </div>
         )}
       </main>
@@ -114,7 +115,7 @@ export function PublicView() {
       {/* Footer */}
       <footer className="py-12 border-t border-gray-200 mt-12 bg-white">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-sm text-gray-400">Powered by Second Brain</p>
+          <p className="text-sm text-slate-500">Powered by Second Brain</p>
         </div>
       </footer>
     </div>

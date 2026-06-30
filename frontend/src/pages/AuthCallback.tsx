@@ -26,7 +26,7 @@ export default function AuthCallback() {
           // Clear any oauth resume state
           try { sessionStorage.removeItem('oauth_callback'); } catch (err) { console.warn('failed clearing oauth resume', err); }
           // Replace current history entry to remove login_code from URL
-          try { navigate("/", { replace: true }); } catch { window.location.replace('/'); }
+          try { navigate("/dashboard", { replace: true }); } catch { window.location.replace('/dashboard'); }
           return;
         }
         setError("No token returned from server.");
@@ -45,7 +45,7 @@ export default function AuthCallback() {
         <h2 className="text-lg font-semibold mb-2">Sign-in</h2>
         <p className="text-sm text-red-600">{error}</p>
         <div className="mt-4">
-          <button onClick={() => navigate('/signin')} className="px-4 py-2 rounded bg-gray-100">Return to sign in</button>
+          <button onClick={() => navigate('/login')} className="px-4 py-2 rounded bg-gray-100">Return to sign in</button>
         </div>
       </div>
     </div>

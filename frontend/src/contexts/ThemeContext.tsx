@@ -13,8 +13,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark" || savedTheme === "light") return savedTheme;
-    // Default to light mode to match the existing design
-    return "light";
+    // Default to dark — the product is a dark-first premium SaaS
+    return "dark";
   });
 
   useEffect(() => {

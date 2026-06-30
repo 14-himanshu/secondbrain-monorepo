@@ -77,7 +77,7 @@ export function PaymentSuccess() {
         {/* Actions */}
         <div className="space-y-3">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/dashboard")}
             className="w-full py-4 bg-purple-600 hover:bg-purple-700 active:scale-[0.99] text-white rounded-2xl text-[12px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-purple-200 dark:shadow-none flex items-center justify-center gap-2"
           >
             <span>Return to Workspace</span>

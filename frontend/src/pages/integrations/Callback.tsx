@@ -71,7 +71,7 @@ export default function IntegrationCallback() {
   const handleContinue = () => {
     // Clear any saved callback params
     try { sessionStorage.removeItem('oauth_callback'); } catch { /* ignore session storage errors */ }
-    navigate('/');
+    navigate('/dashboard');
   };
 
   const handleReconnect = async () => {
@@ -100,7 +100,7 @@ export default function IntegrationCallback() {
           <div>
             <div className="mb-3 text-sm text-gray-700">You need to sign in to complete this integration. After signing in, return to this page or you will be redirected automatically.</div>
             <div className="flex gap-3">
-              <button onClick={() => navigate('/signin')} className="px-4 py-2 bg-purple-600 text-white rounded">Sign in</button>
+              <button onClick={() => navigate('/login')} className="px-4 py-2 bg-purple-600 text-white rounded">Sign in</button>
               <button onClick={() => navigate('/signup')} className="px-4 py-2 border rounded">Create account</button>
             </div>
           </div>

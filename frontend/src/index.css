@@ -34,6 +34,13 @@
   --color-ring: var(--ring);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
 }
 
 /* ── Light Mode Variables ── */
@@ -139,3 +146,47 @@
 .animate-shimmer-semantic {
   animation: shimmer-semantic 2s linear infinite;
 }
+
+@keyframes cta-glow {
+  0%, 100% { box-shadow: 0 4px_20px rgba(111,99,217,0.35); }
+  50% { box-shadow: 0 4px 36px rgba(111,99,217,0.65); }
+}
+
+.btn-cta-glow {
+  background: linear-gradient(to bottom, #9f96f0, #6f63d9);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.15) inset, 0 4px 20px rgba(111,99,217,0.4);
+  animation: cta-glow 3s ease-in-out infinite;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-cta-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.2) inset, 0 8px 32px rgba(111,99,217,0.65);
+  animation-play-state: paused;
+}
+
+.btn-cta-glow:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.1) inset, 0 2px 8px rgba(111,99,217,0.3);
+}
+
+/* ── Page Entry Animation ── */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-enter {
+  animation: page-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Consistent transition tokens ── */
+.transition-micro  { transition: all 0.15s ease; }
+.transition-std    { transition: all 0.2s ease; }
+.transition-layout { transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); }

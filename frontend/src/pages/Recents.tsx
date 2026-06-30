@@ -30,12 +30,12 @@ export default function Recents() {
 
       <Sidebar
         selectedFilter="all"
-        onFilterChange={(filter) => navigate('/', { state: { filter } })}
+        onFilterChange={(filter) => navigate('/dashboard', { state: { filter } })}
         contents={contents}
         selectedContentId={null}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onSelectContent={(id) => id && navigate('/', { state: { openId: id } })}
+        onSelectContent={(id) => id && navigate('/dashboard', { state: { openId: id } })}
         onCollapsedChange={setSidebarCollapsed}
       />
 
@@ -77,8 +77,8 @@ export default function Recents() {
                   aiStatus={c.aiStatus}
                   aiMetadata={c.aiMetadata}
                   description={c.description}
-                  onSelect={() => navigate('/', { state: { openId: c._id } })}
-                  onGenerateInsight={() => navigate('/', { state: { openId: c._id, triggerExtract: true } })}
+                  onSelect={() => navigate('/dashboard', { state: { openId: c._id } })}
+                  onGenerateInsight={() => navigate('/dashboard', { state: { openId: c._id, triggerExtract: true } })}
                   onEdit={(newTitle) => editContent({ contentId: c._id, title: newTitle })}
                   onDelete={() => deleteContent(c._id)}
                 />

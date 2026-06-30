@@ -1,4 +1,3 @@
-import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
 import { UpgradeModal } from "../components/UpgradeModal";
@@ -307,7 +306,7 @@ export function Dashboard() {
   const shareConfig = getShareButtonConfig();
 
   return (
-    <div className="flex bg-gray-100 dark:bg-[#0d0d0f] min-h-screen">
+    <div className="flex bg-muted dark:bg-[#0d0d0f] min-h-screen">
       <Sidebar
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
@@ -320,7 +319,7 @@ export function Dashboard() {
       />
 
       {/* Main Content Area */}
-      <main className={`flex-1 overflow-x-hidden min-h-screen bg-[#FAFAFA] dark:bg-[#0d0d0f] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
+      <main className={`flex-1 overflow-x-hidden min-h-screen bg-background dark:bg-[#0d0d0f] transition-all duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
         <CreateContentModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -338,14 +337,14 @@ export function Dashboard() {
         />
 
         {/* ── Header ── */}
-        <header className="sticky top-0 z-20 bg-white/50 dark:bg-[#0d0d0f]/80 backdrop-blur-lg px-4 md:px-6 pt-4 md:pt-6 pb-4 border-b border-gray-100/50 dark:border-[#252530]/80 font-inter">
+        <header className="sticky top-0 z-20 bg-card/80 dark:bg-[#0d0d0f]/80 backdrop-blur-lg px-4 md:px-6 pt-4 md:pt-6 pb-4 border-b border-border dark:border-[#252530]/80 font-inter">
           <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-3 md:gap-6">
               
               {/* Left: Title & Hamburger */}
               {!mobileSearchOpen && (
                 <div className="flex items-center gap-3 shrink-0 min-w-[120px] md:min-w-[160px]">
                   <button
-                    className="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-gray-50/50 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 text-gray-600 dark:text-gray-400 active:scale-95 transition-all"
+                    className="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl bg-muted border border-border text-foreground/70 active:scale-95 transition-all"
                     onClick={() => setSidebarOpen(true)}
                     aria-label="Open navigation"
                   >
@@ -476,27 +475,48 @@ export function Dashboard() {
 
           {/* Empty State: High-Fidelity Narrative */}
           {filteredContents.length === 0 && (
-            <div className="flex flex-col items-center justify-center pt-24 pb-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-1000">
-              <div className="w-20 h-20 bg-white dark:bg-gray-900 rounded-[28px] flex items-center justify-center mb-10 border border-gray-100 dark:border-gray-800 shadow-sm relative group overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-gray-100/50 dark:from-gray-800/50 to-transparent"></div>
-                <svg className="w-8 h-8 text-gray-400 animate-pulse-semantic" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                </svg>
+            <div className="flex flex-col items-center justify-center pt-20 pb-32 text-center animate-page-enter">
+              {/* Branded icon with glow */}
+              <div className="relative mb-8">
+                <div className="absolute inset-0 bg-purple-500/20 rounded-[32px] blur-2xl scale-150 pointer-events-none" />
+                <div className="relative w-20 h-20 bg-gradient-to-br from-purple-500/10 to-purple-700/10 dark:from-purple-500/20 dark:to-purple-700/20 rounded-[28px] flex items-center justify-center border border-purple-200/50 dark:border-purple-500/30 shadow-sm">
+                  <svg className="w-9 h-9 text-purple-500 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+                  </svg>
+                </div>
               </div>
-              <h3 className="text-[22px] font-bold text-slate-900 dark:text-slate-200 mb-3 tracking-tight font-outfit">
-                {searchQuery ? "No results found" : "Nothing here yet"}
+
+              <h3 className="text-xl font-bold text-foreground mb-2 tracking-tight">
+                {searchQuery ? "No results found" : "Your vault is empty. Let's fill it."}
               </h3>
-              <p className="text-slate-700 text-[13px] max-w-[340px] mb-12 leading-relaxed font-medium">
+              <p className="text-sm text-muted-foreground max-w-[300px] mb-8 leading-relaxed">
                 {searchQuery
-                  ? `We couldn't find anything matching "${searchQuery}".`
-                  : "Save your links, documents, and notes to get started."}
+                  ? `No items match "${searchQuery}". Try a different search term.`
+                  : "Save links, articles, YouTube videos, or documents and let AI summarize them for you."}
               </p>
+
               {!searchQuery && (
-                <Button
-                  variant="primary"
-                  text="Add your first item"
-                  onClick={() => setModalOpen(true)}
-                />
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <button
+                    onClick={() => setModalOpen(true)}
+                    className="h-10 px-5 rounded-xl font-bold text-sm text-white
+                      bg-gradient-to-b from-purple-500 to-[#6f63d9]
+                      shadow-[0_1px_0_rgba(255,255,255,0.15)_inset,_0_4px_14px_rgba(111,99,217,0.4)]
+                      hover:shadow-[0_1px_0_rgba(255,255,255,0.15)_inset,_0_6px_20px_rgba(111,99,217,0.55)]
+                      hover:-translate-y-0.5 active:translate-y-0
+                      transition-all duration-200"
+                  >
+                    Add your first link
+                  </button>
+                  <a
+                    href="https://chromewebstore.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-10 px-5 rounded-xl font-semibold text-sm border border-border hover:border-primary/40 hover:bg-muted/50 text-foreground transition-all duration-150"
+                  >
+                    Get Chrome Extension
+                  </a>
+                </div>
               )}
             </div>
           )}

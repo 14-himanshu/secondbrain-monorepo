@@ -33,9 +33,9 @@ function NavItem({
           : "text-slate-500 dark:text-slate-400 hover:bg-purple-50/30 dark:hover:bg-purple-900/20 hover:text-[#6f63d9] dark:hover:text-[#8378e8]"
       }`}
     >
-      {/* Active pill indicator */}
+      {/* Active left-bar indicator with glow */}
       {active && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-purple-500" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-r-full bg-purple-500 shadow-[0_0_8px_rgba(131,120,232,0.8)]" />
       )}
 
       {/* Icon */}
@@ -112,7 +112,7 @@ export function Sidebar({
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
-    navigate("/signin");
+    navigate("/login");
   };
 
   const formatSource = (link?: string) => {
@@ -156,7 +156,7 @@ export function Sidebar({
       )}
 
       <aside
-        className={`h-screen fixed left-0 top-0 z-30 flex flex-col bg-white dark:bg-[#0d0d0f] border-r border-gray-100/80 dark:border-[#252530] shadow-[1px_0_0_0_rgba(0,0,0,0.03)] ${sidebarWidth} transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
+        className={`h-screen fixed left-0 top-0 z-30 flex flex-col bg-card dark:bg-[#0d0d0f] border-r border-border dark:border-[#252530] shadow-sm ${sidebarWidth} transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] transform ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* ── Collapse Toggle ── */}
         <button

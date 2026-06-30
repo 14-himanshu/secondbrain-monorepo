@@ -1,46 +1,48 @@
 import { useRef, useState } from "react";
-import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { isApiError } from "../lib/apiClient";
 import { BACKEND_URL } from "../config";
 import { signUp } from "../services/auth.api";
+import { CheckCircle2 } from "lucide-react";
+import { Logo } from "../icons/Logo";
 
 interface ValidationError {
   path: (string | number)[];
   message: string;
 }
 
-
-
 export function Signup() {
-  const usernameRef = useRef<HTMLInputElement | null>(null);
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
   const [errors, setErrors] = useState<ValidationError[]>([]);
-
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
   async function signup() {
     setErrors([]);
     setSuccessMsg("");
-    setLoading(true);
-    const username = usernameRef.current?.value ?? "";
     const email = emailRef.current?.value ?? "";
     const password = passwordRef.current?.value ?? "";
+    const confirmPassword = confirmPasswordRef.current?.value ?? "";
+
+    if (password !== confirmPassword) {
+      setErrors([{ path: ["confirmPassword"], message: "Passwords do not match" }]);
+      return;
+    }
+
+    setLoading(true);
+    const username = email.split('@')[0] || "user";
     try {
       await signUp(username, email, password);
       setSuccessMsg("Account created! Redirecting you to sign in…");
-      setTimeout(() => navigate("/signin"), 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (e) {
       if (isApiError(e)) {
         const details = e.details as { errors?: ValidationError[] } | undefined;
-        if (details?.errors?.length) {
-          setErrors(details.errors);
-          return;
-        }
+        if (details?.errors?.length) { setErrors(details.errors); return; }
         setErrors([{ path: ["general"], message: e.message }]);
         return;
       }
@@ -50,192 +52,138 @@ export function Signup() {
     }
   }
 
-  const usernameErrors = errors.filter((e) => e.path?.includes("username"));
   const emailErrors = errors.filter((e) => e.path?.includes("email"));
   const passwordErrors = errors.filter((e) => e.path?.includes("password"));
+  const confirmPasswordErrors = errors.filter((e) => e.path?.includes("confirmPassword"));
   const generalErrors = errors.filter((e) => e.path?.includes("general"));
 
-
-
   return (
-    <div className="min-h-screen w-screen bg-gray-100 flex">
-      {/* ── Left decorative panel ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-purple-600 flex-col justify-between p-12 relative overflow-hidden">
-        {/* Background orbs */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-purple-500 rounded-full opacity-40 blur-3xl" />
-        <div className="absolute -bottom-24 -right-16 w-80 h-80 bg-purple-200 rounded-full opacity-20 blur-3xl" />
+    <div className="animate-page-enter min-h-screen w-screen flex flex-col items-center justify-center bg-muted dark:bg-background text-foreground font-sans p-4 py-12 relative overflow-hidden">
 
-        {/* Logo / brand */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-            </svg>
-          </div>
-          <span className="text-white font-semibold text-lg tracking-tight">Second Brain</span>
-        </div>
-
-        {/* Central copy */}
-        <div className="relative z-10">
-          <h2 className="text-white text-4xl font-bold leading-tight mb-4">
-            Start building<br />
-            <span className="text-purple-200">your second brain.</span>
-          </h2>
-          <p className="text-purple-200/80 text-base leading-relaxed max-w-sm">
-            Join thousands who capture what matters, stay organised, and never lose an idea again.
-          </p>
-        </div>
-
-        {/* Testimonial / social proof */}
-        <div className="relative z-10 bg-white/10 backdrop-blur-sm rounded-2xl p-5">
-          <p className="text-white/90 text-sm leading-relaxed mb-3">
-            "Second Brain changed how I work. Everything I need is organised and instantly searchable."
-          </p>
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-purple-600 font-bold text-xs">
-              AK
-            </div>
-            <div>
-              <p className="text-white text-xs font-semibold">Aryan K.</p>
-              <p className="text-purple-200/70 text-xs">Product Designer</p>
-            </div>
-          </div>
-        </div>
+      {/* ── Background: dot grid (both modes) + purple radial glow ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:24px_24px] opacity-60 dark:opacity-30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(111,99,217,0.08),transparent)] dark:bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(131,120,232,0.14),transparent)]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-purple-500/8 dark:bg-purple-600/10 rounded-full blur-[100px]" />
       </div>
 
-      {/* ── Right form panel ── */}
-      <div className="flex-1 flex flex-col justify-center items-center px-6 py-12">
-        {/* Mobile brand */}
-        <div className="lg:hidden flex items-center gap-2 mb-10">
-          <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="white" className="w-4.5 h-4.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-            </svg>
+      {/* Brand Header */}
+      <div className="flex flex-col items-center mb-8 relative z-10">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-[0_0_20px_rgba(111,99,217,0.4)] ring-2 ring-purple-500/20 group-hover:scale-105 transition-all duration-300">
+            <Logo className="w-5 h-5 text-white" />
           </div>
-          <span className="text-gray-800 font-semibold text-base">Second Brain</span>
-        </div>
+          <span className="text-xl font-bold tracking-tight text-foreground">Second Brain</span>
+        </Link>
+        <p className="text-xs text-muted-foreground mt-2 tracking-wide">Your intelligence, amplified.</p>
+      </div>
 
-        <div className="w-full max-w-sm">
-          {/* Heading */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-800 mb-1">Create your account</h1>
-            <p className="text-gray-600 text-sm">It's free and takes less than a minute.</p>
-          </div>
+      {/* Card — white + border + shadow in light | glass in dark */}
+      <div className="w-full max-w-md mx-auto rounded-2xl border border-border bg-card shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-[#111113]/90 dark:shadow-[0_8px_40px_rgba(0,0,0,0.6)] dark:backdrop-blur-xl overflow-hidden relative z-10">
 
-          {/* General error banner */}
-          {generalErrors.length > 0 && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-100 flex items-start gap-2.5" role="alert" aria-live="assertive">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-red-500 mt-0.5">
-                <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-              </svg>
-              <p className="text-red-600 text-sm">{generalErrors[0].message}</p>
-            </div>
-          )}
+        <div className="p-6 sm:p-8">
+          <h1 className="text-2xl font-bold text-center text-foreground mb-6 tracking-tight">Create your account</h1>
 
-          {/* Success banner */}
+          {/* Success Banner */}
           {successMsg && (
-            <div className="mb-5 px-4 py-3 rounded-xl bg-purple-50 border border-purple-100 flex items-start gap-2.5">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0 text-purple-500 mt-0.5">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-              </svg>
-              <p className="text-purple-700 text-sm">{successMsg}</p>
+            <div className="mb-5 p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-medium flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              {successMsg}
             </div>
           )}
 
-          {/* Username field */}
-          <div className="mb-4">
-            <Input ref={usernameRef} placeholder="Choose a username" label="Username" />
-            {usernameErrors.length > 0 && (
-              <div className="mt-1.5 flex flex-col gap-0.5">
-                {usernameErrors.map((err, i) => (
-                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
-                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-                    </svg>
-                    {err.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Error Banner */}
+          {generalErrors.length > 0 && (
+            <div className="mb-5 p-3.5 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+              {generalErrors[0].message}
+            </div>
+          )}
 
-          {/* Email field */}
-          <div className="mb-4">
-            <Input ref={emailRef} placeholder="Enter your email address" label="Email Address" type="email" />
-            {emailErrors.length > 0 && (
-              <div className="mt-1.5 flex flex-col gap-0.5">
-                {emailErrors.map((err, i) => (
-                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
-                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-                    </svg>
-                    {err.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Password field */}
-          <div className="mb-4">
-            <Input
-              ref={passwordRef}
-              placeholder="Enter your password"
-              label="Password"
-              type="password"
-            />
-            {passwordErrors.length > 0 && (
-              <div className="mt-1.5 flex flex-col gap-0.5">
-                {passwordErrors.map((err, i) => (
-                  <p key={i} className="text-red-500 text-xs flex items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3 shrink-0">
-                      <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-                    </svg>
-                    {err.message}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* CTA */}
-          <div className="mt-6">
-            <Button
-              onClick={signup}
-              loading={loading}
-              text="Create Account"
-              variant="primary"
-              fullwidth={true}
-            />
-          </div>
+          {/* Google OAuth — elevated size & hover */}
+          <button
+            onClick={() => { window.location.href = `${BACKEND_URL}/api/v1/auth/google/start`; }}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2.5 h-11 rounded-xl border border-border dark:border-white/10 bg-background dark:bg-white/5 hover:bg-muted/70 dark:hover:bg-white/[0.08] text-foreground font-semibold text-sm shadow-sm transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg className="w-5 h-5 shrink-0" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.6 8.2 3l6-6C34.5 3 29.6 1 24 1 14.8 1 6.9 6.8 3.6 14.9l7.9 6.1C13.4 14.5 18 9.5 24 9.5z"/>
+              <path fill="#34A853" d="M46.5 24c0-1.6-.1-3.1-.4-4.6H24v8.7h12.7c-.5 2.6-2 4.8-4.2 6.2l6.5 5C43 36.2 46.5 30.6 46.5 24z"/>
+              <path fill="#4A90E2" d="M10.5 28.1A14.7 14.7 0 0110 24c0-1.3.2-2.6.5-3.8L3 14.1C1.1 17.9 0 21.8 0 26c0 4.2 1.1 8.1 3 11.9l7.5-9.8z"/>
+              <path fill="#FBBC05" d="M24 46c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2 1.4-4.5 2.3-8.3 2.3-6 0-10.6-5-12.9-10.7L3.6 33.1C6.9 41.2 14.8 46 24 46z"/>
+            </svg>
+            Continue with Google
+          </button>
 
           {/* Divider */}
-          <div className="mt-6 mb-5 flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-xs text-gray-600">or</span>
-            <div className="flex-1 h-px bg-gray-200" />
+          <div className="relative my-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50 dark:border-white/10"></div>
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="px-3 bg-card dark:bg-[#111113] text-muted-foreground uppercase tracking-widest font-medium">or</span>
+            </div>
           </div>
 
-          {/* Google sign-up button */}
-          <div className="mb-4">
-            <button
-              onClick={async () => { window.location.href = `${BACKEND_URL}/api/v1/auth/google/start`; }}
-              disabled={loading}
-              className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-sm'}`}>
-              <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.6 8.2 3l6-6C34.5 3 29.6 1 24 1 14.8 1 6.9 6.8 3.6 14.9l7.9 6.1C13.4 14.5 18 9.5 24 9.5z"/>
-                <path fill="#34A853" d="M46.5 24c0-1.6-.1-3.1-.4-4.6H24v8.7h12.7c-.5 2.6-2 4.8-4.2 6.2l6.5 5C43 36.2 46.5 30.6 46.5 24z"/>
-                <path fill="#4A90E2" d="M10.5 28.1A14.7 14.7 0 0110 24c0-1.3.2-2.6.5-3.8L3 14.1C1.1 17.9 0 21.8 0 26c0 4.2 1.1 8.1 3 11.9l7.5-9.8z"/>
-                <path fill="#FBBC05" d="M24 46c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2 1.4-4.5 2.3-8.3 2.3-6 0-10.6-5-12.9-10.7L3.6 33.1C6.9 41.2 14.8 46 24 46z"/>
-              </svg>
-              <span className="text-sm font-medium">Continue with Google</span>
-            </button>
-          </div>
+          {/* Form Fields */}
+          <div className="space-y-4">
+            <div>
+              <Input ref={emailRef} placeholder="you@example.com" label="Email address" type="email" />
+              {emailErrors.length > 0 && emailErrors.map((err, i) => (
+                <p key={i} className="mt-1 text-destructive text-xs">{err.message}</p>
+              ))}
+            </div>
 
-          {/* Sign-in link */}
-          <p className="text-center text-sm text-gray-600">
+            <div>
+              <Input ref={passwordRef} placeholder="Create a strong password" label="Password" type="password" />
+              {passwordErrors.length > 0 && passwordErrors.map((err, i) => (
+                <p key={i} className="mt-1 text-destructive text-xs">{err.message}</p>
+              ))}
+            </div>
+
+            <div>
+              <Input ref={confirmPasswordRef} placeholder="Re-enter your password" label="Confirm password" type="password" />
+              {confirmPasswordErrors.length > 0 && confirmPasswordErrors.map((err, i) => (
+                <p key={i} className="mt-1 text-destructive text-xs">{err.message}</p>
+              ))}
+            </div>
+
+            {/* ── Premium CTA Button ── */}
+            <div className="pt-1">
+              <button
+                onClick={signup}
+                disabled={loading}
+                className="relative w-full h-11 rounded-xl font-bold text-sm tracking-wide text-white overflow-hidden
+                  bg-gradient-to-b from-purple-500 to-[#6f63d9]
+                  shadow-[0_1px_0_rgba(255,255,255,0.15)_inset,_0_4px_16px_rgba(111,99,217,0.45)]
+                  hover:shadow-[0_1px_0_rgba(255,255,255,0.15)_inset,_0_6px_24px_rgba(111,99,217,0.6)]
+                  hover:-translate-y-0.5
+                  active:translate-y-0 active:shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,_0_2px_8px_rgba(111,99,217,0.3)]
+                  transition-all duration-200
+                  disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_4px_16px_rgba(111,99,217,0.3)]"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"/>
+                    </svg>
+                    Creating account…
+                  </span>
+                ) : "Create account"}
+              </button>
+            </div>
+
+            <p className="text-center text-[12px] text-muted-foreground px-4 leading-relaxed">
+              By signing up, you agree to our <a href="#" className="underline hover:text-foreground transition-colors">Terms</a> and <a href="#" className="underline hover:text-foreground transition-colors">Privacy Policy</a>.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-border/50 dark:border-white/[0.06] py-5 text-center">
+          <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
-            <Link to="/signin" className="text-purple-600 font-medium hover:text-purple-500 transition-colors">
+            <Link to="/login" className="font-semibold text-foreground hover:text-primary transition-colors">
               Sign in
             </Link>
           </p>

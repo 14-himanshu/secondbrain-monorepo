@@ -8,7 +8,7 @@ interface ButtonProps {
   onClick?: () => void;
   fullwidth?: boolean;
   loading?: boolean;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }
 
 export function Button({
@@ -21,14 +21,21 @@ export function Button({
   size = "md",
 }: ButtonProps) {
   const shadcnVariant = variant === "primary" ? "default" : variant === "secondary" ? "outline" : "ghost";
-  const shadcnSize = size === "sm" ? "sm" : "default";
+  const shadcnSize = size === "sm" ? "sm" : size === "lg" ? "lg" : "default";
+
+  // Semantic primary styling
+  const primaryStyles = variant === "primary"
+    ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+    : "";
+    
+  const customSizeClasses = size === "lg" ? "h-12 text-base px-8" : "";
 
   return (
     <ShadcnButton
       variant={shadcnVariant}
       size={shadcnSize}
       onClick={onClick}
-      className={`${fullwidth ? "w-full" : ""} rounded-xl font-bold tracking-tight shadow-[0_4px_12px_rgba(109,99,255,0.12)]`}
+      className={`${fullwidth ? "w-full" : ""} rounded-lg font-bold tracking-tight transition-all duration-300 active:scale-[0.98] ${primaryStyles} ${customSizeClasses}`}
       disabled={loading}
     >
       {startIcon && <div className="shrink-0 mr-2">{startIcon}</div>}

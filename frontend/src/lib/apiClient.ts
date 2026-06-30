@@ -30,7 +30,7 @@ apiClient.interceptors.response.use(
     // Only redirect on 401 (Unauthorized), not 403 (Forbidden/Quota)
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
-      window.location.href = "/signin";
+      window.location.href = "/login";
     }
 
     const normalized: ApiError = {

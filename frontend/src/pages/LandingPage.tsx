@@ -716,7 +716,7 @@ export function LandingPage() {
           
           <div className="flex gap-3">
             <a
-              href="https://twitter.com"
+              href="https://x.com/hpandey_14"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 flex items-center justify-center rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/50 transition-all duration-150"
@@ -728,7 +728,7 @@ export function LandingPage() {
               </svg>
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/14-himanshu/secondbrain-monorepo"
               target="_blank"
               rel="noopener noreferrer"
               className="w-9 h-9 flex items-center justify-center rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/50 transition-all duration-150"

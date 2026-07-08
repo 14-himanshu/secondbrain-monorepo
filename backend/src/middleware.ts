@@ -36,7 +36,6 @@ export const userMiddleware = async (
       return res.status(403).json({ message: "Invalid token" });
     }
 
-    // @ts-ignore
     req.userId = decoded.id;
 
     // Verify user actually exists in the database to prevent session drift/dead tokens (e.g. database resets)

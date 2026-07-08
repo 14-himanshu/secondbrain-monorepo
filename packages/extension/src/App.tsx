@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Brain, LogIn, Loader2, Check, AlertCircle } from 'lucide-react';
 
-const API_URL = 'http://localhost:5001/api/v1';
+// API URL — change this for production or set VITE_API_URL in .env
+const API_URL = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:5001/api/v1';
 
 export default function App() {
   const [token, setToken] = useState<string | null>(null);
@@ -75,12 +76,12 @@ export default function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': token || '',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           link: tabUrl,
           title: tabTitle,
-          type: tabUrl.includes('youtube.com') || tabUrl.includes('youtu.be') ? 'video' : 'article',
+          type: tabUrl.includes('youtube.com') || tabUrl.includes('youtu.be') ? 'video' : 'post',
           tags: tags.split(',').map(t => t.trim()).filter(Boolean),
           description: description,
         }),
@@ -97,7 +98,7 @@ export default function App() {
     }
   };
 
-  if (loading && !token) {
+  if (loading) {
     return <div className="flex items-center justify-center h-full min-h-[400px]"><Loader2 className="animate-spin text-purple-600" /></div>;
   }
 

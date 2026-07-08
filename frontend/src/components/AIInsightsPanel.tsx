@@ -1,5 +1,8 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import type { Content } from "../hooks/useContent";
 import { getConnections, updateContent } from "../services/content.api";
 import { aiService } from "../services/ai.service";
@@ -201,7 +204,7 @@ function ChatColumn({
 }) {
   const [chatQuery, setChatQuery] = useState("");
   const [messages, setMessages] = useState<
-    { role: "user" | "assistant"; content: string; sources?: Array<{ _id: string; title: string; link: string; type: string }> }[]
+    { role: "user" | "assistant"; content: string; sources?: Array<{ _id: string; title: string; link: string; type: string }>; actions?: string[] }[]
   >([]);
   const [isThinking, setIsThinking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -221,63 +224,97 @@ function ChatColumn({
     const userQuery = retryQuery || chatQuery;
     if (!userQuery.trim() || isThinking) return;
     if (!retryQuery) setChatQuery("");
+
     const history = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
     if (!retryQuery) setMessages((prev) => [...prev, { role: "user", content: userQuery }]);
+
     setIsThinking(true);
+    // Add a placeholder message for the assistant
+    setMessages((prev) => [...prev, { role: "assistant", content: "", sources: [], actions: [] }]);
+
+    // Issue 10 FIX: Create AbortController so we can cancel the stream
+    // if the user closes the panel or sends another message.
+    const abortController = new AbortController();
+
     try {
       const response = await aiService.chat({
         query: userQuery,
         history,
         contentId: selectedContent?._id,
+        signal: abortController.signal,
       });
-      if (response.data.success) {
+
+      if (!response.body) throw new Error("No response body");
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      // Issue 9 FIX: isDone flag to break BOTH loops when [DONE] arrives.
+      // Previously only the inner while broke, leaving the outer loop spinning.
+      let isDone = false;
+
+      while (!isDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        let boundary = buffer.indexOf('\n\n');
+        while (boundary !== -1) {
+          const chunkStr = buffer.slice(0, boundary);
+          buffer = buffer.slice(boundary + 2);
+
+          if (chunkStr.startsWith('data: ')) {
+            const dataStr = chunkStr.replace('data: ', '').trim();
+            if (dataStr === '[DONE]') { isDone = true; break; }
+            if (!dataStr) { boundary = buffer.indexOf('\n\n'); continue; }
+
+            try {
+              const data = JSON.parse(dataStr);
+              setMessages((prev) => {
+                const newMessages = [...prev];
+                // FIX: Spread into a NEW object so React Strict Mode's double-invocation
+                // of this updater doesn't mutate the same reference twice (causing doubled text).
+                const lastMsg = { ...newMessages[newMessages.length - 1] };
+                newMessages[newMessages.length - 1] = lastMsg;
+
+                if (data.type === 'metadata') {
+                  lastMsg.sources = data.sources;
+                } else if (data.type === 'action') {
+                  lastMsg.actions = [...(lastMsg.actions || []), data.content];
+                } else if (data.type === 'chunk') {
+                  lastMsg.content = (lastMsg.content || '') + data.content;
+                  // Clear action messages once real content arrives
+                  if (lastMsg.actions && lastMsg.actions.length > 0) {
+                    lastMsg.actions = [];
+                  }
+                } else if (data.type === 'error') {
+                  lastMsg.content = `⚠️ ${data.content}`;
+                }
+
+                return newMessages;
+              });
+            } catch (e) {
+              console.error("Failed to parse SSE chunk", e);
+            }
+          }
+          boundary = buffer.indexOf('\n\n');
+        }
+      }
+    } catch (err: any) {
+      if (err?.name !== 'AbortError') {
         setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: response.data.answer, sources: response.data.sources },
+          ...prev.slice(0, -1),
+          { role: "assistant", content: "Sorry, the agent encountered an error. Please try again.", sources: [] },
         ]);
-      } else throw new Error(response.data.error || "Brain synthesis failed.");
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "Sorry, something went wrong. Please try again." },
-      ]);
+      }
     } finally {
       setIsThinking(false);
     }
   };
 
-  const renderContent = (content: string, sources?: Array<any>): ReactNode => {
-    const regex = /\[Source\s*(\d+)\]/gi;
-    const parts: ReactNode[] = [];
-    let lastIdx = 0;
-    let match;
-    while ((match = regex.exec(content)) !== null) {
-      if (match.index > lastIdx) parts.push(content.slice(lastIdx, match.index));
-      const sIdx = parseInt(match[1], 10) - 1;
-      const source = sources?.[sIdx];
-      const displayTitle = source?.title
-        ? source.title.length > 22 ? `${source.title.slice(0, 22)}...` : source.title
-        : `Source ${sIdx + 1}`;
-      parts.push(
-        <a
-          key={`src-${match.index}`}
-          href={source?.link || "#"}
-          target={source?.link ? "_blank" : undefined}
-          rel="noopener noreferrer"
-          title={source?.title || `Source ${sIdx + 1}`}
-          className="inline-flex items-center gap-1 px-2 py-0.5 mx-0.5 bg-purple-100/80 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-md text-[10px] font-bold hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors border border-purple-200/50 dark:border-purple-800/30 shadow-sm whitespace-nowrap align-baseline"
-        >
-          <span className="w-3.5 h-3.5 shrink-0 rounded bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-250 flex items-center justify-center text-[8px] font-bold">
-            {sIdx + 1}
-          </span>
-          <span>{displayTitle}</span>
-        </a>
-      );
-      lastIdx = regex.lastIndex;
-    }
-    if (lastIdx < content.length) parts.push(content.slice(lastIdx));
-    return parts.length ? parts : content;
-  };
+
+
 
   return (
     <div className="flex flex-col flex-1 min-h-0 h-full">
@@ -334,7 +371,36 @@ function ChatColumn({
                   : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-tl-none border border-gray-100 dark:border-gray-700"
               }`}
             >
-              {msg.role === "user" ? msg.content : renderContent(msg.content, msg.sources)}
+              {msg.role === "assistant" && msg.actions && msg.actions.length > 0 && (
+                <div className="mb-3 space-y-1.5">
+                  {msg.actions.map((action, aIdx) => (
+                    <div key={aIdx} className="flex items-center gap-2 text-[11px] text-purple-600/80 dark:text-purple-400/80 font-bold bg-purple-50/50 dark:bg-purple-900/20 px-2 py-1 rounded-md max-w-fit">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
+                      {action}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {msg.role === "user" ? (
+                msg.content
+              ) : (
+                <div className="prose prose-sm dark:prose-invert max-w-none text-[13.5px] leading-[1.65] 
+                  prose-p:mb-4 last:prose-p:mb-0 
+                  prose-headings:font-bold prose-headings:mb-3 prose-headings:mt-5 
+                  prose-h1:text-[16px] prose-h2:text-[15px] prose-h3:text-[14px]
+                  prose-a:text-purple-600 dark:prose-a:text-purple-400 prose-a:no-underline hover:prose-a:underline prose-a:font-semibold
+                  prose-strong:font-bold prose-strong:text-gray-900 dark:prose-strong:text-white
+                  prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:bg-gray-200/50 dark:prose-code:bg-gray-800/80 prose-code:text-purple-700 dark:prose-code:text-purple-300 prose-code:font-mono prose-code:text-[12px] prose-code:before:content-none prose-code:after:content-none
+                  prose-pre:bg-[#1e1e24] prose-pre:text-gray-100 prose-pre:rounded-xl prose-pre:p-4 prose-pre:my-4 prose-pre:overflow-x-auto prose-pre:border prose-pre:border-gray-800
+                  prose-ul:my-3 prose-ul:list-disc prose-ul:pl-5
+                  prose-ol:my-3 prose-ol:list-decimal prose-ol:pl-5
+                  prose-li:my-1.5 prose-li:marker:text-gray-400
+                  prose-blockquote:border-l-4 prose-blockquote:border-purple-500/50 prose-blockquote:pl-4 prose-blockquote:py-0.5 prose-blockquote:my-4 prose-blockquote:italic prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400 prose-blockquote:bg-purple-50/30 dark:prose-blockquote:bg-purple-900/10 prose-blockquote:rounded-r-lg">
+                  <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                    {msg.content}
+                  </ReactMarkdown>
+                </div>
+              )}
 
               {msg.role === "assistant" && msg.sources && msg.sources.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200/50 dark:border-gray-700/50 space-y-2">

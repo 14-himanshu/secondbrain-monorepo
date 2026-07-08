@@ -2,7 +2,7 @@ import type { UrlTarget, ClassificationMode, ExtractedContent, ExtractContext } 
 import { getAccessTokenForUser } from "../../google.auth.js";
 import { assessExtractionQuality, adjustConfidence, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import * as pdfParse from "pdf-parse";
-import { renderPageSnapshot } from "../browser.js";
+import { fetchJinaReader } from "./article.extractor.js";
 import {
   createDom,
   extractStructuredMetadata,
@@ -236,10 +236,7 @@ const tryRenderedGoogleExtraction = async (
   target: UrlTarget,
   kind: GoogleResourceKind
 ): Promise<ExtractedContent | null> => {
-  const rendered = await renderPageSnapshot(target.normalizedUrl, {
-    timeoutMs: kind === "doc" || kind === "presentation" || kind === "sheet" ? 12500 : 10500,
-    extraDelayMs: kind === "doc" || kind === "presentation" || kind === "sheet" ? 1600 : 1100,
-  });
+  const rendered = await fetchJinaReader(target.normalizedUrl);
 
   if (
     !rendered?.text ||
@@ -253,20 +250,20 @@ const tryRenderedGoogleExtraction = async (
   const renderedText = normalizeWhitespace(rendered.text).slice(0, 40000);
   if (!renderedText) return null;
 
-  const renderedDom = createDom(rendered.html, rendered.finalUrl);
   const defaults = getGoogleResourceDefaults(kind);
-  const metadata = mergeStructuredMetadata(extractStructuredMetadata(renderedDom.window.document), {
-    title: defaults.title,
+  const metadata = {
+    title: rendered.title || defaults.title,
+    description: rendered.description,
     tags: defaults.tags,
-    contentType: "document",
-  });
+    contentType: "document" as const,
+  };
 
   return buildPublicGoogleSuccess(
     target,
     getGoogleSourceForKind(kind),
     renderedText,
     metadata,
-    "browser_render",
+    "static_fetch",
     0.74,
     getRenderedPartialReasonForKind(kind)
   );

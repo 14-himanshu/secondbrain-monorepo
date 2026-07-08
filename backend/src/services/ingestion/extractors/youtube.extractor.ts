@@ -1,211 +1,49 @@
-import { createDom, extractStructuredMetadata, fetchJsonResponse, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
+import { fetchJinaReader } from "./article.extractor.js";
 import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
-import { YoutubeTranscript } from "youtube-transcript";
-
-type CachedYouTubePage = {
-  fetchedAt: number;
-  metadata: ExtractedContent["metadata"];
-  metadataContent: string;
-  playerResponse: any;
-};
-
-const YOUTUBE_PAGE_CACHE_TTL_MS = 30 * 60 * 1000;
-const YOUTUBE_TRANSCRIPT_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
-const youtubePageCache = new Map<string, CachedYouTubePage>();
-const youtubeTranscriptCache = new Map<string, { fetchedAt: number; transcript: string }>();
-
-const findJsonObjectAfter = (input: string, marker: string) => {
-  const markerIndex = input.indexOf(marker);
-  if (markerIndex === -1) return null;
-
-  const start = input.indexOf("{", markerIndex);
-  if (start === -1) return null;
-
-  let depth = 0;
-  let inString = false;
-  let escaped = false;
-
-  for (let index = start; index < input.length; index++) {
-    const char = input[index];
-
-    if (escaped) {
-      escaped = false;
-      continue;
-    }
-
-    if (char === "\\") {
-      escaped = true;
-      continue;
-    }
-
-    if (char === '"') {
-      inString = !inString;
-      continue;
-    }
-
-    if (inString) continue;
-
-    if (char === "{") depth++;
-    if (char === "}") depth--;
-
-    if (depth === 0) {
-      try {
-        return JSON.parse(input.slice(start, index + 1));
-      } catch {
-        return null;
-      }
-    }
-  }
-
-  return null;
-};
-
-const extractTranscriptText = (payload: any) => {
-  if (!payload?.events || !Array.isArray(payload.events)) return "";
-
-  const fragments = payload.events.flatMap((event: any) =>
-    Array.isArray(event?.segs)
-      ? event.segs
-          .map((segment: any) => normalizeWhitespace(String(segment?.utf8 || "")))
-          .filter(Boolean)
-      : []
-  );
-
-  return normalizeWhitespace(fragments.join(" "));
-};
-
-const chooseCaptionTrack = (playerResponse: any) => {
-  const tracks = playerResponse?.captions?.playerCaptionsTracklistRenderer?.captionTracks;
-  if (!Array.isArray(tracks) || tracks.length === 0) return null;
-
-  return (
-    tracks.find((track: any) => String(track?.languageCode || "").toLowerCase().startsWith("en")) ||
-    tracks[0] ||
-    null
-  );
-};
-
-const getCachedYouTubePage = (key: string) => {
-  const cached = youtubePageCache.get(key);
-  if (!cached) return null;
-  if (Date.now() - cached.fetchedAt > YOUTUBE_PAGE_CACHE_TTL_MS) {
-    youtubePageCache.delete(key);
-    return null;
-  }
-  return cached;
-};
-
-const getCachedTranscript = (key: string) => {
-  const cached = youtubeTranscriptCache.get(key);
-  if (!cached) return null;
-  if (Date.now() - cached.fetchedAt > YOUTUBE_TRANSCRIPT_CACHE_TTL_MS) {
-    youtubeTranscriptCache.delete(key);
-    return null;
-  }
-  return cached.transcript;
-};
-
-const fetchYouTubeOEmbed = async (url: string): Promise<any> => {
-  try {
-    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-    const data = await fetchJsonResponse<any>(oembedUrl, 5000);
-    return data;
-  } catch (err) {
-    console.warn("[YOUTUBE_OEMBED_FALLBACK_FAILED]", err);
-    return null;
-  }
-};
-
-const readYouTubePage = async (target: UrlTarget) => {
-  const cacheKey = target.videoId || target.normalizedUrl;
-  const cached = getCachedYouTubePage(cacheKey);
-  if (cached) return cached;
-
-  let metadata: any = null;
-  let metadataContent = "";
-  let playerResponse: any = null;
-
-  try {
-    const fetched = await fetchTextResponse(target.normalizedUrl, 8000);
-    const dom = createDom(fetched.body, fetched.finalUrl);
-    const htmlMetadata = extractStructuredMetadata(dom.window.document);
-    const jsonLdMetadata = mergeStructuredMetadata(htmlMetadata, {
-      channel: htmlMetadata.siteName,
-    });
-
-    playerResponse =
-      findJsonObjectAfter(fetched.body, "var ytInitialPlayerResponse =") ||
-      findJsonObjectAfter(fetched.body, "ytInitialPlayerResponse =") ||
-      findJsonObjectAfter(fetched.body, '"captions":');
-
-    const videoDetails = playerResponse?.videoDetails;
-    metadata = mergeStructuredMetadata(jsonLdMetadata, {
-      title: videoDetails?.title,
-      description: normalizeWhitespace(String(videoDetails?.shortDescription || "")) || undefined,
-      channel: normalizeWhitespace(String(videoDetails?.author || "")) || undefined,
-      tags: Array.isArray(videoDetails?.keywords) ? videoDetails.keywords : [],
-      durationSeconds: Number(videoDetails?.lengthSeconds || 0) || undefined,
-      contentType: "video",
-    });
-    metadataContent = normalizeWhitespace([metadata.title, metadata.description].filter(Boolean).join(". "));
-  } catch (e: any) {
-    console.warn("[YOUTUBE_HTML_FETCH_FAILED] Attempting oEmbed fallback...", e.message || e);
-  }
-
-  // Fallback to oEmbed if page fetch failed or returned empty content
-  if (!metadata?.title || !metadataContent) {
-    const oembed = await fetchYouTubeOEmbed(target.normalizedUrl);
-    if (oembed) {
-      metadata = {
-        title: oembed.title || "YouTube Video",
-        description: oembed.title ? `A video by ${oembed.author_name || "creator"}.` : undefined,
-        channel: oembed.author_name || undefined,
-        tags: [],
-        contentType: "video",
-      };
-      metadataContent = normalizeWhitespace([metadata.title, metadata.description].filter(Boolean).join(". "));
-    }
-  }
-
-  if (!metadata || !metadataContent) {
-    throw new Error("youtube_fetch_failed");
-  }
-
-  const snapshot = {
-    fetchedAt: Date.now(),
-    metadata,
-    metadataContent,
-    playerResponse,
-  };
-  youtubePageCache.set(cacheKey, snapshot);
-  return snapshot;
-};
+import { normalizeWhitespace } from "../html.js";
 
 export const extractYouTubeContent = async (
   target: UrlTarget,
   mode: ClassificationMode = "deep"
 ): Promise<ExtractedContent> => {
   try {
-    const cacheKey = target.videoId || target.normalizedUrl;
-    const { metadata, metadataContent, playerResponse } = await readYouTubePage(target);
+    const jinaResult = await fetchJinaReader(target.normalizedUrl);
+
+    if (!jinaResult || !jinaResult.title) {
+      throw new Error("youtube_fetch_failed");
+    }
+
+    const title = jinaResult.title;
+    // Jina usually puts the channel and description in the metadata/description, or we just extract what we can.
+    const description = jinaResult.description || undefined;
+    const contentText = normalizeWhitespace(jinaResult.text || "");
+    
+    // Metadata block
+    const metadata = {
+      title,
+      description,
+      channel: undefined, // Hard to extract reliably without full HTML, but Title/Desc is usually enough
+      tags: [],
+      contentType: "video" as const,
+    };
+
+    const metadataContent = normalizeWhitespace([title, description].filter(Boolean).join(". "));
 
     if (mode === "quick") {
       const validation = assessExtractionQuality(metadataContent, "youtube-metadata", target.platform);
       return {
         platform: target.platform,
         normalizedUrl: target.normalizedUrl,
-        source: metadataContent ? "youtube-metadata" : "unavailable",
+        source: "youtube-metadata",
         sourceType: "public_source",
-        ingestionStatus: metadataContent
-          ? deriveIngestionStatus("youtube-metadata", validation, "public_source")
-          : "failed",
-        ingestionReason: metadataContent ? "quick_metadata_preview" : "youtube_fetch_failed",
-        acquisitionMethod: "metadata",
-        confidence: metadataContent ? adjustConfidence(0.82, validation) : 0.05,
+        ingestionStatus: deriveIngestionStatus("youtube-metadata", validation, "public_source"),
+        ingestionReason: "quick_metadata_preview",
+        acquisitionMethod: "static_fetch",
+        confidence: adjustConfidence(0.82, validation),
         wordCount: validation.wordCount,
         extractionQuality: deriveExtractionQuality(validation, "public_source"),
-        cacheable: Boolean(metadataContent),
+        cacheable: true,
         content: metadataContent,
         metadata,
         validation,
@@ -213,77 +51,32 @@ export const extractYouTubeContent = async (
       };
     }
 
-    try {
-      const cachedTranscript = getCachedTranscript(cacheKey);
-      if (cachedTranscript) {
-        const cachedValidation = assessExtractionQuality(cachedTranscript, "youtube-transcript", target.platform);
-        if (cachedValidation.passed) {
-          return {
-            platform: target.platform,
-            normalizedUrl: target.normalizedUrl,
-            source: "youtube-transcript",
-            sourceType: "public_source",
-            ingestionStatus: deriveIngestionStatus("youtube-transcript", cachedValidation, "public_source"),
-            acquisitionMethod: "transcript",
-            confidence: adjustConfidence(0.95, cachedValidation),
-            wordCount: cachedValidation.wordCount,
-            extractionQuality: deriveExtractionQuality(cachedValidation, "public_source"),
-            cacheable: true,
-            content: cachedTranscript,
-            metadata,
-            validation: cachedValidation,
-            contentType: "video",
-          };
-        }
-      }
-
-      const transcriptResponse = await YoutubeTranscript.fetchTranscript(target.videoId || target.normalizedUrl);
-      const transcript = normalizeWhitespace(transcriptResponse.map((t) => t.text).join(" "));
-      const validation = assessExtractionQuality(transcript, "youtube-transcript", target.platform);
-
-      if (transcript && validation.passed) {
-        youtubeTranscriptCache.set(cacheKey, { fetchedAt: Date.now(), transcript });
-        return {
-          platform: target.platform,
-          normalizedUrl: target.normalizedUrl,
-          source: "youtube-transcript",
-          sourceType: "public_source",
-          ingestionStatus: deriveIngestionStatus("youtube-transcript", validation, "public_source"),
-          acquisitionMethod: "transcript",
-          confidence: adjustConfidence(0.95, validation),
-          wordCount: validation.wordCount,
-          extractionQuality: deriveExtractionQuality(validation, "public_source"),
-          cacheable: true,
-          content: transcript,
-          metadata,
-          validation,
-          contentType: "video",
-        };
-      }
-    } catch (e) {
-      // Transcript is optional. Metadata fallback below remains deterministic.
-    }
-    const validation = assessExtractionQuality(metadataContent, "youtube-metadata", target.platform);
+    // Deep extraction (try to use the full text which contains the transcript)
+    const hasTranscript = contentText.length > metadataContent.length + 50;
+    const validation = assessExtractionQuality(
+      hasTranscript ? contentText : metadataContent,
+      hasTranscript ? "youtube-transcript" : "youtube-metadata",
+      target.platform
+    );
 
     return {
       platform: target.platform,
       normalizedUrl: target.normalizedUrl,
-      source: metadataContent ? "youtube-metadata" : "unavailable",
+      source: hasTranscript ? "youtube-transcript" : "youtube-metadata",
       sourceType: "public_source",
-      ingestionStatus: metadataContent
-        ? deriveIngestionStatus("youtube-metadata", validation, "public_source")
-        : "failed",
-      ingestionReason: metadataContent ? "transcript_unavailable" : "youtube_fetch_failed",
-      acquisitionMethod: "metadata",
-      confidence: metadataContent ? adjustConfidence(0.82, validation) : 0.05,
+      ingestionStatus: deriveIngestionStatus(hasTranscript ? "youtube-transcript" : "youtube-metadata", validation, "public_source"),
+      ingestionReason: hasTranscript ? undefined : "transcript_unavailable",
+      acquisitionMethod: "static_fetch",
+      confidence: adjustConfidence(hasTranscript ? 0.95 : 0.82, validation),
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "public_source"),
-      cacheable: Boolean(metadataContent),
-      content: metadataContent,
+      cacheable: true,
+      content: hasTranscript ? contentText : metadataContent,
       metadata,
       validation,
       contentType: "video",
     };
+
   } catch {
     const validation = assessExtractionQuality("", "unavailable", target.platform);
     return {

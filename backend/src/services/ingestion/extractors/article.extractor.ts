@@ -1,6 +1,5 @@
 import { Readability } from "@mozilla/readability";
 import * as pdfParse from "pdf-parse";
-import { renderPageSnapshot } from "../browser.js";
 import {
   createDom,
   extractBodyText,
@@ -57,6 +56,42 @@ const buildProtectedFallback = (
   };
 };
 
+export const fetchJinaReader = async (url: string): Promise<{ text: string, title?: string, description?: string }> => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 20000);
+  
+  try {
+    const headers: Record<string, string> = {
+      "Accept": "application/json",
+      "X-Return-Format": "markdown"
+    };
+    if (process.env.JINA_API_KEY) {
+      headers["Authorization"] = `Bearer ${process.env.JINA_API_KEY}`;
+    }
+
+    const response = await fetch(`https://r.jina.ai/${url}`, {
+      headers,
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Jina API failed: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return {
+      text: json.data?.content || json.data?.text || "",
+      title: json.data?.title,
+      description: json.data?.description
+    };
+  } catch (err) {
+    console.error("[JINA_READER_ERROR]", err);
+    return { text: "" };
+  } finally {
+    clearTimeout(timer);
+  }
+};
+
 export const extractArticleContent = async (
   target: UrlTarget,
   mode: ClassificationMode = "deep"
@@ -105,30 +140,36 @@ export const extractArticleContent = async (
       }
     }
 
-    const fetched = await fetchTextResponse(target.normalizedUrl, 12000);
-    const lowerBody = fetched.body.toLowerCase();
-    const loginWallDetected = LOGIN_WALL_MARKERS.some((marker) => lowerBody.includes(marker));
-    if (loginWallDetected) {
-      return buildProtectedFallback(
-        target,
-        target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || host,
-        "This page appears login-protected. Sign in through a supported connector to extract content."
-      );
+    // Try standard static fetch to get fast metadata
+    let mergedMetadata = { tags: [] as string[] } as any;
+    let metadataContent = "";
+    
+    try {
+      const fetched = await fetchTextResponse(target.normalizedUrl, 10000);
+      const lowerBody = fetched.body.toLowerCase();
+      const loginWallDetected = LOGIN_WALL_MARKERS.some((marker) => lowerBody.includes(marker));
+      if (loginWallDetected) {
+        return buildProtectedFallback(
+          target,
+          target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || host,
+          "This page appears login-protected. Sign in through a supported connector to extract content."
+        );
+      }
+      
+      const dom = createDom(fetched.body, fetched.finalUrl);
+      const metadata = extractStructuredMetadata(dom.window.document);
+      const readable = new Readability(dom.window.document.cloneNode(true) as Document).parse();
+      
+      mergedMetadata = mergeStructuredMetadata(metadata, {
+        title: readable?.title || undefined,
+        excerpt: readable?.excerpt || undefined,
+        author: readable?.byline || undefined,
+      });
+      metadataContent = buildMetadataContent(mergedMetadata.title, mergedMetadata.description, mergedMetadata.excerpt);
+    } catch (e) {
+      console.warn("[STATIC_FETCH_FAILED]", (e as Error).message);
     }
 
-    const dom = createDom(fetched.body, fetched.finalUrl);
-    const metadata = extractStructuredMetadata(dom.window.document);
-
-    const readable = new Readability(dom.window.document.cloneNode(true) as Document).parse();
-    const readabilityText = normalizeWhitespace(readable?.textContent || "");
-    const mergedMetadata = mergeStructuredMetadata(metadata, {
-      title: readable?.title || undefined,
-      excerpt: readable?.excerpt || undefined,
-      author: readable?.byline || undefined,
-    });
-    const inferredContentType = "post" as const;
-
-    const metadataContent = buildMetadataContent(mergedMetadata.title, mergedMetadata.description, mergedMetadata.excerpt);
     if (mode === "quick" && metadataContent) {
       const validation = assessExtractionQuality(metadataContent, "metadata", target.platform);
       return {
@@ -145,13 +186,31 @@ export const extractArticleContent = async (
         content: metadataContent,
         metadata: mergedMetadata,
         validation,
-        contentType: inferredContentType,
+        contentType: "post",
       };
     }
 
-    if (readabilityText) {
-      const validation = assessExtractionQuality(readabilityText, "readability", target.platform);
+    // Attempt Jina Reader extraction
+    const jinaResult = await fetchJinaReader(target.normalizedUrl);
+    
+    mergedMetadata = mergeStructuredMetadata(mergedMetadata, {
+      title: jinaResult.title,
+      description: jinaResult.description
+    });
+
+    if (jinaResult.text) {
+      const validation = assessExtractionQuality(jinaResult.text, "readability", target.platform);
       const ingestionStatus = deriveIngestionStatus("readability", validation, "public_source");
+      
+      const loginWallDetected = LOGIN_WALL_MARKERS.some((marker) => jinaResult.text.toLowerCase().includes(marker));
+      if (loginWallDetected) {
+         return buildProtectedFallback(
+          target,
+          mergedMetadata.title || host,
+          "This page appears login-protected. Sign in through a supported connector to extract content."
+        );
+      }
+
       if (validation.wordCount > 0) {
         return {
           platform: target.platform,
@@ -161,85 +220,19 @@ export const extractArticleContent = async (
           ingestionStatus,
           ingestionReason: ingestionStatus === "partial_extraction" ? "limited_readability_content" : undefined,
           acquisitionMethod: "static_fetch",
-          confidence: adjustConfidence(0.85, validation),
+          confidence: adjustConfidence(0.95, validation),
           wordCount: validation.wordCount,
           extractionQuality: deriveExtractionQuality(validation, "public_source"),
           cacheable: validation.passed,
-          content: readabilityText,
+          content: jinaResult.text,
           metadata: mergedMetadata,
           validation,
-          contentType: inferredContentType,
+          contentType: "post",
         };
       }
     }
 
-    const bodyText = extractBodyText(dom.window.document);
-    const validation = assessExtractionQuality(bodyText, "body-fallback", target.platform);
-    if (bodyText) {
-      return {
-        platform: target.platform,
-        normalizedUrl: target.normalizedUrl,
-        source: "body-fallback",
-        sourceType: "public_source",
-        ingestionStatus: deriveIngestionStatus("body-fallback", validation, "public_source"),
-        ingestionReason: validation.passed ? undefined : "static_body_fallback",
-        acquisitionMethod: "static_fetch",
-        confidence: adjustConfidence(0.25, validation),
-        wordCount: validation.wordCount,
-        extractionQuality: deriveExtractionQuality(validation, "public_source"),
-        cacheable: false,
-        content: bodyText,
-        metadata: mergedMetadata,
-        validation,
-        contentType: inferredContentType,
-      };
-    }
-
-    const rendered = await renderPageSnapshot(target.normalizedUrl, {
-      extraDelayMs: host.includes("notion.") ? 2800 : 1200,
-      timeoutMs: 22000,
-    });
-
-    if (rendered?.text) {
-      const renderedDom = createDom(rendered.html, rendered.finalUrl);
-      const renderedMetadata = mergeStructuredMetadata(
-        mergedMetadata,
-        extractStructuredMetadata(renderedDom.window.document)
-      );
-      const readable = new Readability(renderedDom.window.document.cloneNode(true) as Document).parse();
-      const renderedText = normalizeWhitespace(readable?.textContent || rendered.text).slice(0, 40000);
-      const renderedValidation = assessExtractionQuality(renderedText, "readability", target.platform);
-
-      const renderedLoginWall = LOGIN_WALL_MARKERS.some((marker) =>
-        rendered.text.toLowerCase().includes(marker)
-      );
-      if (renderedLoginWall) {
-        return buildProtectedFallback(
-          target,
-          renderedMetadata.title || host,
-          "This page requires a logged-in session before content can be extracted."
-        );
-      }
-
-      return {
-        platform: target.platform,
-        normalizedUrl: target.normalizedUrl,
-        source: "readability",
-        sourceType: "public_source",
-        ingestionStatus: deriveIngestionStatus("readability", renderedValidation, "public_source"),
-        ingestionReason: renderedValidation.passed ? undefined : "browser_render_partial",
-        acquisitionMethod: "browser_render",
-        confidence: adjustConfidence(0.78, renderedValidation),
-        wordCount: renderedValidation.wordCount,
-        extractionQuality: deriveExtractionQuality(renderedValidation, "public_source"),
-        cacheable: renderedValidation.passed,
-        content: renderedText,
-        metadata: renderedMetadata,
-        validation: renderedValidation,
-        contentType: inferredContentType,
-      };
-    }
-
+    // Fallback if Jina fails entirely
     if (metadataContent) {
       const metadataValidation = assessExtractionQuality(metadataContent, "metadata", target.platform);
       return {
@@ -257,7 +250,7 @@ export const extractArticleContent = async (
         content: metadataContent,
         metadata: mergedMetadata,
         validation: metadataValidation,
-        contentType: inferredContentType,
+        contentType: "post",
       };
     }
 
@@ -277,7 +270,7 @@ export const extractArticleContent = async (
       content: "",
       metadata: mergedMetadata,
       validation: emptyValidation,
-      contentType: inferredContentType,
+      contentType: "post",
     };
   } catch (error) {
     const validation = assessExtractionQuality("", "unavailable", target.platform);

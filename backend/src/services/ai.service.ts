@@ -1,8 +1,6 @@
 import OpenAI from "openai";
 import { Groq } from "groq-sdk";
 import mongoose from "mongoose";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { pipeline } from "@xenova/transformers";
 import { getGroqApiKey } from "../config.js";
 import { ContentModel, BrainInsightModel, UserModel } from "../db.js";
@@ -28,73 +26,25 @@ const getExtractor = async () => {
     return extractorPromise;
 };
 
-(puppeteer as any).use((StealthPlugin as any)());
 
 // --- Reliability Engine (Production Errors & Metrics) ---
 // ... (existing code)
 
 /**
- * Deep Scraper Engine (Puppeteer + Stealth)
- * Launches a real headless browser to bypass React/Notion security walls.
+ * Deep Scraper Engine (Jina Reader API)
+ * Uses Jina Reader API to bypass React/Notion security walls and extract content.
  */
 const deepScrape = async (url: string): Promise<string> => {
   console.log(`[AI][DEEP_SCRAPE_START] ${url}`);
-  let browser;
   try {
-    browser = await (puppeteer as any).launch({
-      headless: true,
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox', 
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--blink-settings=imagesEnabled=false' 
-      ],
-    });
-    const page = await browser.newPage();
-    
-    // SPEED BOOSTER: Block stylesheets and fonts
-    await page.setRequestInterception(true);
-    page.on('request', (req: any) => {
-      if (['stylesheet', 'font', 'media', 'image'].includes(req.resourceType())) {
-        req.abort();
-      } else {
-        req.continue();
-      }
-    });
-
-    await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-    await page.setViewport({ width: 1280, height: 800 });
-
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    
-    const isSlowSite = url.includes('notion.so') || url.includes('app.notion.com') || url.includes('linkedin.com');
-    await new Promise(r => setTimeout(r, isSlowSite ? 3000 : 800));
-
-    // Robust Extraction: Try direct, fallback to content
-    let content = "";
-    try {
-      content = await page.evaluate(() => {
-        const body = document.querySelector('body');
-        if (!body) return "";
-        // Remove noise
-        const scripts = body.querySelectorAll('script, style, nav, footer, noscript');
-        scripts.forEach(s => s.remove());
-        return body.innerText;
-      });
-    } catch (evalErr) {
-      console.warn("[AI][DEEP_SCRAPE][EVAL_RETRY] Frame detached. Using content fallback.");
-      const rawHtml = await page.content();
-      content = rawHtml.replace(/<[^>]*>?/gm, ' ').slice(0, 15000); // Crude but safe text extraction
-    }
-
-    console.log(`[AI][DEEP_SCRAPE_OK] chars=${content?.length ?? 0}`);
-    return (content || "").slice(0, 10000); 
+    const { fetchJinaReader } = await import("./ingestion/extractors/article.extractor.js");
+    const result = await fetchJinaReader(url);
+    const content = result?.text || "";
+    console.log(`[AI][DEEP_SCRAPE_OK] chars=${content.length}`);
+    return content.slice(0, 10000);
   } catch (error: any) {
     console.error(`[AI][DEEP_SCRAPE_FAILED] ${error.message}`);
     return "";
-  } finally {
-    if (browser) await browser.close();
   }
 };
 

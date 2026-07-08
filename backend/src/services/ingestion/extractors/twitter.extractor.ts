@@ -1,4 +1,4 @@
-import { renderPageSnapshot } from "../browser.js";
+import { fetchJinaReader } from "./article.extractor.js";
 import { createDom, extractStructuredMetadata, fetchTextResponse, mergeStructuredMetadata, normalizeWhitespace } from "../html.js";
 import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
@@ -20,18 +20,17 @@ export const extractTwitterContent = async (
     const validation = assessExtractionQuality(metadataContent, "twitter-metadata", target.platform);
 
     if (!validation.passed || validation.wordCount < 20) {
-      const rendered = await renderPageSnapshot(target.normalizedUrl, { extraDelayMs: 1500, timeoutMs: 20000 });
-      if (rendered?.text) {
-        const renderedDom = createDom(rendered.html, rendered.finalUrl);
+      const jinaResult = await fetchJinaReader(target.normalizedUrl);
+      if (jinaResult?.text) {
         const renderedMetadata = mergeStructuredMetadata(
           mergedMetadata,
-          extractStructuredMetadata(renderedDom.window.document)
+          { title: jinaResult.title, description: jinaResult.description }
         );
         const renderedContent = normalizeWhitespace(
           [
             renderedMetadata.title,
             renderedMetadata.description,
-            rendered.text,
+            jinaResult.text,
           ]
             .filter(Boolean)
             .join(". ")
@@ -45,7 +44,7 @@ export const extractTwitterContent = async (
           sourceType: "public_source",
           ingestionStatus: deriveIngestionStatus("body-fallback", renderedValidation, "public_source"),
           ingestionReason: renderedValidation.passed ? undefined : "rendered_tweet_partial",
-          acquisitionMethod: "browser_render",
+          acquisitionMethod: "static_fetch",
           confidence: adjustConfidence(0.81, renderedValidation),
           wordCount: renderedValidation.wordCount,
           extractionQuality: deriveExtractionQuality(renderedValidation, "public_source"),

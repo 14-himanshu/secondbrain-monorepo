@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @tailwind utilities;
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -69,19 +70,19 @@
 /* ── Dark Mode Variables ── */
 .dark {
   --background: #0d0d0f;
-  --foreground: #f0efff;
+  --foreground: #ffffff;
   --card: #141418;
-  --card-foreground: #f0efff;
+  --card-foreground: #ffffff;
   --popover: #141418;
-  --popover-foreground: #f0efff;
+  --popover-foreground: #ffffff;
   --primary: #8378e8;
   --primary-foreground: #ffffff;
   --secondary: #1c1c22;
-  --secondary-foreground: #d4d3f0;
+  --secondary-foreground: #a1a1aa;
   --muted: #1c1c22;
-  --muted-foreground: #8888a0;
+  --muted-foreground: #71717a;
   --accent: #22222a;
-  --accent-foreground: #f0efff;
+  --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --border: #252530;
   --input: #252530;

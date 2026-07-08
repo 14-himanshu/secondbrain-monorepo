@@ -1,3 +1,19 @@
 {
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+
+  // Python: point the IDE to the agent's virtual environment, not system Python
+  "python.defaultInterpreterPath": "${workspaceFolder}/packages/agent/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/packages/agent/venv/lib/python3.13/site-packages"
+  ],
+
+  // Pyright / Pylance settings
+  "python.analysis.venvPath": "${workspaceFolder}/packages/agent",
+  "python.analysis.venv": "venv",
+  "python.analysis.typeCheckingMode": "basic",
+
+  // Per-folder interpreter overrides
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
 }

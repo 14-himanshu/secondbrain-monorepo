@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
 import { connectToDatabase, ContentModel, LinkModel, UserModel } from "./db.js";
 import { getFrontendUrls, getJwtPassword, getPort, getGoogleClientId, getGoogleClientSecret, getGoogleRedirectUri } from "./config.js";
 import { userMiddleware } from "./middleware.js";
@@ -34,6 +35,15 @@ app.use(
   })
 );
 
+// Issue #16 FIX: Rate limiter for auth endpoints (20 attempts per 15 minutes).
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many attempts. Please wait 15 minutes before trying again." },
+});
+
 const signupSchema = z.object({
   username: z
     .string()
@@ -64,7 +74,7 @@ const contentSchema = z.object({
   description: z.string().optional(),
 });
 
-app.post("/api/v1/signup", async (req, res) => {
+app.post("/api/v1/signup", authLimiter, async (req, res) => {
   const parsed = signupSchema.safeParse(req.body);
 
   if (!parsed.success) {
@@ -102,7 +112,7 @@ app.post("/api/v1/signup", async (req, res) => {
   }
 });
 
-app.post("/api/v1/signin", async (req, res) => {
+app.post("/api/v1/signin", authLimiter, async (req, res) => {
   const parsed = signinSchema.safeParse(req.body);
 
   if (!parsed.success) {
@@ -123,7 +133,7 @@ app.post("/api/v1/signin", async (req, res) => {
     return res.status(403).json({ message: "Invalid credentials" });
   }
 
-  const token = jwt.sign({ id: existingUser._id }, getJwtPassword());
+  const token = jwt.sign({ id: existingUser._id }, getJwtPassword(), { expiresIn: "30d" });
 
   res.json({ token });
 });
@@ -580,7 +590,7 @@ const startServer = async () => {
     console.log('[STARTUP] Connected to database');
   } catch (err) {
     console.error('[STARTUP] Database connection failed:', err);
-    process.exit(1);
+    process.exit(1); // Issue #18 FIX: Exit on DB failure so process restarts cleanly
   }
 
   try {

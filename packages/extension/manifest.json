@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Second Brain Clipper",
+  "version": "1.0.0",
+  "description": "Save pages directly to your Second Brain",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "favicon.svg",
+      "48": "favicon.svg",
+      "128": "favicon.svg"
+    }
+  },
+  "icons": {
+    "16": "favicon.svg",
+    "48": "favicon.svg",
+    "128": "favicon.svg"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:5001/*",
+    "https://*.onrender.com/*"
+  ]
+}

@@ -5,7 +5,6 @@ import {
   Bot, 
   Search, 
   Shield, 
-  Activity, 
   ChevronRight, 
   FileText, 
   Globe, 
@@ -186,7 +185,7 @@ export function LandingPage() {
             
             <div className="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-8 backdrop-blur-sm">
               <Sparkles className="mr-2 h-3.5 w-3.5" />
-              Intelligence Amplified
+              Now powered by LangGraph Autonomous Agent
             </div>
             
             <h1 className="mx-auto max-w-5xl text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl leading-[1.1]">
@@ -352,6 +351,7 @@ export function LandingPage() {
               <div className="flex items-center gap-2 font-bold text-lg"><FileText className="w-6 h-6" /> PDFs</div>
               <div className="flex items-center gap-2 font-bold text-lg"><Globe className="w-6 h-6" /> Articles</div>
               <div className="flex items-center gap-2 font-bold text-lg"><Database className="w-6 h-6" /> Notion</div>
+              <div className="flex items-center gap-2 font-bold text-lg"><Zap className="w-6 h-6" /> Chrome Extension</div>
             </div>
           </div>
         </section>
@@ -449,19 +449,19 @@ export function LandingPage() {
               <div className="order-1 lg:order-2 space-y-6">
                 <div className="inline-flex items-center rounded-full bg-indigo-500/10 px-3 py-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
                   <Bot className="mr-2 h-4 w-4" />
-                  Neural Retrieval
+                  LangGraph Autonomous Agent
                 </div>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-                  Context-Grounded AI Assistant.
+                  A Real Agent, Not Just a Chatbot.
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  Chat with your entire knowledge base. Our descriptive RAG (Retrieval-Augmented Generation) pipeline answers complex queries using only your stored content, completely eliminating AI hallucinations.
+                  Powered by a LangGraph state machine with Llama 3.3 on Groq. The agent autonomously decides which tools to call — semantic search, live web scraping — streams its thinking in real-time, and grounds every answer strictly in your saved content.
                 </p>
                 <ul className="space-y-3 pt-4">
                   {[
-                    "100% grounded in your personal data",
-                    "Inline cited source badges for verification",
-                    "Cross-pollinate ideas across different documents"
+                    "Zero hallucinations — only answers from your data",
+                    "Real-time streaming with live tool-use indicators",
+                    "Autonomous multi-step reasoning with LangGraph"
                   ].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 font-medium text-foreground">
                       <div className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-500">
@@ -510,37 +510,37 @@ export function LandingPage() {
                   <div className="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mb-6">
                     <Zap className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-bold tracking-tight mb-3">Automated AI Summaries</h3>
+                  <h3 className="text-xl font-bold tracking-tight mb-3">Real-time Streaming Agent</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Extract key ideas, themes, and difficulty tags automatically upon ingestion. Digest long articles in seconds.
+                    Watch the AI agent think in real-time. Live tool-use indicators show exactly which action it is taking — searching your brain or scraping the live web — before the answer streams in token by token.
                   </p>
                 </div>
               </div>
 
-              {/* Feature 3 */}
+              {/* Feature 3 - Chrome Extension */}
               <div id="security" className="group relative overflow-hidden rounded-3xl border border-border/50 dark:border-white/10 bg-card dark:bg-[#111113] p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-tr from-green-500/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/5 to-transparent pointer-events-none" />
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center mb-6">
-                    <Shield className="w-6 h-6" />
+                  <div className="w-12 h-12 rounded-xl bg-orange-500/10 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-6">
+                    <Globe className="w-6 h-6" />
                   </div>
-                  <h3 className="text-xl font-bold tracking-tight mb-3">Dynamic Privacy Panel</h3>
+                  <h3 className="text-xl font-bold tracking-tight mb-3">Chrome Extension Clipper</h3>
                   <p className="text-muted-foreground leading-relaxed">
-                    Manage custom profiles, security policies, and granular AI preferences. Your data remains strictly isolated.
+                    Save any page to your Second Brain in one click without leaving the tab. The browser extension auto-grabs the title, URL, lets you add tags and a note, then saves directly to your vault.
                   </p>
                 </div>
               </div>
 
               {/* Feature 4 - Spans 2 cols on md/lg */}
               <div className="md:col-span-2 group relative overflow-hidden rounded-3xl border border-border/50 dark:border-white/10 bg-card dark:bg-[#111113] p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div className="absolute inset-0 bg-gradient-to-tl from-blue-500/5 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-green-500/5 to-transparent pointer-events-none" />
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-6">
-                    <Activity className="w-6 h-6" />
+                  <div className="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center mb-6">
+                    <Shield className="w-6 h-6" />
                   </div>
-                  <h3 className="text-2xl font-bold tracking-tight mb-3">Seamless Quota Management</h3>
+                  <h3 className="text-2xl font-bold tracking-tight mb-3">Privacy-First & Secure by Design</h3>
                   <p className="text-muted-foreground max-w-md leading-relaxed">
-                    Track your manual neural extractions and system usage in real-time. Upgrade seamlessly when you need unlimited power for massive research tasks.
+                    Per-user MongoDB vector search filtering ensures you only ever see your own data. JWT auth, Google OAuth, zero LLM data retention — your knowledge base is yours alone.
                   </p>
                 </div>
               </div>
@@ -668,9 +668,11 @@ export function LandingPage() {
             </div>
             <div className="space-y-3">
               {[
-                { q: "How is my data stored and secured?", a: "Your data is strictly encrypted at rest and in transit. We use isolated vector environments ensuring your private semantic web is never co-mingled with others." },
-                { q: "Can I export my nodes if I leave?", a: "Absolutely. We offer 1-click bulk exports in JSON and Markdown formats. Your data is yours, forever." },
-                { q: "Does the AI train on my data?", a: "No. We have strict zero-data retention agreements with our LLM providers. Your data is used purely for inference and is never used to train global models." }
+                { q: "How is my data stored and secured?", a: "Your data is strictly encrypted at rest and in transit. We use isolated MongoDB vector environments with strict per-user filtering — your private semantic web is never co-mingled with other users' data." },
+                { q: "What is the AI agent powered by?", a: "The AI agent is a LangGraph state machine running Llama 3.3-70B via Groq's ultra-fast inference API. It autonomously decides when to search your vault (via MongoDB Atlas Vector Search) or scrape the live web (via Jina AI), then streams the result token-by-token back to you." },
+                { q: "How does the Chrome Extension work?", a: "Install the extension, log in once with your account credentials, and from then on you can save any page you are reading in a single click. It automatically captures the URL and title, and lets you add optional tags and a quick note before saving directly to your vault." },
+                { q: "Does the AI train on my data?", a: "No. We have strict zero-data retention agreements with our LLM providers. Your data is used purely for inference and is never stored or used to train any global models." },
+                { q: "Can I export my nodes if I leave?", a: "Absolutely. We offer 1-click bulk exports in JSON and Markdown formats. Your data is yours, forever." }
               ].map((faq, i) => (
                 <FaqItem key={i} q={faq.q} a={faq.a} />
               ))}

@@ -225,7 +225,7 @@ function ChatColumn({
     if (!userQuery.trim() || isThinking) return;
     if (!retryQuery) setChatQuery("");
 
-    const history = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
+    const history = messages.slice(-12).map((m) => ({ role: m.role, content: m.content }));
     if (!retryQuery) setMessages((prev) => [...prev, { role: "user", content: userQuery }]);
 
     setIsThinking(true);
@@ -289,7 +289,7 @@ function ChatColumn({
                     lastMsg.actions = [];
                   }
                 } else if (data.type === 'error') {
-                  lastMsg.content = `⚠️ ${data.content}`;
+                  lastMsg.content = `⚠️ ${data.content || data.message || "Unknown error"}`;
                 }
 
                 return newMessages;
@@ -303,9 +303,16 @@ function ChatColumn({
       }
     } catch (err: any) {
       if (err?.name !== 'AbortError') {
+        const isOffline = err.message === 'Failed to fetch' || err.message.includes('NetworkError');
         setMessages((prev) => [
           ...prev.slice(0, -1),
-          { role: "assistant", content: "Sorry, the agent encountered an error. Please try again.", sources: [] },
+          { 
+            role: "assistant", 
+            content: isOffline 
+              ? "⚠️ **AI Agent Offline**\n\nThe Python backend cannot be reached. Please ensure it's running via `uvicorn main:app`." 
+              : "⚠️ Sorry, the agent encountered an error. Please try again.", 
+            sources: [] 
+          },
         ]);
       }
     } finally {

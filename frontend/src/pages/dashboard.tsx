@@ -512,7 +512,7 @@ export function Dashboard() {
                     href="https://chromewebstore.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="h-10 px-5 rounded-xl font-semibold text-sm border border-border hover:border-primary/40 hover:bg-muted/50 text-foreground transition-all duration-150"
+                    className="h-10 px-5 rounded-xl font-semibold text-sm border border-border hover:border-primary/40 hover:bg-muted/50 text-foreground transition-all duration-150 inline-flex items-center justify-center"
                   >
                     Get Chrome Extension
                   </a>

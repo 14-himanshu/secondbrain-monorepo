@@ -1,5 +1,5 @@
 import { getNotionApiVersion, getNotionToken } from "../../../config.js";
-import { renderPageSnapshot } from "../browser.js";
+import { fetchJinaReader } from "./article.extractor.js";
 import { createDom, extractStructuredMetadata, mergeStructuredMetadata, normalizeWhitespace as normalizeHtmlWhitespace } from "../html.js";
 import { adjustConfidence, assessExtractionQuality, deriveExtractionQuality, deriveIngestionStatus } from "../validation.js";
 import type { ClassificationMode, ExtractedContent, UrlTarget } from "../types.js";
@@ -81,7 +81,7 @@ const collectNestedBlockText = async (
 };
 
 const extractPublicNotionContent = async (target: UrlTarget): Promise<ExtractedContent | null> => {
-  const rendered = await renderPageSnapshot(target.normalizedUrl, { extraDelayMs: 3000, timeoutMs: 22000 });
+  const rendered = await fetchJinaReader(target.normalizedUrl);
   if (!rendered?.text) return null;
 
   const lower = rendered.text.toLowerCase();
@@ -98,7 +98,7 @@ const extractPublicNotionContent = async (target: UrlTarget): Promise<ExtractedC
       sourceType: "protected_source",
       ingestionStatus: "authentication_required",
       ingestionReason: "notion_authentication_required",
-      acquisitionMethod: "browser_render",
+      acquisitionMethod: "static_fetch",
       confidence: 0.05,
       wordCount: validation.wordCount,
       extractionQuality: deriveExtractionQuality(validation, "protected_source"),
@@ -115,12 +115,12 @@ const extractPublicNotionContent = async (target: UrlTarget): Promise<ExtractedC
     };
   }
 
-  const dom = createDom(rendered.html, rendered.finalUrl);
-  const metadata = mergeStructuredMetadata(extractStructuredMetadata(dom.window.document), {
-    title: target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "Notion page",
+  const metadata = {
+    title: rendered.title || target.url.pathname.split("/").filter(Boolean).pop()?.replace(/-/g, " ") || "Notion page",
+    description: rendered.description,
     tags: ["notion", "public"],
-    contentType: "document",
-  });
+    contentType: "document" as const,
+  };
   const content = normalizeHtmlWhitespace(rendered.text).slice(0, 40000);
   const validation = assessExtractionQuality(content, "body-fallback", target.platform);
 
@@ -131,7 +131,7 @@ const extractPublicNotionContent = async (target: UrlTarget): Promise<ExtractedC
     sourceType: "public_source",
     ingestionStatus: deriveIngestionStatus("body-fallback", validation, "public_source"),
     ingestionReason: validation.passed ? undefined : "public_notion_partial",
-    acquisitionMethod: "browser_render",
+    acquisitionMethod: "static_fetch",
     confidence: adjustConfidence(0.82, validation),
     wordCount: validation.wordCount,
     extractionQuality: deriveExtractionQuality(validation, "public_source"),

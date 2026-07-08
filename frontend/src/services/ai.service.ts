@@ -1,4 +1,5 @@
 import { apiClient } from "../lib/apiClient";
+import { BACKEND_URL } from "../config";
 
 /**
  * AI Service
@@ -33,7 +34,19 @@ export const aiService = {
     query: string;
     history: Array<{ role: "user" | "assistant"; content: string }>;
     contentId?: string;
+    signal?: AbortSignal;
   }) => {
-    return apiClient.post(AI_ENDPOINTS.CHAT, payload, { timeout: 15000 });
+    // We use native fetch here instead of apiClient because Axios is poor at handling SSE streams.
+    const token = localStorage.getItem("token"); // or however auth is handled
+    const { signal, ...body } = payload;
+    return fetch(BACKEND_URL + AI_ENDPOINTS.CHAT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify({ ...body, stream: true }),
+      signal,
+    });
   },
 };

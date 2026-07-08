@@ -8,6 +8,7 @@ import Recents from "./pages/Recents";
 import { Settings } from "./pages/Settings";
 import { PaymentSuccess } from "./pages/PaymentSuccess";
 import { LandingPage } from "./pages/LandingPage";
+import { ExtensionInstallPage } from "./pages/ExtensionInstallPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/recents" element={<Recents />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/extension" element={<ExtensionInstallPage />} />
         </Routes>
         </BrowserRouter>
       </ThemeProvider>

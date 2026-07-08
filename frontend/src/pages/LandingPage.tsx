@@ -115,6 +115,10 @@ export function LandingPage() {
             <a href="#security" onClick={(e) => scrollToSection(e, 'security')} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
               Security
             </a>
+            <Link to="/extension" className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors flex items-center gap-1">
+              <Globe className="w-4 h-4" />
+              Extension
+            </Link>
           </nav>
 
           <div className="hidden md:flex items-center gap-5">
@@ -525,9 +529,12 @@ export function LandingPage() {
                     <Globe className="w-6 h-6" />
                   </div>
                   <h3 className="text-xl font-bold tracking-tight mb-3">Chrome Extension Clipper</h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed flex-1">
                     Save any page to your Second Brain in one click without leaving the tab. The browser extension auto-grabs the title, URL, lets you add tags and a note, then saves directly to your vault.
                   </p>
+                  <Link to="/extension" className="mt-6 inline-flex items-center text-sm font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300">
+                    Get the Extension <ChevronRight className="w-4 h-4 ml-1" />
+                  </Link>
                 </div>
               </div>
 

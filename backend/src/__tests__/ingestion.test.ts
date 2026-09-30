@@ -88,7 +88,8 @@ test("AI synthesis only runs on validated high-confidence extraction", () => {
   assert.equal(shouldUseAiSynthesis(extraction, "deep"), true);
   assert.equal(shouldUseAiSynthesis({ ...extraction, confidence: 0.45, ingestionStatus: "partial_extraction" }, "deep"), true);
   assert.equal(shouldUseAiSynthesis({ ...extraction, ingestionStatus: "authentication_required", content: "" }, "deep"), false);
-  assert.equal(shouldUseAiSynthesis(extraction, "quick"), false);
+  assert.equal(shouldUseAiSynthesis(extraction, "quick"), true);
+  assert.equal(shouldUseAiSynthesis({ ...extraction, ingestionStatus: "failed", content: "" }, "quick"), false);
 });
 
 test("deterministic description preserves a short summary and bullets", () => {

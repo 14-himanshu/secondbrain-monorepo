@@ -106,37 +106,140 @@ export const extractArticleContent = async (
   }
 
   try {
-    const isPdfUrl = target.url.pathname.toLowerCase().endsWith(".pdf");
-    if (isPdfUrl) {
-      const fetchedPdf = await fetchArrayBufferResponse(target.normalizedUrl, 15000);
-      const pdfLib: any = (pdfParse as any).default || (pdfParse as any);
-      const parsed = await pdfLib(Buffer.from(fetchedPdf.body));
-      const pdfText = normalizeWhitespace(String(parsed.text || "")).slice(0, 40000);
-      const validation = assessExtractionQuality(pdfText, "body-fallback", target.platform);
-      const ingestionStatus = deriveIngestionStatus("body-fallback", validation, "public_source");
-      if (pdfText) {
-        return {
-          platform: target.platform,
-          normalizedUrl: target.normalizedUrl,
-          source: "body-fallback",
-          sourceType: "public_source",
-          ingestionStatus,
-          ingestionReason: ingestionStatus === "partial_extraction" ? "limited_pdf_text" : undefined,
-          acquisitionMethod: "file_download",
-          confidence: adjustConfidence(0.84, validation),
-          wordCount: validation.wordCount,
-          extractionQuality: deriveExtractionQuality(validation, "public_source"),
-          cacheable: validation.passed,
-          content: pdfText,
-          metadata: {
-            title: target.url.pathname.split("/").filter(Boolean).pop() || "PDF document",
-            description: pdfText.slice(0, 500),
-            tags: ["pdf", "document"],
+    // 1. Direct Image URL Support
+    const isImageUrl = /\.(png|jpe?g|webp|svg|gif)(\?.*)?$/i.test(target.url.pathname);
+    if (isImageUrl) {
+      const filename = target.url.pathname.split("/").filter(Boolean).pop()?.replace(/[-_]/g, " ") || "Image asset";
+      const imageContent = `Image asset hosted on ${host} (${filename}). Direct media resource.`;
+      const validation = assessExtractionQuality(imageContent, "metadata", target.platform);
+      return {
+        platform: target.platform,
+        normalizedUrl: target.normalizedUrl,
+        source: "metadata",
+        sourceType: "public_source",
+        ingestionStatus: "full_extraction",
+        acquisitionMethod: "static_fetch",
+        confidence: 0.9,
+        wordCount: validation.wordCount,
+        extractionQuality: "medium",
+        cacheable: true,
+        content: imageContent,
+        metadata: {
+          title: `Image: ${filename}`,
+          description: `Direct image asset from ${host}`,
+          tags: ["image", "media", host],
+          contentType: "post",
+        },
+        validation,
+        contentType: "post",
+      };
+    }
+
+    // 2. GitHub Repository Fast Ingestion
+    const isGithub = host === "github.com";
+    const githubSegments = target.url.pathname.split("/").filter(Boolean);
+    if (isGithub && githubSegments.length >= 2 && githubSegments[0] && !["settings", "marketplace", "explore", "topics"].includes(githubSegments[0])) {
+      const [owner, repo] = githubSegments;
+      try {
+        const repoRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+          headers: { "User-Agent": "SecondBrain/1.0" },
+        });
+        if (repoRes.ok) {
+          const repoData = (await repoRes.json()) as any;
+          let readmeText = "";
+          try {
+            const readmeRes = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/HEAD/README.md`);
+            if (readmeRes.ok) {
+              readmeText = await readmeRes.text();
+            }
+          } catch {}
+
+          const fullContent = [
+            `GitHub Repository: ${repoData.full_name}`,
+            `Description: ${repoData.description || "No description provided"}`,
+            `Language: ${repoData.language || "Unknown"} | Stars: ${repoData.stargazers_count ?? 0} | Forks: ${repoData.forks_count ?? 0}`,
+            readmeText ? `README Overview:\n${readmeText.slice(0, 15000)}` : "",
+          ].filter(Boolean).join("\n\n");
+
+          const validation = assessExtractionQuality(fullContent, "body-fallback", target.platform);
+          return {
+            platform: target.platform,
+            normalizedUrl: target.normalizedUrl,
+            source: "body-fallback",
+            sourceType: "public_source",
+            ingestionStatus: "full_extraction",
+            acquisitionMethod: "static_fetch",
+            confidence: 0.98,
+            wordCount: validation.wordCount,
+            extractionQuality: "high",
+            cacheable: true,
+            content: fullContent,
+            metadata: {
+              title: `${repoData.full_name}: ${repoData.description || "GitHub Repository"}`,
+              description: repoData.description || `GitHub repository by ${owner}`,
+              tags: ["github", "code", ...(repoData.topics || []).slice(0, 4), repoData.language?.toLowerCase()].filter(Boolean),
+              contentType: "document",
+            },
+            validation,
             contentType: "document",
-          },
-          validation,
-          contentType: "document",
-        };
+          };
+        }
+      } catch (ghErr) {
+        console.warn("[GITHUB_API_FALLBACK]", (ghErr as Error).message);
+      }
+    }
+
+    // 3. PDF Support (checks extension or /pdf/ path)
+    const isPdfUrl = target.url.pathname.toLowerCase().endsWith(".pdf") || target.url.pathname.toLowerCase().includes("/pdf/");
+    if (isPdfUrl) {
+      try {
+        const fetchedPdf = await fetchArrayBufferResponse(target.normalizedUrl, 15000);
+        let rawText = "";
+        const pdfAny = pdfParse as any;
+        if (typeof pdfAny?.PDFParse === "function") {
+          const parser = new pdfAny.PDFParse({ data: Buffer.from(fetchedPdf.body) });
+          const textObj = await parser.getText();
+          rawText = textObj?.text || "";
+          if (typeof parser.destroy === "function") {
+            await parser.destroy();
+          }
+        } else if (typeof pdfAny === "function") {
+          const parsed = await pdfAny(Buffer.from(fetchedPdf.body));
+          rawText = parsed.text || "";
+        } else if (typeof pdfAny?.default === "function") {
+          const parsed = await pdfAny.default(Buffer.from(fetchedPdf.body));
+          rawText = parsed.text || "";
+        }
+
+        const pdfText = normalizeWhitespace(String(rawText || "")).slice(0, 40000);
+        if (pdfText) {
+          const validation = assessExtractionQuality(pdfText, "body-fallback", target.platform);
+          const ingestionStatus = deriveIngestionStatus("body-fallback", validation, "public_source");
+          return {
+            platform: target.platform,
+            normalizedUrl: target.normalizedUrl,
+            source: "body-fallback",
+            sourceType: "public_source",
+            ingestionStatus,
+            ingestionReason: ingestionStatus === "partial_extraction" ? "limited_pdf_text" : undefined,
+            acquisitionMethod: "file_download",
+            confidence: adjustConfidence(0.84, validation),
+            wordCount: validation.wordCount,
+            extractionQuality: deriveExtractionQuality(validation, "public_source"),
+            cacheable: validation.passed,
+            content: pdfText,
+            metadata: {
+              title: target.url.pathname.split("/").filter(Boolean).pop() || "PDF document",
+              description: pdfText.slice(0, 500),
+              tags: ["pdf", "document", "research"],
+              contentType: "document",
+            },
+            validation,
+            contentType: "document",
+          };
+        }
+      } catch (pdfErr) {
+        console.warn("[PDF_PARSE_WARNING]", (pdfErr as Error).message);
       }
     }
 

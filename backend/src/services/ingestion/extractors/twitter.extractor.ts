@@ -11,6 +11,57 @@ export const extractTwitterContent = async (
   _mode: ClassificationMode = "deep"
 ): Promise<ExtractedContent> => {
   try {
+    const statusMatch = target.url.pathname.match(/\/([^/]+)\/status\/(\d+)/i);
+    if (statusMatch) {
+      const [, screenName, statusId] = statusMatch;
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 7000);
+        const fxRes = await fetch(`https://api.fxtwitter.com/${screenName}/status/${statusId}`, {
+          signal: controller.signal,
+          headers: { "User-Agent": "SecondBrain/1.0" },
+        });
+        clearTimeout(timeout);
+
+        if (fxRes.ok) {
+          const data = (await fxRes.json()) as any;
+          if (data?.tweet?.text) {
+            const tweet = data.tweet;
+            const author = tweet.author?.name ? `${tweet.author.name} (@${tweet.author.screen_name || screenName})` : screenName;
+            const tweetText = tweet.text;
+            const fullContent = `Post by ${author}:\n"${tweetText}"\nEngagement: ${tweet.likes ?? 0} likes, ${tweet.retweets ?? 0} retweets.`;
+            const tags = Array.from(new Set(["twitter", "social", ...extractHashtags(tweetText)])).slice(0, 8);
+            const validation = assessExtractionQuality(fullContent, "body-fallback", target.platform);
+
+            return {
+              platform: target.platform,
+              normalizedUrl: target.normalizedUrl,
+              source: "body-fallback",
+              sourceType: "public_source",
+              ingestionStatus: "full_extraction",
+              acquisitionMethod: "static_fetch",
+              confidence: 0.98,
+              wordCount: validation.wordCount,
+              extractionQuality: "high",
+              cacheable: true,
+              content: fullContent,
+              metadata: {
+                title: `Post by ${author}: ${tweetText.slice(0, 60)}...`,
+                description: tweetText,
+                author,
+                tags,
+                contentType: "post",
+              },
+              validation,
+              contentType: "post",
+            };
+          }
+        }
+      } catch (fxErr) {
+        console.warn("[FIXTWEET_FALLBACK]", (fxErr as Error).message);
+      }
+    }
+
     const fetched = await fetchTextResponse(target.normalizedUrl, 10000);
     const dom = createDom(fetched.body, fetched.finalUrl);
     const metadata = extractStructuredMetadata(dom.window.document);

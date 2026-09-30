@@ -12,6 +12,8 @@ load_dotenv(dotenv_path)
 
 MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/chat-app")
 JINA_API_KEY = os.getenv("JINA_API_KEY")
+BACKEND_PORT = os.getenv("PORT", "5001")
+BACKEND_URL = os.getenv("BACKEND_INTERNAL_URL", f"http://127.0.0.1:{BACKEND_PORT}")
 
 client = AsyncIOMotorClient(MONGODB_URI)
 try:
@@ -33,55 +35,68 @@ async def search_brain(query: str, config: RunnableConfig) -> str:
         results = []
 
         try:
-            # Issue 5 FIX: userId filter is now INSIDE $vectorSearch so Atlas only
-            # searches vectors belonging to this user — not all users globally.
-            from openai import AsyncOpenAI
-            openai_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-            response = await openai_client.embeddings.create(
-                model="text-embedding-3-small",
-                input=query,
-                dimensions=1536
-            )
-            query_embedding = response.data[0].embedding
-
-            pipeline = [
-                {
-                    "$vectorSearch": {
-                        "index": "vector_index",
-                        "path": "embedding",
-                        "queryVector": query_embedding,
-                        "filter": { "userId": { "$eq": ObjectId(user_id) } },
-                        "numCandidates": 100,
-                        "limit": 10
-                    }
-                },
-                {
-                    "$project": {
-                        "title": 1,
-                        "link": 1,
-                        "description": 1,
-                        "similarity": { "$meta": "vectorSearchScore" }
-                    }
-                }
-            ]
-            cursor = contents_collection.aggregate(pipeline)
-            results = await cursor.to_list(length=5)
+            # Query local in-memory embedding from Node.js (MiniLM-L6-v2, 384 dimensions)
+            async with httpx.AsyncClient(timeout=6.0) as http_client:
+                embed_res = await http_client.post(
+                    f"{BACKEND_URL}/api/v1/internal/embed",
+                    json={"text": query}
+                )
+                if embed_res.status_code == 200:
+                    query_embedding = embed_res.json().get("embedding")
+                    if query_embedding and len(query_embedding) == 384:
+                        pipeline = [
+                            {
+                                "$vectorSearch": {
+                                    "index": "vector_index",
+                                    "path": "embedding",
+                                    "queryVector": query_embedding,
+                                    "filter": { "userId": { "$eq": ObjectId(user_id) } },
+                                    "numCandidates": 100,
+                                    "limit": 5
+                                }
+                            },
+                            {
+                                "$project": {
+                                    "title": 1,
+                                    "link": 1,
+                                    "description": 1,
+                                    "topics": 1,
+                                    "tags": 1,
+                                    "similarity": { "$meta": "vectorSearchScore" }
+                                }
+                            }
+                        ]
+                        cursor = contents_collection.aggregate(pipeline)
+                        results = await cursor.to_list(length=5)
         except Exception as vec_err:
-            print(f"Vector search failed: {vec_err}. Falling back to regex.")
-            # Fallback to Regex
+            print(f"[SEARCH_BRAIN] Vector search unavailable ({vec_err}). Using smart keyword fallback.")
+
+        # Multi-field fallback if vector search yielded no results
+        if not results:
+            keywords = [w.strip() for w in query.split() if len(w.strip()) > 2]
+            regex_pattern = "|".join(keywords) if keywords else query
             cursor = contents_collection.find(
-                {"userId": ObjectId(user_id), "$or": [{"title": {"$regex": query, "$options": "i"}}, {"description": {"$regex": query, "$options": "i"}}]}
+                {
+                    "userId": ObjectId(user_id),
+                    "$or": [
+                        {"title": {"$regex": regex_pattern, "$options": "i"}},
+                        {"description": {"$regex": regex_pattern, "$options": "i"}},
+                        {"topics": {"$regex": regex_pattern, "$options": "i"}},
+                        {"tags": {"$regex": regex_pattern, "$options": "i"}},
+                        {"link": {"$regex": regex_pattern, "$options": "i"}},
+                    ]
+                }
             ).limit(5)
             results = await cursor.to_list(length=5)
 
         if not results:
-            return f"No results found in the brain for '{query}'."
+            return f"No results found in your Second Brain for '{query}'."
 
         formatted = []
         for c in results:
             sim = c.get('similarity', 'N/A')
-            formatted.append(f"Title: {c.get('title')}\nLink: {c.get('link')}\nDescription: {c.get('description')}\nSimilarity: {sim}")
+            topics = ", ".join(c.get('topics', [])) if c.get('topics') else "General"
+            formatted.append(f"Title: {c.get('title')}\nLink: {c.get('link')}\nTopics: {topics}\nDescription: {c.get('description')}\nSimilarity: {sim}")
         return "\n\n---\n\n".join(formatted)
     except Exception as e:
         return f"Error searching brain: {str(e)}"

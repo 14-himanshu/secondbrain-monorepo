@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -210,7 +210,9 @@ function ChatColumn({
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: isThinking ? "auto" : "smooth" });
+    }
   }, [messages, isThinking]);
 
   // Clear chat when content changes
@@ -474,14 +476,14 @@ function ChatColumn({
 }
 
 // ─── Main Export: The Centered Focus Modal ────────────────────────────────────
-export function AIInsightsPanel({ isOpen, onClose, selectedContent }: AIInsightsPanelProps) {
+export const AIInsightsPanel = memo(function AIInsightsPanel({ isOpen, onClose, selectedContent }: AIInsightsPanelProps) {
   const { data: connections = [] } = useQuery({
     queryKey: ["connections", selectedContent?._id],
     queryFn: async () => {
       if (!selectedContent) return [];
       return getConnections(selectedContent._id);
     },
-    enabled: Boolean(selectedContent),
+    enabled: Boolean(selectedContent && isOpen),
   });
 
   const sections = useMemo<OverviewSections>(() => {
@@ -551,6 +553,7 @@ export function AIInsightsPanel({ isOpen, onClose, selectedContent }: AIInsights
 
   // No body scroll lock — avoids layout shift from scrollbar removal
 
+  if (!isOpen) return null;
   const contentKey = selectedContent?._id ?? "empty";
 
   return (
@@ -652,6 +655,6 @@ export function AIInsightsPanel({ isOpen, onClose, selectedContent }: AIInsights
       </div>
     </>
   );
-}
+});
 
 export default AIInsightsPanel;

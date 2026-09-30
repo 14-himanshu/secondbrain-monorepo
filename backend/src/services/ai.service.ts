@@ -84,6 +84,9 @@ const updateMetrics = (latency: number, tokens: number = 0, error: string | null
 // --- Provider Initialization ---
 const isValidKey = (key?: string) => !!key && !key.includes("****") && key.length > 20;
 
+const GROQ_PRIMARY_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
+const GROQ_FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || "openai/gpt-oss-20b";
+
 const groq = isValidKey(process.env.GROQ_API_KEY) ? new Groq({
   apiKey: process.env.GROQ_API_KEY,
 }) : null;
@@ -127,10 +130,11 @@ const invokeLLM = async (params: any, retries = 2) => {
       if (openai) {
         callPromise = openai.chat.completions.create({
           ...params,
-          model: params.model === "llama-3.3-70b-versatile" ? "gpt-4o-mini" : params.model
+          model: (params.model?.startsWith("openai/") || params.model?.startsWith("llama") || params.model?.startsWith("qwen")) ? "gpt-4o-mini" : (params.model || "gpt-4o-mini")
         });
       } else if (groq) {
-        callPromise = groq.chat.completions.create(params);
+        const activeModel = attempt > 0 ? GROQ_FALLBACK_MODEL : (params.model || GROQ_PRIMARY_MODEL);
+        callPromise = groq.chat.completions.create({ ...params, model: activeModel });
       } else {
         throw new AIError(AIErrorCode.SYNTHESIS_ERROR, "No AI provider configured", false);
       }
@@ -260,23 +264,37 @@ const buildAiMetadata = (
 
 const buildSynthesisDescription = (
   result: Record<string, any>,
-  deterministicDescription: string
+  deterministicDescription: string,
+  contentWordCount?: number
 ) => {
-  const shortDescription = String(result.short_description || "").trim() || deterministicDescription.split("\n\n")[0] || "No summary available.";
+  const shortDescription =
+    String(result.short_description || "").trim() ||
+    deterministicDescription.split("\n\n")[0] ||
+    "No summary available.";
+
   const summaryPoints = Array.isArray(result.summary_points)
     ? result.summary_points.map((item) => String(item || "").trim()).filter(Boolean).slice(0, 4)
     : [];
+
   const semanticSummary = Array.isArray(result.semantic_summary)
     ? result.semantic_summary.map((item) => String(item || "").trim()).filter(Boolean).slice(0, 3)
     : [];
 
+  const words = contentWordCount || Math.max(100, shortDescription.split(/\s+/).length * 8);
+  const readingTime = Math.max(1, Math.round(words / 200));
+  const difficulty = String(result.difficulty || "Intermediate").trim();
+
   const sections = [shortDescription];
+
   if (summaryPoints.length > 0) {
     sections.push(`MAIN IDEAS:\n${summaryPoints.map((item) => `• ${item}`).join("\n")}`);
   }
+
   if (semanticSummary.length > 0) {
     sections.push(`KEY TAKEAWAYS:\n${semanticSummary.map((item) => `• ${item}`).join("\n")}`);
   }
+
+  sections.push(`Reading Time: ${readingTime} min | Difficulty: ${difficulty}`);
 
   return sections.join("\n\n").trim();
 };
@@ -536,33 +554,31 @@ const getAiClassificationInternal = async (url: string, mode: ClassificationMode
       ? "- tags: [] (Return an empty array for tags as auto-tagging is disabled)."
       : "- tags: 3 to 6 lowercase tags.";
 
-    const synthesisPrompt = `You summarize only verified extracted web content.
+    const synthesisPrompt = `You summarize only verified extracted web content into an executive bookmark digest.
 Return valid JSON only with:
 {
   "title": "",
   "short_description": "",
   "summary_points": [],
   "semantic_summary": [],
+  "difficulty": "Beginner|Intermediate|Advanced",
   "tags": [],
   "category": "",
   "content_type": ""
 }
 Rules:
 - Use ONLY the provided extracted content and metadata.
-- Never infer missing facts.
-- Never use general web/domain knowledge.
-- If extracted content is insufficient, keep title/description conservative and factual.
-- Do not fabricate details, entities, claims, or context.
-- Write a short_description that is roughly 6 to 7 sentences long.
+- Never infer missing facts, never fabricate details.
+- Write a short_description that is 1 to 2 crisp, high-impact sentences summarizing the core thesis.
+- summary_points: 3 to 4 concise bullet points capturing key arguments, data, or steps.
+- semantic_summary: 2 to 3 practical takeaways, insights, or why this bookmark is valuable.
+- difficulty: Evaluate difficulty as "Beginner", "Intermediate", or "Advanced".
 - ${toneInstruction}
-- summary_points: 2 to 4 concise bullets.
-- semantic_summary: 2 to 3 concise insights.
 - ${tagInstruction}
-- Be literal and deterministic.
 - ${sourceCoverageNote}`;
 
     const response = await invokeLLM({
-      model: "llama-3.1-8b-instant",
+      model: GROQ_PRIMARY_MODEL,
       messages: [
         { role: "system", content: synthesisPrompt },
         {
@@ -594,7 +610,7 @@ ${truncateForSynthesis(extraction.content)}`,
 
     return {
       title: String(result.title || "").trim() || fallbackClassification.title,
-      description: buildSynthesisDescription(result, fallbackClassification.description),
+      description: buildSynthesisDescription(result, fallbackClassification.description, extraction.wordCount),
       type: fallbackClassification.type,
       tags: finalTags,
       topics,
@@ -956,7 +972,7 @@ export const generateAiChatAnswer = async (
   try {
     console.log("[LLM_CALL_START]");
     const response = await invokeLLM({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_PRIMARY_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         ...history.slice(-6),
@@ -1012,7 +1028,7 @@ export const generateAiChatAnswerStream = async (
     console.log("[PROMPT_CREATED]");
 
     const stream = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_PRIMARY_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         ...history.slice(-6),
@@ -1151,7 +1167,7 @@ export const generateBrainIntelligence = async (userId: string, contents: any[],
   console.log("[AI_INSIGHTS_START]");
   try {
     const response = await invokeLLM({
-      model: "llama-3.3-70b-versatile",
+      model: GROQ_PRIMARY_MODEL,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: "Analyze my brain patterns with high-fidelity behavioral reasoning." }

@@ -47,7 +47,8 @@ export const aiChatController = async (req: Request, res: Response) => {
       body: JSON.stringify({
         query,
         history,
-        userId: userId?.toString()
+        userId: userId?.toString(),
+        contentId: contentId ? contentId.toString() : undefined
       }),
       signal: abortController.signal
     });

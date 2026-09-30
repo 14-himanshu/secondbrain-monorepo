@@ -1,19 +1,20 @@
 import os
 import json
 import asyncio
-from typing import List
+from typing import List, Optional
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 
 # Load .env from backend folder to share keys
 dotenv_path = os.path.join(os.path.dirname(__file__), '../../backend/.env')
 load_dotenv(dotenv_path)
 
 from agent import agent_graph
+from tools import contents_collection
 
 app = FastAPI(title="Second Brain AI Agent", version="1.0.0")
 
@@ -38,6 +39,7 @@ class ChatRequest(BaseModel):
     query: str
     history: List[Message] = []
     userId: str
+    contentId: Optional[str] = None
 
 # Issue #14 FIX: Add a health check endpoint so Node backend and load
 # balancers can verify the agent is alive before routing traffic to it.
@@ -45,7 +47,7 @@ class ChatRequest(BaseModel):
 async def health():
     return {
         "status": "ok",
-        "model": "llama-3.3-70b-versatile",
+        "model": os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
         "groq_key_set": bool(os.getenv("GROQ_API_KEY")),
         "openai_key_set": bool(os.getenv("OPENAI_API_KEY")),
     }
@@ -55,6 +57,30 @@ async def chat_endpoint(request: ChatRequest):
     async def generate_response():
         # Convert history to LangChain messages
         messages = []
+
+        if request.contentId:
+            try:
+                from bson import ObjectId
+                active_doc = await contents_collection.find_one({"_id": ObjectId(request.contentId)})
+                if active_doc:
+                    note_title = active_doc.get("title", "Untitled Note")
+                    note_desc = active_doc.get("description", "No summary available")
+                    note_link = active_doc.get("link", "")
+                    note_topics = ", ".join(active_doc.get("topics", [])) if active_doc.get("topics") else "General"
+                    messages.append(SystemMessage(
+                        content=(
+                            f"[ACTIVE NOTE CONTEXT]\n"
+                            f"The user is currently inspecting this specific note:\n"
+                            f"- Title: {note_title}\n"
+                            f"- Source Link: {note_link}\n"
+                            f"- Topics: {note_topics}\n"
+                            f"- Summary & Content:\n{note_desc}\n\n"
+                            f"Directive: Prioritize this active note context whenever the user refers to 'this note', 'this article', 'this video', or asks for a summary/explanation."
+                        )
+                    ))
+            except Exception as e:
+                print(f"[ACTIVE_NOTE_INJECT_WARNING] {e}")
+
         for msg in request.history:
             if msg.role == "user":
                 messages.append(HumanMessage(content=msg.content))
@@ -94,8 +120,9 @@ async def chat_endpoint(request: ChatRequest):
             # Wrap entire stream with a 60-second timeout
             async def timed_stream():
                 try:
-                    async for event in asyncio.timeout(60)(stream_events().__aiter__()):
-                        yield event
+                    async with asyncio.timeout(60):
+                        async for event in stream_events():
+                            yield event
                 except asyncio.TimeoutError:
                     yield f"data: {json.dumps({'type': 'error', 'content': 'The agent timed out (60s). Please try a shorter question or try again.'})}\n\n"
 

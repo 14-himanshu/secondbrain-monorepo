@@ -78,16 +78,15 @@ export const buildDeterministicDescription = (extraction: ExtractedContent) => {
   return sections.join("\n\n").trim();
 };
 
-export const shouldUseAiSynthesis = (extraction: ExtractedContent, mode: ClassificationMode) => {
-  if (mode !== "deep") return false;
+export const shouldUseAiSynthesis = (extraction: ExtractedContent, _mode?: ClassificationMode) => {
   if (["authentication_required", "unsupported", "failed"].includes(extraction.ingestionStatus)) {
     return false;
   }
-  if (extraction.content.trim()) return true;
+  if (extraction.content && extraction.content.trim().length > 20) return true;
   return Boolean(
-    extraction.metadata.title ||
-      extraction.metadata.description ||
-      extraction.metadata.excerpt
+    (extraction.metadata.title && extraction.metadata.title.length > 5) ||
+      (extraction.metadata.description && extraction.metadata.description.length > 15) ||
+      (extraction.metadata.excerpt && extraction.metadata.excerpt.length > 15)
   );
 };
 

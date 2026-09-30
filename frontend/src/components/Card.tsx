@@ -3,7 +3,7 @@ import { Shareicon } from "../icons/ShareIcon";
 import { YouTubeIcon } from "../icons/YoutubeIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import type { IngestionStatus } from "@secondbrain/contracts";
 import { Card as ShadcnCard } from "@/components/ui/card";
 
@@ -34,7 +34,7 @@ interface CardProps {
   readOnly?: boolean;
 }
 
-export function Card({
+export const Card = memo(function Card({
   title,
   link,
   type,
@@ -168,10 +168,10 @@ export function Card({
   return (
     <ShadcnCard 
       onClick={onSelect}
-      className={`group p-4 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] flex flex-col h-full relative cursor-pointer overflow-hidden border border-purple-200/80 dark:border-purple-500/40 shadow-[0_0_15px_rgba(131,120,232,0.15)] dark:shadow-[0_0_15px_rgba(131,120,232,0.1)] ${
+      className={`group p-4 transition-[transform,border-color,box-shadow] duration-200 ease-out will-change-transform transform-gpu flex flex-col h-full relative cursor-pointer overflow-hidden border border-purple-200/80 dark:border-purple-500/40 shadow-[0_2px_12px_rgba(131,120,232,0.08)] dark:shadow-[0_2px_12px_rgba(131,120,232,0.04)] ${
         isSelected 
-          ? 'border-purple-400 dark:border-purple-400 ring-2 ring-purple-300/60 dark:ring-purple-500/60 shadow-[0_0_30px_rgba(131,120,232,0.4)] dark:shadow-[0_0_30px_rgba(131,120,232,0.3)] -translate-y-0.5' 
-          : 'hover:border-purple-400 dark:hover:border-purple-400 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(131,120,232,0.4)] dark:hover:shadow-[0_0_30px_rgba(131,120,232,0.3)]'
+          ? 'border-purple-400 dark:border-purple-400 ring-2 ring-purple-300/60 dark:ring-purple-500/60 shadow-[0_4px_24px_rgba(131,120,232,0.25)] -translate-y-0.5' 
+          : 'hover:border-purple-400 dark:hover:border-purple-400 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(131,120,232,0.18)]'
       }`}
     >
       
@@ -347,4 +347,4 @@ export function Card({
       </div>
     </ShadcnCard>
   );
-}
+});

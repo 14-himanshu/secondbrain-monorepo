@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, memo } from "react";
 import { Logo } from "../icons/Logo";
 import { LibraryIcon } from "../icons/LibraryIcon";
 import { DocumentIcon } from "../icons/DocumentIcon";
@@ -64,7 +64,7 @@ function NavItem({
   );
 }
 
-export function Sidebar({
+export const Sidebar = memo(function Sidebar({
   selectedFilter,
   onFilterChange,
   contents: _contents = [],
@@ -142,6 +142,8 @@ export function Sidebar({
     { key: "video", label: "Videos", icon: <YouTubeIcon /> },
     { key: "document", label: "Documents", icon: <DocumentIcon /> },
   ];
+
+  const recentContents = useMemo(() => (_contents || []).slice(0, 5), [_contents]);
 
   const sidebarWidth = isCollapsed ? "w-20" : "w-72";
 
@@ -249,8 +251,8 @@ export function Sidebar({
           )}
 
           <div className="flex flex-col gap-0.5 overflow-y-auto max-h-52 scrollbar-none">
-            {_contents && _contents.length > 0 ? (
-              _contents.slice(0, 5).map((c) => {
+            {recentContents.length > 0 ? (
+              recentContents.map((c) => {
                 const isActive = _selectedContentId === c._id;
                 if (isCollapsed) {
                   return (
@@ -388,6 +390,6 @@ export function Sidebar({
       </aside>
     </>
   );
-}
+});
 
 export default Sidebar;

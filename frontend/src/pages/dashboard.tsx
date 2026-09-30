@@ -6,7 +6,7 @@ import { PlusIcon } from "../icons/PlusIcon";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { useContentMutations } from "../hooks/useContentMutations";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo, useDeferredValue } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AIInsightsPanel } from "../components/AIInsightsPanel";
 
@@ -23,6 +23,46 @@ import { isApiError } from "../lib/apiClient";
 const AI_PANEL_STORAGE_KEY = "sb-ai-panel-open";
 
 type DashboardLocationState = { openId?: string; filter?: string; triggerExtract?: boolean };
+
+interface DashboardCardItemProps {
+  content: Content;
+  isSelected: boolean;
+  onSelect: (id: string) => void;
+  onEdit: (id: string, title: string) => void;
+  onDelete: (id: string) => void;
+  onGenerateInsight: (id: string) => void;
+}
+
+const DashboardCardItem = React.memo(function DashboardCardItem({
+  content,
+  isSelected,
+  onSelect,
+  onEdit,
+  onDelete,
+  onGenerateInsight,
+}: DashboardCardItemProps) {
+  const { _id, title, link, type, aiStatus, description, aiMetadata } = content;
+  const handleSelect = useCallback(() => onSelect(_id), [onSelect, _id]);
+  const handleEdit = useCallback((newTitle: string) => onEdit(_id, newTitle), [onEdit, _id]);
+  const handleDelete = useCallback(() => onDelete(_id), [onDelete, _id]);
+  const handleGenerate = useCallback(() => onGenerateInsight(_id), [onGenerateInsight, _id]);
+
+  return (
+    <Card
+      title={title}
+      link={link}
+      type={type}
+      aiStatus={aiStatus}
+      aiMetadata={aiMetadata}
+      description={description}
+      isSelected={isSelected}
+      onSelect={handleSelect}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onGenerateInsight={handleGenerate}
+    />
+  );
+});
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -96,18 +136,19 @@ export function Dashboard() {
     }
   }, [isAiPanelOpen, selectedContentId]);
 
-  // ON-DEMAND POLLING: Only poll for the SELECTED content if it's processing
-  useEffect(() => {
+  // ON-DEMAND POLLING: Only poll for the SELECTED content if it's actively processing
+  const isSelectedProcessing = useMemo(() => {
     const selected = contents.find(c => c._id === selectedContentId);
-    const isProcessing = selected?.aiStatus && ["queued", "processing", "scraping", "analyzing"].includes(selected.aiStatus);
+    return Boolean(selected?.aiStatus && ["queued", "processing", "scraping", "analyzing"].includes(selected.aiStatus));
+  }, [contents, selectedContentId]);
 
-    if (isProcessing) {
-      const interval = setInterval(() => {
-        refresh();
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [selectedContentId, contents, refresh]);
+  useEffect(() => {
+    if (!isSelectedProcessing) return;
+    const interval = setInterval(() => {
+      refresh();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isSelectedProcessing, refresh]);
 
   // Refresh only when modal transitions from open → closed
   useEffect(() => {
@@ -143,8 +184,6 @@ export function Dashboard() {
     }
   }, [openIdFromState, locationState, navigate, location.pathname]);
 
-
-
   // Semantic Search Logic with Debounce
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -154,7 +193,7 @@ export function Dashboard() {
         setSemanticResults(null);
         setIsSearching(false);
       }
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
@@ -181,67 +220,87 @@ export function Dashboard() {
     }
   }
 
-
   /**
-   * Manual Insight Generation (On-Demand)
+   * Manual Insight Generation (On-Demand) - Memoized
    */
-  async function handleGenerateInsight(contentId: string) {
-  // Cancel previous if any
-  if (abortControllerRef.current) abortControllerRef.current.abort();
-  abortControllerRef.current = new AbortController();
+  const handleGenerateInsight = useCallback(async (contentId: string) => {
+    // Cancel previous if any
+    if (abortControllerRef.current) abortControllerRef.current.abort();
+    abortControllerRef.current = new AbortController();
 
-  // 1. Optimistic UI Update using Query Cache
-  await queryClient.cancelQueries({ queryKey: queryKeys.content });
-  queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
-    old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "queued" } : c) : []
-  );
-  
-  // 2. Open panel instantly
-  setSelectedContentId(contentId);
-  setIsAiPanelOpen(true);
-
-
-  try {
-    const response = await aiService.reprocessNote(contentId);
-    
-    // Quick Mode Hydration: If the API returned quick data, update cache instantly
-    if (response.data.data) {
-      const quick = response.data.data;
-      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
-        old ? old.map(c => c._id === contentId ? { 
-          ...c, 
-          title: quick.title || c.title,
-          description: quick.description,
-          tags: quick.tags,
-          aiStatus: "processing" 
-        } : c) : []
-      );
-    }
-    
-    console.log("Insight generation started", response.data.message);
-  } catch (error) {
-    if (isApiError(error) && error.code === "ERR_CANCELED") return;
-
-    if (isApiError(error) && (error.details as Record<string, unknown>)?.code === "QUOTA_EXCEEDED") {
-      setUpgradeModalOpen(true);
-      // Revert optimistic UI
-      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
-        old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "unprocessed" } : c) : []
-      );
-      return;
-    }
-
-    const diagnostic = "Failed to start insight generation";
-    console.error(`[INSIGHT_START_ERROR]`, error);
-    
-    // Revert status on failure
+    // 1. Optimistic UI Update using Query Cache
+    await queryClient.cancelQueries({ queryKey: queryKeys.content });
     queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
-      old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c) : []
+      old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "queued" } : c) : []
     );
-  } finally {
-    queryClient.invalidateQueries({ queryKey: queryKeys.content });
-  }
-}
+    
+    // 2. Open panel instantly
+    setSelectedContentId(contentId);
+    setIsAiPanelOpen(true);
+
+    try {
+      const response = await aiService.reprocessNote(contentId);
+      
+      // Quick Mode Hydration: If the API returned quick data, update cache instantly
+      if (response.data.data) {
+        const quick = response.data.data;
+        queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
+          old ? old.map(c => c._id === contentId ? { 
+            ...c, 
+            title: quick.title || c.title,
+            description: quick.description,
+            tags: quick.tags,
+            aiStatus: "processing" 
+          } : c) : []
+        );
+      }
+      
+      console.log("Insight generation started", response.data.message);
+    } catch (error) {
+      if (isApiError(error) && error.code === "ERR_CANCELED") return;
+
+      if (isApiError(error) && (error.details as Record<string, unknown>)?.code === "QUOTA_EXCEEDED") {
+        setUpgradeModalOpen(true);
+        // Revert optimistic UI
+        queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
+          old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "unprocessed" } : c) : []
+        );
+        return;
+      }
+
+      const diagnostic = "Failed to start insight generation";
+      console.error(`[INSIGHT_START_ERROR]`, error);
+      
+      // Revert status on failure
+      queryClient.setQueryData<Content[]>(queryKeys.content, (old) => 
+        old ? old.map(c => c._id === contentId ? { ...c, aiStatus: "failed", aiError: diagnostic } : c) : []
+      );
+    } finally {
+      queryClient.invalidateQueries({ queryKey: queryKeys.content });
+    }
+  }, [queryClient]);
+
+  const handleSelectCard = useCallback((id: string) => {
+    setSelectedContentId((prev) => {
+      const isDeselecting = prev === id;
+      setIsAiPanelOpen(!isDeselecting);
+      return isDeselecting ? null : id;
+    });
+  }, []);
+
+  const handleEditCard = useCallback((id: string, newTitle: string) => {
+    editContent({ contentId: id, title: newTitle });
+  }, [editContent]);
+
+  const handleDeleteCard = useCallback((id: string) => {
+    deleteContent(id);
+  }, [deleteContent]);
+
+  const handleCloseSidebar = useCallback(() => setSidebarOpen(false), []);
+  const handleSelectContentFromSidebar = useCallback((id: string | null) => {
+    setSelectedContentId(id);
+    if (id) setIsAiPanelOpen(true);
+  }, []);
 
   useEffect(() => {
     if (locationState?.triggerExtract && openIdFromState) {
@@ -252,23 +311,25 @@ export function Dashboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locationState, openIdFromState]);
 
-  let displayContents = contents;
-  
-  if (semanticResults !== null) {
-    displayContents = semanticResults;
-  } else if (searchQuery) {
-    displayContents = contents.filter((content) =>
-      content.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      content.link?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
+  const deferredSearchQuery = useDeferredValue(searchQuery);
 
-  const filteredContents =
-    selectedFilter === "all"
-      ? displayContents
-      : displayContents.filter(
-        (content) => content.type?.toLowerCase() === selectedFilter
+  const filteredContents = useMemo(() => {
+    let list = contents;
+    if (semanticResults !== null) {
+      list = semanticResults;
+    } else if (deferredSearchQuery.trim()) {
+      const q = deferredSearchQuery.toLowerCase().trim();
+      list = contents.filter((content) =>
+        content.title?.toLowerCase().includes(q) ||
+        content.link?.toLowerCase().includes(q) ||
+        content.description?.toLowerCase().includes(q)
       );
+    }
+
+    if (selectedFilter === "all") return list;
+    const filter = selectedFilter.toLowerCase();
+    return list.filter((content) => content.type?.toLowerCase() === filter);
+  }, [contents, semanticResults, deferredSearchQuery, selectedFilter]);
 
 
   const getShareButtonConfig = () => {
@@ -313,8 +374,8 @@ export function Dashboard() {
         contents={contents}
         selectedContentId={selectedContentId}
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        onSelectContent={(id) => { setSelectedContentId(id); setIsAiPanelOpen(true); }}
+        onClose={handleCloseSidebar}
+        onSelectContent={handleSelectContentFromSidebar}
         onCollapsedChange={setSidebarCollapsed}
       />
 
@@ -442,33 +503,20 @@ export function Dashboard() {
 
         <div className="px-6 pt-8 pb-8 max-w-[1400px] mx-auto font-inter">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20 items-start">
-            {filteredContents.map(({ type, link, title, _id, aiStatus, description, aiMetadata }) => (
+            {filteredContents.map((content) => (
               <div
-                key={_id}
-                ref={el => { cardRefs.current[_id] = el; }}
+                key={content._id}
+                ref={el => { cardRefs.current[content._id] = el; }}
+                className="h-full"
               >
-              <Card
-                key={_id}
-                title={title}
-                link={link}
-                type={type}
-                aiStatus={aiStatus}
-                aiMetadata={aiMetadata}
-                description={description}
-                isSelected={selectedContentId === _id}
-                onGenerateInsight={() => handleGenerateInsight(_id)}
-                onSelect={() => {
-                  const isDeselecting = selectedContentId === _id;
-                  setSelectedContentId(isDeselecting ? null : _id);
-                  if (!isDeselecting) {
-                    setIsAiPanelOpen(true);
-                  } else {
-                    setIsAiPanelOpen(false);
-                  }
-                }}
-                onEdit={(newTitle) => editContent({ contentId: _id, title: newTitle })}
-                onDelete={() => deleteContent(_id)}
-              />
+                <DashboardCardItem
+                  content={content}
+                  isSelected={selectedContentId === content._id}
+                  onSelect={handleSelectCard}
+                  onEdit={handleEditCard}
+                  onDelete={handleDeleteCard}
+                  onGenerateInsight={handleGenerateInsight}
+                />
               </div>
             ))}
           </div>

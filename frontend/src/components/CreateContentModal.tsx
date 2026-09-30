@@ -99,8 +99,12 @@ export function CreateContentModal({ open, onClose }: { open: boolean; onClose: 
       if (sType) setType(sType);
       if (sTags) setTags(sTags);
       
-    } catch {
-      setAiError("Couldn't fetch details. Try again.");
+    } catch (err) {
+      if (isApiError(err)) {
+        setAiError(err.message || "Couldn't fetch details. Try again.");
+      } else {
+        setAiError("Couldn't fetch details. Try again.");
+      }
     } finally {
       setIsAnalyzing(false);
     }

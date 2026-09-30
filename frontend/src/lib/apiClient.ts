@@ -27,8 +27,14 @@ apiClient.interceptors.response.use(
     const payload = error.response?.data as { message?: string } | undefined;
     
     // Automatically log out if token verification fails
-    // Only redirect on 401 (Unauthorized), not 403 (Forbidden/Quota)
-    if (error.response?.status === 401) {
+    // Redirect on 401 (Unauthorized), or 403 if it was due to invalid/expired auth token
+    const isAuthError =
+      error.response?.status === 401 ||
+      (error.response?.status === 403 &&
+        (payload?.message?.toLowerCase().includes("token") ||
+          payload?.message?.toLowerCase().includes("auth")));
+
+    if (isAuthError) {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }

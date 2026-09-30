@@ -10,7 +10,7 @@ import { userMiddleware } from "./middleware.js";
 import { random } from "./utils.js";
 import cors from "cors";
 
-import { getAiClassification, processContentEmbedding } from "./services/ai.service.js";
+import { getAiClassification, processContentEmbedding, createEmbedding } from "./services/ai.service.js";
 import { normalizeUrl } from "./services/ingestion/url.js";
 import { semanticSearchController } from "./controllers/search.controller.js";
 import { initCronJobs } from "./cron.js";
@@ -47,12 +47,9 @@ const authLimiter = rateLimit({
 const signupSchema = z.object({
   username: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(20, "Username cannot exceed 20 characters")
-    .regex(
-      /^[a-zA-Z0-9_]+$/,
-      "Username can contain only letters, numbers and underscores"
-    ),
+    .min(1, "Username must not be empty")
+    .max(50, "Username too long")
+    .optional(),
   email: z
     .string()
     .email("Invalid email address"),
@@ -62,7 +59,7 @@ const signupSchema = z.object({
 });
 
 const signinSchema = z.object({
-  username: z.string().min(3, "Username is required"),
+  username: z.string().min(1, "Username or email is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -82,14 +79,15 @@ app.post("/api/v1/signup", authLimiter, async (req, res) => {
   }
 
   const { username, email, password } = parsed.data;
+  const normalizedEmail = email.trim().toLowerCase();
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
     const existingEmail = await UserModel.findOne({
       $or: [
-        { email: email },
-        { username: email }
+        { email: normalizedEmail },
+        { username: normalizedEmail }
       ]
     });
     if (existingEmail) {
@@ -98,8 +96,34 @@ app.post("/api/v1/signup", authLimiter, async (req, res) => {
       });
     }
 
-    await UserModel.create({ username, email, password: hashedPassword });
-    res.json({ message: "User signed up" });
+    let candidateUsername = (username || normalizedEmail.split("@")[0] || "user")
+      .trim()
+      .replace(/[^a-zA-Z0-9_]/g, "_")
+      .slice(0, 20);
+
+    if (candidateUsername.length < 3) {
+      candidateUsername = (candidateUsername + "_usr").slice(0, 20);
+    }
+
+    let finalUsername = candidateUsername;
+    const existingUsername = await UserModel.findOne({ username: finalUsername });
+    if (existingUsername) {
+      finalUsername = `${finalUsername.slice(0, 14)}_${Math.random().toString(36).substring(2, 7)}`;
+    }
+
+    const newUser = await UserModel.create({
+      username: finalUsername,
+      email: normalizedEmail,
+      password: hashedPassword
+    });
+
+    const token = jwt.sign({ id: newUser._id }, getJwtPassword(), { expiresIn: "30d" });
+
+    res.json({
+      message: "User signed up",
+      token,
+      username: newUser.username
+    });
   } catch (e: any) {
     if (e.code === 11000) {
       return res.status(400).json({ 
@@ -120,8 +144,15 @@ app.post("/api/v1/signin", authLimiter, async (req, res) => {
   }
 
   const { username, password } = parsed.data;
+  const identifier = username.trim();
 
-  const existingUser = await UserModel.findOne({ username });
+  const existingUser = await UserModel.findOne({
+    $or: [
+      { username: identifier },
+      { email: identifier.toLowerCase() },
+      { username: identifier.toLowerCase() }
+    ]
+  });
 
   if (!existingUser) {
     return res.status(403).json({ message: "Invalid credentials" });
@@ -135,7 +166,7 @@ app.post("/api/v1/signin", authLimiter, async (req, res) => {
 
   const token = jwt.sign({ id: existingUser._id }, getJwtPassword(), { expiresIn: "30d" });
 
-  res.json({ token });
+  res.json({ token, username: existingUser.username });
 });
 
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
@@ -263,6 +294,20 @@ app.use("/api/v1/ai", (req, res, next) => {
   console.log(`[AI_ROUTE_HIT]: ${req.method} ${req.path}`, { body: req.body });
   next();
 }, aiRouter);
+
+// Internal local embedding endpoint (shared with Python microservice without API keys)
+app.post("/api/v1/internal/embed", async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text || typeof text !== "string") {
+      return res.status(400).json({ error: "Missing text string" });
+    }
+    const embedding = await createEmbedding(text, false);
+    res.json({ embedding });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 import { getConnectionsController } from "./controllers/connections.controller.js";
 import {

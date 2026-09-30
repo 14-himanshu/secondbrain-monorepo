@@ -6,3 +6,10 @@ backend/tsconfig.tsbuildinfo
 .env
 backend/.env
 frontend/.env
+.DS_Store
+**/.DS_Store
+*.pyc
+__pycache__/
+**/__pycache__/
+* 2.*
+**/* 2.*

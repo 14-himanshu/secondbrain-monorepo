@@ -8,23 +8,44 @@ export const extractYouTubeContent = async (
   mode: ClassificationMode = "deep"
 ): Promise<ExtractedContent> => {
   try {
-    const jinaResult = await fetchJinaReader(target.normalizedUrl);
+    let jinaResult: { text?: string; title?: string; description?: string } | null = null;
+    try {
+      jinaResult = await fetchJinaReader(target.normalizedUrl);
+    } catch {
+      jinaResult = null;
+    }
 
-    if (!jinaResult || !jinaResult.title) {
+    let title = jinaResult?.title;
+    let description = jinaResult?.description;
+    let channel: string | undefined = undefined;
+
+    // Fast, resilient YouTube oEmbed fallback if Jina title was missing
+    if (!title) {
+      try {
+        const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(target.normalizedUrl)}&format=json`;
+        const res = await fetch(oembedUrl);
+        if (res.ok) {
+          const oembedData = (await res.json()) as any;
+          title = oembedData.title || title;
+          channel = oembedData.author_name;
+        }
+      } catch (oembedErr) {
+        console.warn("[YOUTUBE_OEMBED_FALLBACK_FAILED]", (oembedErr as Error).message);
+      }
+    }
+
+    if (!title) {
       throw new Error("youtube_fetch_failed");
     }
 
-    const title = jinaResult.title;
-    // Jina usually puts the channel and description in the metadata/description, or we just extract what we can.
-    const description = jinaResult.description || undefined;
-    const contentText = normalizeWhitespace(jinaResult.text || "");
-    
+    const contentText = normalizeWhitespace(jinaResult?.text || "");
+
     // Metadata block
     const metadata = {
       title,
       description,
-      channel: undefined, // Hard to extract reliably without full HTML, but Title/Desc is usually enough
-      tags: [],
+      channel,
+      tags: ["video", "youtube"],
       contentType: "video" as const,
     };
 

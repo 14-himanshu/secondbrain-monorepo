@@ -34,11 +34,36 @@ export function Signup() {
     }
 
     setLoading(true);
-    const username = email.split('@')[0] || "user";
+    let username = email.split('@')[0] || "user";
+    username = username.replace(/[^a-zA-Z0-9_]/g, "_");
+    if (username.length < 3) username = (username + "_user").slice(0, 20);
+    if (username.length > 20) username = username.slice(0, 20);
+
     try {
-      await signUp(username, email, password);
-      setSuccessMsg("Account created! Redirecting you to sign in…");
-      setTimeout(() => navigate("/login"), 1500);
+      const response = await signUp(username, email, password);
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("username", response.username || username);
+        try {
+          const cb = sessionStorage.getItem('oauth_callback');
+          if (cb) {
+            const params = new URLSearchParams(cb);
+            const ts = Number(params.get('ts') || params.get('timestamp') || 0);
+            const now = Date.now();
+            if (ts && now - ts < 1000 * 60 * 10) {
+              navigate(`/integrations/callback${cb}`);
+              return;
+            }
+            sessionStorage.removeItem('oauth_callback');
+          }
+        } catch {
+          // ignore resume errors
+        }
+        navigate("/dashboard");
+        return;
+      }
+      setSuccessMsg("Account created! Redirecting to dashboard…");
+      setTimeout(() => navigate("/dashboard"), 800);
     } catch (e) {
       if (isApiError(e)) {
         const details = e.details as { errors?: ValidationError[] } | undefined;

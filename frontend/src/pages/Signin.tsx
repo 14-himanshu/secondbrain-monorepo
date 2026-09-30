@@ -23,7 +23,7 @@ export function Signin() {
       const response = await signIn(username, password);
       const jwt = response.token;
       localStorage.setItem("token", jwt);
-      localStorage.setItem("username", username);
+      localStorage.setItem("username", response.username || username);
       try {
         const cb = sessionStorage.getItem('oauth_callback');
         if (cb) {

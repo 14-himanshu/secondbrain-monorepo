@@ -14,26 +14,26 @@ export const userMiddleware = async (
 
   // No header
   if (!authHeader) {
-    return res.status(403).json({ message: "No auth token provided" });
+    return res.status(401).json({ message: "No auth token provided" });
   }
 
   // Not in Bearer format
   if (!authHeader.startsWith("Bearer ")) {
-    return res.status(403).json({ message: "Invalid auth format" });
+    return res.status(401).json({ message: "Invalid auth format" });
   }
 
   // Extract token
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(403).json({ message: "Invalid auth token" });
+    return res.status(401).json({ message: "Invalid auth token" });
   }
 
   try {
     const decoded = jwt.verify(token, getJwtPassword()) as jwt.JwtPayload;
 
     if (!decoded || !decoded.id) {
-      return res.status(403).json({ message: "Invalid token" });
+      return res.status(401).json({ message: "Invalid token" });
     }
 
     req.userId = decoded.id;
@@ -46,6 +46,6 @@ export const userMiddleware = async (
 
     next();
   } catch (err) {
-    return res.status(403).json({ message: "Token verification failed" });
+    return res.status(401).json({ message: "Token verification failed" });
   }
 };

@@ -3,7 +3,7 @@ import { BACKEND_URL } from "../config";
 import type { ValidationIssue } from "@secondbrain/contracts";
 
 export const signIn = async (username: string, password: string) => {
-  const response = await apiClient.post<{ token: string }>("/api/v1/signin", {
+  const response = await apiClient.post<{ token: string; username?: string }>("/api/v1/signin", {
     username,
     password,
   });
@@ -11,10 +11,12 @@ export const signIn = async (username: string, password: string) => {
 };
 
 export const signUp = async (username: string, email: string, password: string) => {
-  const response = await apiClient.post<{ message: string; errors?: ValidationIssue[] }>(
-    "/api/v1/signup",
-    { username, email, password }
-  );
+  const response = await apiClient.post<{
+    message: string;
+    token?: string;
+    username?: string;
+    errors?: ValidationIssue[];
+  }>("/api/v1/signup", { username, email, password });
   return response.data;
 };
 

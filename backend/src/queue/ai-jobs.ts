@@ -79,22 +79,26 @@ export const createAiWorker = (
 };
 
 export const getAiQueueMetrics = async () => {
-  const aiQueue = getQueue();
-  if (!aiQueue) {
-    return { enabled: false };
+  try {
+    const aiQueue = getQueue();
+    if (!aiQueue) {
+      return { enabled: false };
+    }
+
+    const [counts, waiting, delayed] = await Promise.all([
+      aiQueue.getJobCounts("active", "completed", "delayed", "failed", "waiting"),
+      aiQueue.getWaitingCount(),
+      aiQueue.getDelayedCount(),
+    ]);
+
+    return {
+      enabled: true,
+      ...counts,
+      queueDepth: waiting + delayed + (counts.active ?? 0),
+    };
+  } catch (error) {
+    return { enabled: false, error: "Redis queue unreachable" };
   }
-
-  const [counts, waiting, delayed] = await Promise.all([
-    aiQueue.getJobCounts("active", "completed", "delayed", "failed", "waiting"),
-    aiQueue.getWaitingCount(),
-    aiQueue.getDelayedCount(),
-  ]);
-
-  return {
-    enabled: true,
-    ...counts,
-    queueDepth: waiting + delayed + (counts.active ?? 0),
-  };
 };
 
 export const initQueueObservers = async () => {

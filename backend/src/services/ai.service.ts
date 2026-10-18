@@ -84,8 +84,8 @@ const updateMetrics = (latency: number, tokens: number = 0, error: string | null
 // --- Provider Initialization ---
 const isValidKey = (key?: string) => !!key && !key.includes("****") && key.length > 20;
 
-const GROQ_PRIMARY_MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
-const GROQ_FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || "openai/gpt-oss-20b";
+const GROQ_PRIMARY_MODEL = process.env.GROQ_MODEL || "llama-3.3-70b-versatile";
+const GROQ_FALLBACK_MODEL = process.env.GROQ_FALLBACK_MODEL || "llama-3.1-8b-instant";
 
 const groq = isValidKey(process.env.GROQ_API_KEY) ? new Groq({
   apiKey: process.env.GROQ_API_KEY,

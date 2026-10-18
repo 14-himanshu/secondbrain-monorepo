@@ -34,7 +34,7 @@ CRITICAL RULES TO PREVENT HALLUCINATIONS:
 """
 
 def create_agent():
-    groq_model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+    groq_model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     llm = ChatGroq(
         model=groq_model,
         api_key=_GROQ_KEY,

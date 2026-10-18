@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import {
   getFrontendUrls,
   getGoogleClientId,
@@ -229,10 +230,12 @@ export const googleCallbackController = async (req: Request, res: Response) => {
       });
 
       if (!user) {
+        const randomPassword = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+        const hashedPassword = await bcrypt.hash(randomPassword, 10);
         user = await UserModel.create({ 
           username: email, 
           email: email,
-          password: Math.random().toString(36), 
+          password: hashedPassword, 
           google: { loginOnly: true, connected: true, email: email } 
         });
       } else {
@@ -361,7 +364,7 @@ export const exchangeLoginCode = async (req: Request, res: Response) => {
     const user = await UserModel.findById(payload.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const appToken = jwt.sign({ id: user._id }, getJwtPassword());
+    const appToken = jwt.sign({ id: user._id }, getJwtPassword(), { expiresIn: "30d" });
     return res.json({ token: appToken });
   } catch (e) {
     return res.status(400).json({ message: "Invalid or expired code" });

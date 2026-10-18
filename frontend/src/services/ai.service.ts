@@ -10,7 +10,7 @@ import { BACKEND_URL } from "../config";
  * AI Service Endpoints
  */
 export const AI_ENDPOINTS = {
-  REPROCESS: "/api/v1/ai/reprocess",
+  REPROCESS: (contentId: string) => `/api/v1/content/${contentId}/extract`,
   TAG: "/api/v1/ai/tag",
   CHAT: "/api/v1/ai/chat",
 };
@@ -20,7 +20,7 @@ export const aiService = {
    * Triggers manual re-analysis for a note.
    */
   reprocessNote: async (contentId: string) => {
-    return apiClient.post(`/api/v1/content/${contentId}/extract`);
+    return apiClient.post(AI_ENDPOINTS.REPROCESS(contentId));
   },
 
   /**

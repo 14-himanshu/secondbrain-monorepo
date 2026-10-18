@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { UserModel } from "../db.js";
 import { createRazorpayOrder, verifyRazorpaySignature } from "../services/razorpay.service.js";
+import { getRazorpayKeyId } from "../config.js";
 
 // Pro plan cost in INR
 const PRO_PLAN_PRICE = 999;
@@ -19,7 +20,7 @@ export const createCheckoutOrderController = async (req: Request, res: Response)
       orderId: order.id, 
       amount: order.amount, 
       currency: order.currency,
-      keyId: process.env.RAZORPAY_KEY_ID
+      keyId: getRazorpayKeyId()
     });
   } catch (error: any) {
     console.error("Error creating Razorpay order:", error);

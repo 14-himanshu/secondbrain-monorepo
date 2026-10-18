@@ -5,6 +5,7 @@ import { cosineSimilarity } from "../utils.js";
 import { ContentModel, BrainInsightModel, UserModel } from "../db.js";
 import { z } from "zod";
 import { enqueueAiIngestionJob } from "../queue/ai-jobs.js";
+import { getPythonAgentUrl } from "../config.js";
 
 // ... existing code ...
 
@@ -32,7 +33,7 @@ export const aiChatController = async (req: Request, res: Response) => {
     }
 
     // Proxy the request to the Python microservice
-    const pythonAgentUrl = process.env.PYTHON_AGENT_URL || "http://127.0.0.1:8000/chat";
+    const pythonAgentUrl = getPythonAgentUrl();
 
     // Issue 8 FIX: Add a 65-second AbortController timeout.
     // Without this, a slow/hung Python agent would freeze Node forever.

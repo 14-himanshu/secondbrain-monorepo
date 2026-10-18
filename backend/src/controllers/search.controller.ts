@@ -20,30 +20,62 @@ export const semanticSearchController = async (req: Request, res: Response) => {
     try {
       // 2. NATIVE VECTOR SEARCH (Fast & Professional)
       // This requires a Search Index named "vector_index" in Atlas
-      results = await ContentModel.aggregate([
-        {
-          "$vectorSearch": {
-            "index": "vector_index",
-            "path": "embedding",
-            "queryVector": queryEmbedding,
-            "numCandidates": 100,
-            "limit": 20
+      try {
+        results = await ContentModel.aggregate([
+          {
+            "$vectorSearch": {
+              "index": "vector_index",
+              "path": "embedding",
+              "queryVector": queryEmbedding,
+              "numCandidates": 100,
+              "limit": 20,
+              "filter": { "userId": { "$eq": new mongoose.Types.ObjectId(userId) } }
+            }
+          },
+          {
+            "$match": { "userId": new mongoose.Types.ObjectId(userId) }
+          },
+          {
+            "$project": {
+              "title": 1,
+              "link": 1,
+              "type": 1,
+              "description": 1,
+              "tags": 1,
+              "similarity": { "$meta": "vectorSearchScore" }
+            }
           }
-        },
-        {
-          "$match": { "userId": new mongoose.Types.ObjectId(userId) }
-        },
-        {
-          "$project": {
-            "title": 1,
-            "link": 1,
-            "type": 1,
-            "description": 1,
-            "tags": 1,
-            "similarity": { "$meta": "vectorSearchScore" }
+        ]);
+      } catch (filterError) {
+        // Fallback if userId is not marked as filter type in vector index definition
+        results = await ContentModel.aggregate([
+          {
+            "$vectorSearch": {
+              "index": "vector_index",
+              "path": "embedding",
+              "queryVector": queryEmbedding,
+              "numCandidates": 100,
+              "limit": 50
+            }
+          },
+          {
+            "$match": { "userId": new mongoose.Types.ObjectId(userId) }
+          },
+          {
+            "$limit": 20
+          },
+          {
+            "$project": {
+              "title": 1,
+              "link": 1,
+              "type": 1,
+              "description": 1,
+              "tags": 1,
+              "similarity": { "$meta": "vectorSearchScore" }
+            }
           }
-        }
-      ]);
+        ]);
+      }
 
       console.log(`[AI][VECTOR_SEARCH_NATIVE] found=${results.length}`);
     } catch (vectorError) {

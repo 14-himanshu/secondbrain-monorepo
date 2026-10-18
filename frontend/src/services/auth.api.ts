@@ -10,13 +10,15 @@ export const signIn = async (username: string, password: string) => {
   return response.data;
 };
 
-export const signUp = async (username: string, email: string, password: string) => {
+export const signUp = async (username: string | undefined, email: string, password: string) => {
+  const payload: Record<string, string> = { email, password };
+  if (username) payload.username = username;
   const response = await apiClient.post<{
     message: string;
     token?: string;
     username?: string;
     errors?: ValidationIssue[];
-  }>("/api/v1/signup", { username, email, password });
+  }>("/api/v1/signup", payload);
   return response.data;
 };
 

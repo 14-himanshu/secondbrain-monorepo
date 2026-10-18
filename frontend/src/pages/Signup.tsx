@@ -34,16 +34,12 @@ export function Signup() {
     }
 
     setLoading(true);
-    let username = email.split('@')[0] || "user";
-    username = username.replace(/[^a-zA-Z0-9_]/g, "_");
-    if (username.length < 3) username = (username + "_user").slice(0, 20);
-    if (username.length > 20) username = username.slice(0, 20);
 
     try {
-      const response = await signUp(username, email, password);
+      const response = await signUp(undefined, email, password);
       if (response.token) {
         localStorage.setItem("token", response.token);
-        localStorage.setItem("username", response.username || username);
+        localStorage.setItem("username", response.username || email.split("@")[0] || "User");
         try {
           const cb = sessionStorage.getItem('oauth_callback');
           if (cb) {

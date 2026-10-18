@@ -55,7 +55,7 @@ const signupSchema = z.object({
     .email("Invalid email address"),
   password: z
     .string()
-    .min(1, "Password must not be empty"),
+    .min(8, "Password must be at least 8 characters"),
 });
 
 const signinSchema = z.object({
@@ -84,12 +84,7 @@ app.post("/api/v1/signup", authLimiter, async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const existingEmail = await UserModel.findOne({
-      $or: [
-        { email: normalizedEmail },
-        { username: normalizedEmail }
-      ]
-    });
+    const existingEmail = await UserModel.findOne({ email: normalizedEmail });
     if (existingEmail) {
       return res.status(400).json({ 
         errors: [{ path: ["email"], message: "Email is already registered" }] 
@@ -126,8 +121,9 @@ app.post("/api/v1/signup", authLimiter, async (req, res) => {
     });
   } catch (e: any) {
     if (e.code === 11000) {
+      const field = Object.keys(e.keyPattern || {})[0] || "username";
       return res.status(400).json({ 
-        errors: [{ path: ["username"], message: "Username is already taken" }] 
+        errors: [{ path: [field], message: `${field === "email" ? "Email" : "Username"} is already taken` }] 
       });
     }
     return res.status(400).json({ 
@@ -152,7 +148,7 @@ app.post("/api/v1/signin", authLimiter, async (req, res) => {
       { email: identifier.toLowerCase() },
       { username: identifier.toLowerCase() }
     ]
-  });
+  }).select("+password");
 
   if (!existingUser) {
     return res.status(403).json({ message: "Invalid credentials" });
@@ -290,10 +286,7 @@ app.post("/api/v1/content/:id/extract", userMiddleware, async (req, res) => {
 
 
 // AI Route Grouping & Debugging
-app.use("/api/v1/ai", (req, res, next) => {
-  console.log(`[AI_ROUTE_HIT]: ${req.method} ${req.path}`, { body: req.body });
-  next();
-}, aiRouter);
+app.use("/api/v1/ai", aiRouter);
 
 // Internal local embedding endpoint (shared with Python microservice without API keys)
 app.post("/api/v1/internal/embed", async (req, res) => {
@@ -333,8 +326,12 @@ app.post("/api/v1/auth/exchange", express.json(), exchangeLoginCode);
 app.get("/api/v1/search", userMiddleware, semanticSearchController);
 app.get("/api/v1/content/:id/connections", userMiddleware, getConnectionsController);
 app.get("/api/v1/ai/queue-metrics", userMiddleware, async (_req, res) => {
-  const metrics = await getAiQueueMetrics();
-  res.json(metrics);
+  try {
+    const metrics = await getAiQueueMetrics();
+    res.json(metrics);
+  } catch (error) {
+    res.json({ enabled: false, error: "Queue metrics unavailable" });
+  }
 });
 
 app.post('/api/v1/billing/checkout', userMiddleware, createCheckoutOrderController);
@@ -377,10 +374,9 @@ app.get('/api/v1/me', userMiddleware, async (req, res) => {
 
 app.put('/api/v1/me', userMiddleware, async (req, res) => {
   try {
-    const { username, email, bio, aiPreferences, avatarBase64 } = req.body;
+    const { username, bio, aiPreferences, avatarBase64 } = req.body;
     const updateData: any = {};
     if (username !== undefined) updateData.username = username;
-    if (email !== undefined) updateData.email = email;
     if (bio !== undefined) updateData.bio = bio;
     if (avatarBase64 !== undefined) updateData.avatarBase64 = avatarBase64;
     if (aiPreferences !== undefined) {
@@ -404,8 +400,11 @@ app.post('/api/v1/user/password', userMiddleware, async (req, res) => {
   if (!currentPassword || !newPassword) {
     return res.status(400).json({ message: "Current and new password required" });
   }
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return res.status(400).json({ message: "New password must be at least 8 characters" });
+  }
   try {
-    const user = await UserModel.findById(req.userId);
+    const user = await UserModel.findById(req.userId).select("+password");
     if (!user) return res.status(404).json({ message: "User not found" });
     // @ts-ignore
     const passwordMatch = await bcrypt.compare(currentPassword, user.password);
@@ -429,8 +428,8 @@ app.delete('/api/v1/user/account', userMiddleware, async (req, res) => {
   }
 });
 
-// Debug endpoint (non-secret): report whether Google OAuth config is present and redirect URI
-app.get('/api/v1/debug/oauth-config', (_req, res) => {
+// Debug endpoint (requires authentication): report whether Google OAuth config is present and redirect URI
+app.get('/api/v1/debug/oauth-config', userMiddleware, (_req, res) => {
   try {
     const clientIdPresent = Boolean(getGoogleClientId());
     const clientSecretPresent = Boolean(getGoogleClientSecret());
@@ -452,16 +451,13 @@ app.get('/api/v1/debug/oauth-config', (_req, res) => {
 
 
 app.get("/api/v1/content", userMiddleware, async (req, res) => {
-  // @ts-ignore
-
-  const userId = req.userId;
-
-  const content = await ContentModel.find({ userId }).populate(
-    "userId",
-    "username"
-  );
-
-  res.json({ content });
+  try {
+    const userId = req.userId;
+    const content = await ContentModel.find({ userId }).sort({ createdAt: -1 });
+    res.json({ content });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 app.put("/api/v1/content", userMiddleware, async (req, res) => {
@@ -498,9 +494,6 @@ app.put("/api/v1/content", userMiddleware, async (req, res) => {
 
 app.delete("/api/v1/content", userMiddleware, async (req, res) => {
   const contentId = req.body.contentId;
-  console.log("Delete request received");
-  console.log("contentId:", contentId);
-  console.log("userId:", req.userId);
 
   if (!contentId) {
     return res.status(400).json({ message: "Content ID is required" });
@@ -512,12 +505,9 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
       userId: req.userId,
     });
 
-    console.log("Delete result:", result);
-
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: "Content not found or you don't have permission to delete it",
-        debug: { contentId, userId: req.userId }
+        message: "Content not found or you don't have permission to delete it"
       });
     }
 
@@ -526,7 +516,6 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
       deletedCount: result.deletedCount,
     });
   } catch (e) {
-    console.error("Delete error:", e);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -598,25 +587,29 @@ app.post("/api/brain/share", userMiddleware, async (req, res) => {
 });
 
 app.get("/api/brain/share/:shareId", async (req, res) => {
-  const shareId = req.params.shareId;
-  const link = await LinkModel.findOne({ shareId });
+  try {
+    const shareId = req.params.shareId;
+    const link = await LinkModel.findOne({ shareId });
 
-  if (!link || link.shareType === 'private') {
-    return res.status(404).json({ message: "Shared brain not found or private" });
+    if (!link || link.shareType === 'private') {
+      return res.status(404).json({ message: "Shared brain not found or private" });
+    }
+
+    const content = await ContentModel.find({ userId: link.userId }).sort({ createdAt: -1 });
+    const user = await UserModel.findOne({ _id: link.userId });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({
+      username: user.username,
+      content,
+      shareType: link.shareType
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
   }
-
-  const content = await ContentModel.find({ userId: link.userId });
-  const user = await UserModel.findOne({ _id: link.userId });
-
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
-  }
-
-  res.json({
-    username: user.username,
-    content,
-    shareType: link.shareType
-  });
 });
 
 // API v1 Catch-all for 404 debugging (MUST BE LAST)
@@ -673,7 +666,6 @@ const startServer = async () => {
 
 startServer().catch((error) => {
   console.error("[STARTUP] Failed to start backend:", error instanceof Error ? error.message : error);
-  // Don't exit - let the server keep running for health checks
-  // process.exit(1);
+  process.exit(1);
 });
 // Force restart for PUT endpoint

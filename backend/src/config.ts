@@ -19,7 +19,10 @@ export const getFrontendUrls = () =>
     .map((url) => url.trim().replace(/\/$/, ""))
     .filter(Boolean);
 export const getGroqApiKey = () => process.env.GROQ_API_KEY?.trim();
+export const getGroqModel = () => process.env.GROQ_MODEL?.trim() || "llama-3.3-70b-versatile";
+export const getGroqFallbackModel = () => process.env.GROQ_FALLBACK_MODEL?.trim() || "llama-3.1-8b-instant";
 export const getOpenAiApiKey = () => process.env.OPENAI_API_KEY?.trim();
+export const getPythonAgentUrl = () => process.env.PYTHON_AGENT_URL?.trim() || "http://127.0.0.1:8000/chat";
 export const getRedisUrl = () => process.env.REDIS_URL?.trim();
 export const getAiWorkerConcurrency = () => Number(process.env.AI_WORKER_CONCURRENCY ?? 3);
 export const getNotionToken = () => process.env.NOTION_TOKEN?.trim();

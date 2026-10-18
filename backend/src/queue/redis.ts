@@ -4,12 +4,12 @@ import { getRedisUrl } from "../config.js";
 let queueConnection: IORedis | null = null;
 let lockConnection: IORedis | null = null;
 
-const createConnection = () => {
+const createConnection = (forQueue: boolean = false) => {
   const redisUrl = getRedisUrl();
   if (!redisUrl) return null;
 
   const connection = new IORedis(redisUrl, {
-    maxRetriesPerRequest: 1,
+    maxRetriesPerRequest: forQueue ? null : 1,
     enableReadyCheck: false,
     enableOfflineQueue: false,
     lazyConnect: true,
@@ -28,7 +28,7 @@ export const isQueueEnabled = () => Boolean(getRedisUrl());
 
 export const getQueueConnection = () => {
   if (!queueConnection) {
-    queueConnection = createConnection();
+    queueConnection = createConnection(true);
   }
   return queueConnection;
 };

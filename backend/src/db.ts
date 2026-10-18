@@ -7,8 +7,8 @@ export const connectToDatabase = async () => {
 };
 const UserSchema = new Schema({
   username: { type: String, unique: true },
-  password: String,
-  email: String,
+  password: { type: String, select: false },
+  email: { type: String, unique: true, sparse: true },
   bio: String,
   avatarBase64: { type: String, select: true },
   aiPreferences: {

@@ -18,17 +18,27 @@ from tools import contents_collection
 
 app = FastAPI(title="Second Brain AI Agent", version="1.0.0")
 
-# Issue #13 FIX: Add CORS middleware so the agent is safely accessible
-# even if called directly (e.g. during testing or future direct-client use).
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+# Dynamic CORS configuration for local and cloud deployment
+def get_allowed_origins() -> List[str]:
+    origins = [
         os.getenv("FRONTEND_URL", "http://localhost:5173"),
+        os.getenv("BACKEND_URL", "http://localhost:5001"),
         "http://localhost:5001",
         "http://127.0.0.1:5001",
-    ],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type", "Authorization"],
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+    custom = os.getenv("ALLOWED_ORIGINS", "")
+    if custom:
+        origins.extend([o.strip() for o in custom.split(",") if o.strip()])
+    return list(dict.fromkeys(filter(None, origins)))
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=get_allowed_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class Message(BaseModel):
@@ -41,13 +51,12 @@ class ChatRequest(BaseModel):
     userId: str
     contentId: Optional[str] = None
 
-# Issue #14 FIX: Add a health check endpoint so Node backend and load
-# balancers can verify the agent is alive before routing traffic to it.
+# Health check endpoint so Node backend and load balancers can verify the agent
 @app.get("/health")
 async def health():
     return {
         "status": "ok",
-        "model": os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+        "model": os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
         "groq_key_set": bool(os.getenv("GROQ_API_KEY")),
         "openai_key_set": bool(os.getenv("OPENAI_API_KEY")),
     }
